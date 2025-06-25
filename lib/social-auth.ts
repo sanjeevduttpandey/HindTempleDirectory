@@ -1,3 +1,4 @@
+// Deprecated: This file is no longer used. Kept for potential future needs.
 // Social media authentication utilities
 export interface SocialUserData {
   id: string

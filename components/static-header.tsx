@@ -1,23 +1,6 @@
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { Home, Settings, Menu } from "lucide-react"
-
-// Static user data
-const staticUser = {
-  name: "Priya Sharma",
-  spiritualName: "Bhakti Priya",
-  email: "priya.sharma@email.com",
-  avatar: "/placeholder.svg?height=40&width=40&text=PS",
-}
+import { Building2, Calendar, MessageCircle, Home, Info, Users, Sparkles } from "lucide-react"
 
 export function StaticHeader() {
   return (
@@ -32,95 +15,102 @@ export function StaticHeader() {
           </Link>
 
           <nav className="hidden md:flex items-center space-x-6">
-            <Link href="/dashboard" className="text-gray-700 hover:text-orange-600">
-              Dashboard
+            <Link href="/" className="text-gray-700 hover:text-orange-600 flex items-center gap-1">
+              <Home className="h-4 w-4" />
+              Home
             </Link>
-            <Link href="/temples" className="text-gray-700 hover:text-orange-600">
+            <Link href="/about" className="text-gray-700 hover:text-orange-600 flex items-center gap-1">
+              <Info className="h-4 w-4" />
+              About
+            </Link>
+            <Link href="/temples" className="text-gray-700 hover:text-orange-600 flex items-center gap-1">
+              <Building2 className="h-4 w-4" />
               Mandirs
             </Link>
-            <Link href="/events" className="text-gray-700 hover:text-orange-600">
+            <Link href="/events" className="text-gray-700 hover:text-orange-600 flex items-center gap-1">
+              <Calendar className="h-4 w-4" />
               Satsangs
             </Link>
-            <Link href="/panchang" className="text-gray-700 hover:text-orange-600">
-              Panchang
-            </Link>
-            <Link href="/community" className="text-gray-700 hover:text-orange-600">
-              Community
-            </Link>
+
+            <div className="relative group">
+              <button className="text-gray-700 hover:text-orange-600 flex items-center gap-1">
+                <Users className="h-4 w-4" />
+                Community
+              </button>
+              <div className="absolute left-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                <div className="py-1">
+                  <Link href="/community" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                    Discussions
+                  </Link>
+                  <Link href="/community/groups" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                    Groups
+                  </Link>
+                  <Link href="/festivals" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                    Festivals
+                  </Link>
+                </div>
+              </div>
+            </div>
+
+            <div className="relative group">
+              <button className="text-gray-700 hover:text-orange-600 flex items-center gap-1">
+                <Building2 className="h-4 w-4" />
+                Business
+              </button>
+              <div className="absolute left-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                <div className="py-1">
+                  <Link href="/business/directory" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                    Business Directory
+                  </Link>
+                  <Link href="/business/register" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                    Register Business
+                  </Link>
+                  <Link href="/business/services" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                    Services
+                  </Link>
+                  <Link
+                    href="/business/marketplace"
+                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  >
+                    Marketplace
+                  </Link>
+                </div>
+              </div>
+            </div>
+
+            <div className="relative group">
+              <button className="text-gray-700 hover:text-orange-600 flex items-center gap-1">
+                <Sparkles className="h-4 w-4" />
+                Spiritual Tools
+              </button>
+              <div className="absolute left-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                <div className="py-1">
+                  <Link href="/panchang" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                    Panchang
+                  </Link>
+                  <Link href="/datetime" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                    Hindu Time
+                  </Link>
+                  <Link href="/festivals" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                    Festival Calendar
+                  </Link>
+                </div>
+              </div>
+            </div>
           </nav>
         </div>
 
         <div className="flex items-center space-x-4">
           <Button variant="outline" size="sm" className="hidden md:flex" asChild>
-            <Link href="/donate">Daan (Donate)</Link>
+            <Link href="/help">Help</Link>
           </Button>
 
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="relative h-8 w-8 rounded-full">
-                <Avatar className="h-8 w-8">
-                  <AvatarImage src={staticUser.avatar || "/placeholder.svg"} alt={staticUser.name} />
-                  <AvatarFallback>
-                    {staticUser.name
-                      .split(" ")
-                      .map((n) => n[0])
-                      .join("")}
-                  </AvatarFallback>
-                </Avatar>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-56" align="end" forceMount>
-              <DropdownMenuLabel className="font-normal">
-                <div className="flex flex-col space-y-1">
-                  <p className="text-sm font-medium leading-none">{staticUser.name}</p>
-                  {staticUser.spiritualName && <p className="text-xs text-amber-700">({staticUser.spiritualName})</p>}
-                  <p className="text-xs leading-none text-muted-foreground">{staticUser.email}</p>
-                </div>
-              </DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem>
-                <Home className="mr-2 h-4 w-4" />
-                <Link href="/dashboard">Dashboard</Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <Settings className="mr-2 h-4 w-4" />
-                <span>Settings</span>
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem>
-                <Link href="/">Return to Home</Link>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild className="md:hidden">
-              <Button variant="ghost" size="sm">
-                <Menu className="h-5 w-5" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem>
-                <Link href="/dashboard">Dashboard</Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <Link href="/temples">Mandirs</Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <Link href="/events">Satsangs</Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <Link href="/panchang">Panchang</Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <Link href="/community">Community</Link>
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem>
-                <Link href="/donate">Daan (Donate)</Link>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          {/* Mobile menu button */}
+          <div className="md:hidden">
+            <Button variant="ghost" size="sm">
+              <MessageCircle className="h-5 w-5" />
+            </Button>
+          </div>
         </div>
       </div>
     </header>

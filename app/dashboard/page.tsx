@@ -4,42 +4,11 @@ import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import {
-  Calendar,
-  MapPin,
-  Heart,
-  Star,
-  Plus,
-  BookOpen,
-  Flame,
-  Gift,
-  Clock,
-  MessageCircle,
-  Building2,
-} from "lucide-react"
+import { Calendar, MapPin, Heart, Star, Plus, BookOpen, Flame, Clock, MessageCircle, Building2 } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
 import HinduTimeWidget from "@/components/hindu-time-widget"
 import { StaticHeader } from "@/components/static-header"
-
-// Static data for dashboard
-const staticUser = {
-  name: "Priya Sharma",
-  email: "priya.sharma@email.com",
-  avatar: "/placeholder.svg?height=40&width=40",
-  spiritualName: "Bhakti Priya",
-  favoriteDeity: "Krishna",
-  joinedDate: "2023-06-15",
-  city: "Auckland",
-  stats: {
-    templesVisited: 12,
-    eventsAttended: 28,
-    pujasPerformed: 45,
-    donationsGiven: 8,
-    mantrasChanted: 1250,
-    fastingDays: 24,
-  },
-}
 
 export default function DashboardPage() {
   const [currentTime, setCurrentTime] = useState(new Date())
@@ -82,25 +51,19 @@ export default function DashboardPage() {
   const recentActivity = [
     {
       type: "puja",
-      description: "Performed morning Surya Namaskara",
+      description: "Morning Surya Namaskara performed",
       time: "6 hours ago",
       icon: Flame,
     },
     {
-      type: "donation",
-      description: "Donated to Annadaan program",
-      time: "2 days ago",
-      icon: Gift,
-    },
-    {
       type: "event",
-      description: "Attended Hanuman Jayanti celebration",
+      description: "Hanuman Jayanti celebration attended",
       time: "1 week ago",
       icon: Calendar,
     },
     {
       type: "temple",
-      description: "Visited Shiva Temple in Hamilton",
+      description: "Shiva Temple in Hamilton visited",
       time: "2 weeks ago",
       icon: Building2,
     },
@@ -150,6 +113,15 @@ export default function DashboardPage() {
     source: "Bhagavad Gita 2.47",
   }
 
+  const communityStats = {
+    templesVisited: 12,
+    eventsAttended: 28,
+    pujasPerformed: 45,
+    mantrasChanted: 1250,
+    fastingDays: 24,
+    donationsGiven: 8,
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-orange-50 to-white">
       <StaticHeader />
@@ -159,12 +131,8 @@ export default function DashboardPage() {
         <div className="mb-8">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">
-                नमस्ते, {staticUser.spiritualName || staticUser.name}! 🙏
-              </h1>
-              <p className="text-gray-600 mt-1">
-                May Lord {staticUser.favoriteDeity} bless your spiritual journey today
-              </p>
+              <h1 className="text-3xl font-bold text-gray-900">नमस्ते! Welcome to Sanatan New Zealand 🙏</h1>
+              <p className="text-gray-600 mt-1">Connecting the Hindu community across New Zealand</p>
             </div>
             <div className="text-right">
               <div className="text-sm text-gray-500">Today's Tithi</div>
@@ -187,53 +155,53 @@ export default function DashboardPage() {
         <div className="grid lg:grid-cols-3 gap-8">
           {/* Main Content */}
           <div className="lg:col-span-2 space-y-8">
-            {/* Quick Stats */}
+            {/* Community Stats */}
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
               <Card className="hover:shadow-md transition-shadow">
                 <CardContent className="p-4 text-center">
                   <Building2 className="h-8 w-8 text-orange-500 mx-auto mb-2" />
-                  <div className="text-2xl font-bold text-gray-900">{staticUser.stats.templesVisited}</div>
-                  <div className="text-sm text-gray-600">Temples Visited</div>
-                </CardContent>
-              </Card>
-
-              <Card className="hover:shadow-md transition-shadow">
-                <CardContent className="p-4 text-center">
-                  <Flame className="h-8 w-8 text-red-500 mx-auto mb-2" />
-                  <div className="text-2xl font-bold text-gray-900">{staticUser.stats.pujasPerformed}</div>
-                  <div className="text-sm text-gray-600">Pujas Performed</div>
-                </CardContent>
-              </Card>
-
-              <Card className="hover:shadow-md transition-shadow">
-                <CardContent className="p-4 text-center">
-                  <BookOpen className="h-8 w-8 text-blue-500 mx-auto mb-2" />
-                  <div className="text-2xl font-bold text-gray-900">{staticUser.stats.mantrasChanted}</div>
-                  <div className="text-sm text-gray-600">Mantras Chanted</div>
+                  <div className="text-2xl font-bold text-gray-900">50+</div>
+                  <div className="text-sm text-gray-600">Hindu Temples</div>
                 </CardContent>
               </Card>
 
               <Card className="hover:shadow-md transition-shadow">
                 <CardContent className="p-4 text-center">
                   <Calendar className="h-8 w-8 text-green-500 mx-auto mb-2" />
-                  <div className="text-2xl font-bold text-gray-900">{staticUser.stats.eventsAttended}</div>
-                  <div className="text-sm text-gray-600">Satsangs Attended</div>
+                  <div className="text-2xl font-bold text-gray-900">200+</div>
+                  <div className="text-sm text-gray-600">Monthly Events</div>
                 </CardContent>
               </Card>
 
               <Card className="hover:shadow-md transition-shadow">
                 <CardContent className="p-4 text-center">
-                  <Gift className="h-8 w-8 text-purple-500 mx-auto mb-2" />
-                  <div className="text-2xl font-bold text-gray-900">{staticUser.stats.donationsGiven}</div>
-                  <div className="text-sm text-gray-600">Daan Given</div>
+                  <MessageCircle className="h-8 w-8 text-blue-500 mx-auto mb-2" />
+                  <div className="text-2xl font-bold text-gray-900">5000+</div>
+                  <div className="text-sm text-gray-600">Community Members</div>
+                </CardContent>
+              </Card>
+
+              <Card className="hover:shadow-md transition-shadow">
+                <CardContent className="p-4 text-center">
+                  <Flame className="h-8 w-8 text-red-500 mx-auto mb-2" />
+                  <div className="text-2xl font-bold text-gray-900">Daily</div>
+                  <div className="text-sm text-gray-600">Puja Services</div>
+                </CardContent>
+              </Card>
+
+              <Card className="hover:shadow-md transition-shadow">
+                <CardContent className="p-4 text-center">
+                  <BookOpen className="h-8 w-8 text-purple-500 mx-auto mb-2" />
+                  <div className="text-2xl font-bold text-gray-900">100+</div>
+                  <div className="text-sm text-gray-600">Study Groups</div>
                 </CardContent>
               </Card>
 
               <Card className="hover:shadow-md transition-shadow">
                 <CardContent className="p-4 text-center">
                   <Heart className="h-8 w-8 text-pink-500 mx-auto mb-2" />
-                  <div className="text-2xl font-bold text-gray-900">{staticUser.stats.fastingDays}</div>
-                  <div className="text-sm text-gray-600">Vrat Days</div>
+                  <div className="text-2xl font-bold text-gray-900">24/7</div>
+                  <div className="text-sm text-gray-600">Spiritual Support</div>
                 </CardContent>
               </Card>
             </div>
@@ -241,15 +209,15 @@ export default function DashboardPage() {
             {/* Quick Actions */}
             <Card>
               <CardHeader>
-                <CardTitle>Spiritual Actions</CardTitle>
-                <CardDescription>Continue your devotional journey</CardDescription>
+                <CardTitle>Explore Our Community</CardTitle>
+                <CardDescription>Discover temples, events, and spiritual resources</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                   <Button className="h-20 flex-col bg-orange-600 hover:bg-orange-700" asChild>
                     <Link href="/events/create">
                       <Plus className="h-6 w-6 mb-2" />
-                      <span className="text-sm">Create Satsang</span>
+                      <span className="text-sm">Create Event</span>
                     </Link>
                   </Button>
                   <Button variant="outline" className="h-20 flex-col" asChild>
@@ -265,9 +233,9 @@ export default function DashboardPage() {
                     </Link>
                   </Button>
                   <Button variant="outline" className="h-20 flex-col" asChild>
-                    <Link href="/donate">
-                      <Gift className="h-6 w-6 mb-2" />
-                      <span className="text-sm">Give Daan</span>
+                    <Link href="/business/directory">
+                      <Building2 className="h-6 w-6 mb-2" />
+                      <span className="text-sm">Hindu Businesses</span>
                     </Link>
                   </Button>
                 </div>
@@ -315,7 +283,7 @@ export default function DashboardPage() {
                       </div>
                     </div>
                     <Button size="sm" variant="outline" asChild>
-                      <Link href={`/events/${event.id}`}>Join</Link>
+                      <Link href={`/events/${event.id}`}>View</Link>
                     </Button>
                   </div>
                 ))}
@@ -325,8 +293,8 @@ export default function DashboardPage() {
             {/* Recommended Temples */}
             <Card>
               <CardHeader>
-                <CardTitle>Recommended Mandirs Near You</CardTitle>
-                <CardDescription>Based on your devotional preferences</CardDescription>
+                <CardTitle>Featured Mandirs</CardTitle>
+                <CardDescription>Discover beautiful temples across New Zealand</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 {recommendedTemples.map((temple, index) => (
@@ -404,10 +372,10 @@ export default function DashboardPage() {
               </CardContent>
             </Card>
 
-            {/* Recent Activity */}
+            {/* Recent Community Activity */}
             <Card>
               <CardHeader>
-                <CardTitle className="text-lg">Recent Spiritual Activity</CardTitle>
+                <CardTitle className="text-lg">Community Activity</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
                 {recentActivity.map((activity, index) => (
