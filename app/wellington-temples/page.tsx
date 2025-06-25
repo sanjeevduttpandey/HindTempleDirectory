@@ -16,7 +16,7 @@ const wellingtonTemples = [
     website: "https://www.wia.org.nz/",
     rating: 4.5,
     reviews: 78,
-    image: "/images/wellington-indian-association-main.jpg",
+    image: "/images/wellington-indian-association-night.jpg",
     description:
       "Wellington's premier Indian cultural organization promoting Indian heritage, culture, and community activities.",
     timings: "Office Hours: 9:00 AM - 5:00 PM",
@@ -33,7 +33,7 @@ const wellingtonTemples = [
     website: "https://www.kktemplewellington.org.nz/",
     rating: 4.7,
     reviews: 95,
-    image: "/images/kurinchi-kumaran-wellington-main.jpg",
+    image: "/images/kurinchi-kumaran-temple-ceremony.jpg",
     description:
       "A beautiful temple dedicated to Lord Murugan, serving Wellington's Tamil Hindu community with devotion and cultural programs.",
     timings: "6:00 AM - 8:00 PM",
@@ -50,7 +50,7 @@ const wellingtonTemples = [
     website: "https://www.baps.org/Global-Network/Asia-Pacific/Wellington.aspx",
     rating: 4.9,
     reviews: 156,
-    image: "/images/baps-wellington-mandir.jpg",
+    image: "/images/baps-wellington-interior.jpg",
     description:
       "A magnificent Swaminarayan temple serving the Wellington community with traditional worship, cultural programs, and spiritual guidance following the BAPS tradition.",
     timings: "6:00 AM - 8:30 PM",
@@ -67,7 +67,7 @@ const wellingtonTemples = [
     website: "https://www.svwt.org.nz/",
     rating: 4.6,
     reviews: 112,
-    image: "/images/vishwa-vinayak-wellington.jpg",
+    image: "/images/vishwa-vinayak-temple.jpg",
     description:
       "A peaceful sanctuary dedicated to Lord Ganesha, hosting regular pujas and cultural events in Wellington.",
     timings: "6:30 AM - 8:00 PM",
@@ -83,7 +83,7 @@ const wellingtonTemples = [
     website: "https://iskconwellington.com/",
     rating: 4.8,
     reviews: 134,
-    image: "/images/iskcon-wellington-main.jpg",
+    image: "/images/iskcon-wellington-altar.jpg",
     description:
       "International Society for Krishna Consciousness promoting Krishna consciousness through spiritual practices and community service.",
     timings: "4:30 AM - 9:00 PM",

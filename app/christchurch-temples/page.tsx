@@ -16,7 +16,7 @@ const christchurchTemples = [
     website: "https://www.hindutemple.org.nz/",
     rating: 4.8,
     reviews: 92,
-    image: "/images/hindu-temple-canterbury-main.jpg",
+    image: "/images/hindu-temple-society-canterbury-exterior.jpg",
     description:
       "The main Hindu temple in Christchurch, serving the Canterbury region with traditional worship and cultural programs.",
     timings: "6:30 AM - 8:00 PM",
@@ -33,7 +33,7 @@ const christchurchTemples = [
     website: "https://www.baps.org/Global-Network/Asia-Pacific/Christchurch.aspx",
     rating: 4.9,
     reviews: 78,
-    image: "/images/baps-christchurch-main.jpg",
+    image: "/images/baps-christchurch-interior.jpg",
     description:
       "A beautiful Swaminarayan temple serving the Christchurch community with traditional worship and spiritual guidance.",
     timings: "7:00 AM - 8:00 PM (Daily Arti at 7:00 AM & 7:00 PM)",
@@ -50,7 +50,7 @@ const christchurchTemples = [
     website: "https://harekrishnachristchurch.co.nz/",
     rating: 4.8,
     reviews: 72,
-    image: "/images/iskcon-christchurch-main.jpg",
+    image: "/images/iskcon-christchurch-deities.jpg",
     description:
       "International Society for Krishna Consciousness temple promoting Krishna consciousness through spiritual practices and community service in Christchurch.",
     timings: "5:00 AM - 8:30 PM",
@@ -67,7 +67,7 @@ const christchurchTemples = [
     website: "https://www.sgtc.org.nz/",
     rating: 4.7,
     reviews: 65,
-    image: "/images/gurdwara-christchurch-main.jpg",
+    image: "/images/sri-guru-tegh-bahadur-gurdwara.jpg",
     description:
       "A Sikh Gurdwara serving the Christchurch community with spiritual guidance and langar (community kitchen).",
     timings: "5:00 AM - 9:00 PM",

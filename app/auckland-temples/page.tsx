@@ -16,7 +16,7 @@ const aucklandTemples = [
     website: "https://www.aucklandmandir.org.nz",
     rating: 4.8,
     reviews: 120,
-    image: "/images/shri-sanatan-dharm-mandir-main.jpg",
+    image: "/images/shri-sanatan-dharm-mandir-auckland.jpg",
     description: "One of the largest Hindu temples in New Zealand, serving the community since 1992.",
     timings: "6:00 AM - 8:00 PM",
     deity: "Multi-deity",
@@ -38,7 +38,7 @@ const aucklandTemples = [
     website: "https://www.bharatiyamandir.org.nz/",
     rating: 4.7,
     reviews: 105,
-    image: "/images/bharatiya-mandir-main.png", // Updated to use the new high-quality image
+    image: "/images/bharatiya-mandir-interior.jpg",
     description:
       "One of Auckland's oldest Hindu temples, serving the community with traditional worship and cultural programs since 1987.",
     timings: "6:00 AM - 8:30 PM",
@@ -55,7 +55,7 @@ const aucklandTemples = [
     website: "https://www.aucklandsriganeshtemple.com/",
     rating: 4.9,
     reviews: 112,
-    image: "/images/auckland-sri-ganesh-temple-main.jpg",
+    image: "/images/auckland-sri-ganesh-temple-deity.jpg",
     description:
       "Established in 2002, this temple is dedicated to Lord Ganesha and has been developing with the grace of Lord Ganesha.",
     timings: "10:00 AM - 1:00 PM, 6:00 PM - 9:00 PM (Morning Arti at 11:30 AM, Evening Arti at 7:30 PM)",
@@ -78,7 +78,7 @@ const aucklandTemples = [
     website: "https://www.thirusubramaniyar.org.nz/",
     rating: 4.8,
     reviews: 98,
-    image: "/images/thiru-subramaniyar-aalayam-main.jpg",
+    image: "/images/thiru-subramaniyar-aalayam-naga.jpg",
     description:
       "A beautiful temple dedicated to Lord Murugan, serving the Tamil Hindu community in Auckland with traditional South Indian worship.",
     timings: "6:30 AM - 8:00 PM",
@@ -101,7 +101,7 @@ const aucklandTemples = [
     website: "https://www.nzthirumurugan.org.nz/",
     rating: 4.7,
     reviews: 87,
-    image: "/images/nz-thirumurugan-temple-main.jpg",
+    image: "/images/nz-thirumurugan-temple-deity.jpg",
     description:
       "A temple dedicated to Lord Murugan, offering traditional Tamil worship services and cultural programs.",
     timings: "6:00 AM - 8:00 PM",
@@ -124,7 +124,7 @@ const aucklandTemples = [
     website: "https://www.baps.org/Global-Network/Asia-Pacific/Auckland.aspx",
     rating: 4.9,
     reviews: 124,
-    image: "/images/baps-avondale-mandir.jpg",
+    image: "/images/baps-auckland-avondale-main.jpg",
     description:
       "A magnificent Swaminarayan temple in Avondale serving the Auckland community with traditional worship and cultural programs.",
     timings: "6:00 AM - 8:30 PM",
@@ -147,7 +147,7 @@ const aucklandTemples = [
     website: "https://isso.org.nz/",
     rating: 4.8,
     reviews: 95,
-    image: "/images/isso-auckland-temple.jpg",
+    image: "/images/isso-auckland-golden-shrine.jpg",
     description:
       "A Swaminarayan temple serving the Auckland community with spiritual guidance and cultural activities.",
     timings: "6:30 AM - 8:30 PM",
@@ -170,7 +170,7 @@ const aucklandTemples = [
     website: "https://www.saibabatemple.org.nz/",
     rating: 4.7,
     reviews: 89,
-    image: "/images/shirdi-sai-baba-auckland-main.jpg",
+    image: "/images/shirdi-sai-baba-temple-auckland-exterior.jpg",
     description: "A temple dedicated to Shirdi Sai Baba, offering spiritual guidance and community service.",
     timings: "7:00 AM - 8:00 PM",
     deity: "Sai Baba",
@@ -191,7 +191,7 @@ const aucklandTemples = [
     phone: "+64 9 629 4354",
     rating: 4.6,
     reviews: 76,
-    image: "/images/hanuman-mandir-auckland.jpg",
+    image: "/images/sanatan-dharam-hanuman-mandir-deity.jpg",
     description: "A temple dedicated to Lord Hanuman, offering traditional worship and spiritual activities.",
     timings: "6:30 AM - 8:00 PM",
     deity: "Hanuman",
@@ -212,7 +212,7 @@ const aucklandTemples = [
     phone: "+64 9 836 6291",
     rating: 4.7,
     reviews: 82,
-    image: "/images/ram-mandir-henderson.jpg",
+    image: "/images/shri-ram-mandir-auckland-exterior.jpg",
     description:
       "A temple dedicated to Lord Ram, serving the West Auckland community with traditional worship and cultural programs.",
     timings: "6:00 AM - 8:00 PM",
@@ -235,7 +235,7 @@ const aucklandTemples = [
     website: "https://aiai.org.nz/",
     rating: 4.5,
     reviews: 68,
-    image: "/images/aiai-auckland-center.jpg",
+    image: "/images/aiai-cultural-center-main.jpg",
     description: "A cultural center promoting Indian heritage and community activities in Auckland.",
     timings: "9:00 AM - 6:00 PM",
     deity: "Cultural Center",
