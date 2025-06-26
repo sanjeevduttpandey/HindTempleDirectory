@@ -11,7 +11,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Badge } from "@/components/ui/badge"
-import { Upload, X, CheckCircle, AlertCircle, Loader2, ImageIcon } from "lucide-react"
+import { Upload, X, CheckCircle, AlertCircle, Loader2, Camera } from "lucide-react"
 import StaticHeader from "@/components/static-header"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 
@@ -45,6 +45,12 @@ const cities = [
   "Other",
 ]
 
+interface UploadedImage {
+  url: string
+  filename: string
+  originalName: string
+}
+
 export default function RegisterBusiness() {
   const [currentStep, setCurrentStep] = useState(1)
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -76,7 +82,7 @@ export default function RegisterBusiness() {
     agreeToMarketing: false,
   })
 
-  const [uploadedImages, setUploadedImages] = useState<string[]>([])
+  const [uploadedImages, setUploadedImages] = useState<UploadedImage[]>([])
   const [uploading, setUploading] = useState(false)
   const [uploadError, setUploadError] = useState("")
 
@@ -109,8 +115,9 @@ export default function RegisterBusiness() {
         })
 
         if (!response.ok) {
-          const errorData = await response.json().catch(() => ({ error: "Upload failed" }))
-          throw new Error(errorData.error || `Upload failed for ${file.name}`)
+          const errorText = await response.text()
+          console.error("Upload response error:", errorText)
+          throw new Error(`Upload failed for ${file.name}: ${response.status} ${response.statusText}`)
         }
 
         const result = await response.json()
@@ -119,11 +126,15 @@ export default function RegisterBusiness() {
           throw new Error(result.error || `Upload failed for ${file.name}`)
         }
 
-        return result.data.url
+        return {
+          url: result.data.url,
+          filename: result.data.filename,
+          originalName: result.data.originalName,
+        }
       })
 
-      const imageUrls = await Promise.all(uploadPromises)
-      setUploadedImages((prev) => [...prev, ...imageUrls])
+      const newImages = await Promise.all(uploadPromises)
+      setUploadedImages((prev) => [...prev, ...newImages])
 
       // Clear the input so the same files can be selected again if needed
       event.target.value = ""
@@ -135,8 +146,8 @@ export default function RegisterBusiness() {
     }
   }
 
-  const removeImage = (imageUrl: string) => {
-    setUploadedImages((prev) => prev.filter((url) => url !== imageUrl))
+  const removeImage = (filename: string) => {
+    setUploadedImages((prev) => prev.filter((img) => img.filename !== filename))
   }
 
   const [newService, setNewService] = useState("")
@@ -188,13 +199,14 @@ export default function RegisterBusiness() {
         },
         body: JSON.stringify({
           ...formData,
-          images: uploadedImages,
+          images: uploadedImages.map((img) => img.url), // Send image URLs
         }),
       })
 
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({ error: "Registration failed" }))
-        throw new Error(errorData.error || "Registration failed")
+        const errorText = await response.text()
+        console.error("Registration response error:", errorText)
+        throw new Error(`Registration failed: ${response.status} ${response.statusText}`)
       }
 
       const result = await response.json()
@@ -584,13 +596,18 @@ export default function RegisterBusiness() {
                 <div>
                   <Label>Business Images (Optional)</Label>
                   <div className="space-y-4">
-                    <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-orange-400 transition-colors">
+                    <div className="border-2 border-dashed border-orange-300 rounded-lg p-8 text-center hover:border-orange-400 transition-colors bg-orange-50/30">
                       <div className="flex flex-col items-center">
-                        <ImageIcon className="h-12 w-12 text-gray-400 mb-3" />
+                        <div className="bg-orange-100 p-4 rounded-full mb-4">
+                          <Camera className="h-8 w-8 text-orange-600" />
+                        </div>
+                        <h3 className="text-lg font-semibold text-gray-900 mb-2">Upload Business Images</h3>
                         <p className="text-sm text-gray-600 mb-2">
-                          Upload photos of your business, products, or services
+                          Show your business, products, or services to potential customers
                         </p>
-                        <p className="text-xs text-gray-500 mb-4">Supported formats: JPEG, PNG, WebP (Max 5MB each)</p>
+                        <p className="text-xs text-gray-500 mb-4">
+                          Supported formats: JPEG, PNG, WebP • Maximum 5MB per image
+                        </p>
                         <input
                           type="file"
                           accept="image/jpeg,image/jpg,image/png,image/webp"
@@ -600,16 +617,23 @@ export default function RegisterBusiness() {
                           id="image-upload"
                           disabled={uploading}
                         />
-                        <Button type="button" variant="outline" size="sm" asChild disabled={uploading}>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="lg"
+                          asChild
+                          disabled={uploading}
+                          className="bg-white hover:bg-orange-50 border-orange-300 text-orange-700"
+                        >
                           <label htmlFor="image-upload" className="cursor-pointer">
                             {uploading ? (
                               <>
-                                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                                <Loader2 className="h-5 w-5 mr-2 animate-spin" />
                                 Uploading...
                               </>
                             ) : (
                               <>
-                                <Upload className="h-4 w-4 mr-2" />
+                                <Upload className="h-5 w-5 mr-2" />
                                 Choose Images
                               </>
                             )}
@@ -628,26 +652,31 @@ export default function RegisterBusiness() {
                     {uploadedImages.length > 0 && (
                       <div>
                         <Label className="text-sm font-medium">Uploaded Images ({uploadedImages.length})</Label>
-                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-2">
-                          {uploadedImages.map((imageUrl, index) => (
-                            <div key={index} className="relative group">
-                              <img
-                                src={imageUrl || "/placeholder.svg"}
-                                alt={`Business image ${index + 1}`}
-                                className="w-full h-24 object-cover rounded-lg border border-gray-200 group-hover:border-orange-300 transition-colors"
-                                onError={(e) => {
-                                  const target = e.target as HTMLImageElement
-                                  target.src = "/placeholder.svg?height=96&width=128&text=Image"
-                                }}
-                              />
+                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-3">
+                          {uploadedImages.map((image, index) => (
+                            <div key={image.filename} className="relative group">
+                              <div className="aspect-square relative overflow-hidden rounded-lg border-2 border-gray-200 group-hover:border-orange-300 transition-colors">
+                                <img
+                                  src={image.url || "/placeholder.svg"}
+                                  alt={`Business image ${index + 1}`}
+                                  className="w-full h-full object-cover"
+                                  onError={(e) => {
+                                    const target = e.target as HTMLImageElement
+                                    target.src = "/placeholder.svg?height=128&width=128&text=Error"
+                                  }}
+                                />
+                              </div>
                               <button
                                 type="button"
-                                onClick={() => removeImage(imageUrl)}
-                                className="absolute -top-2 -right-2 bg-red-500 hover:bg-red-600 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity shadow-lg"
-                                title="Remove image"
+                                onClick={() => removeImage(image.filename)}
+                                className="absolute -top-2 -right-2 bg-red-500 hover:bg-red-600 text-white rounded-full p-1.5 opacity-0 group-hover:opacity-100 transition-opacity shadow-lg"
+                                title={`Remove ${image.originalName}`}
                               >
                                 <X className="h-3 w-3" />
                               </button>
+                              <div className="absolute bottom-0 left-0 right-0 bg-black/50 text-white text-xs p-1 truncate opacity-0 group-hover:opacity-100 transition-opacity">
+                                {image.originalName}
+                              </div>
                             </div>
                           ))}
                         </div>

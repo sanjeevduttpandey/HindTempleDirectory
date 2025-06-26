@@ -24,30 +24,26 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: false, error: "File size too large. Maximum 5MB allowed." }, { status: 400 })
     }
 
-    // For now, we'll use a placeholder URL since we can't write to filesystem in this environment
-    // In production, you would upload to a cloud storage service like AWS S3, Cloudinary, etc.
+    // Convert file to base64 for storage
+    const bytes = await file.arrayBuffer()
+    const buffer = Buffer.from(bytes)
+    const base64 = buffer.toString("base64")
+    const mimeType = file.type
+    const dataUrl = `data:${mimeType};base64,${base64}`
 
-    // Generate a unique filename for reference
+    // Generate unique filename for reference
     const timestamp = Date.now()
     const randomString = Math.random().toString(36).substring(2, 15)
     const extension = file.name.split(".").pop()
     const filename = `business-${timestamp}-${randomString}.${extension}`
 
-    // Create a placeholder URL that includes the original filename for better UX
-    const imageUrl = `/placeholder.svg?height=300&width=400&text=${encodeURIComponent(file.name.replace(/\.[^/.]+$/, ""))}`
-
-    // In a real application, you would:
-    // 1. Upload to cloud storage (AWS S3, Cloudinary, Vercel Blob, etc.)
-    // 2. Return the actual URL from the storage service
-    // 3. Store the URL in your database
-
-    console.log(`File upload simulated: ${filename} (${file.size} bytes, ${file.type})`)
+    console.log(`File uploaded: ${filename} (${file.size} bytes, ${file.type})`)
 
     return NextResponse.json({
       success: true,
       data: {
         filename,
-        url: imageUrl,
+        url: dataUrl, // Return base64 data URL for immediate display
         size: file.size,
         type: file.type,
         originalName: file.name,

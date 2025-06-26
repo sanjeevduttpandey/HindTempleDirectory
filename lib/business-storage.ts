@@ -24,7 +24,7 @@ interface BusinessSubmission {
   reviewedAt?: string
   reviewNotes?: string
   rating?: number
-  images?: string[] // Array of image URLs
+  images?: string[] // Array of image URLs/data URLs
 }
 
 interface ApprovedBusiness extends BusinessSubmission {
