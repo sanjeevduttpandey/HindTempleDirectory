@@ -77,6 +77,48 @@ export default function RegisterBusiness() {
   })
 
   const [uploadedImages, setUploadedImages] = useState<string[]>([])
+  const [uploading, setUploading] = useState(false)
+  const [uploadError, setUploadError] = useState("")
+
+  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = event.target.files
+    if (!files || files.length === 0) return
+
+    setUploading(true)
+    setUploadError("")
+
+    try {
+      const uploadPromises = Array.from(files).map(async (file) => {
+        const formData = new FormData()
+        formData.append("file", file)
+
+        const response = await fetch("/api/upload", {
+          method: "POST",
+          body: formData,
+        })
+
+        const result = await response.json()
+
+        if (!result.success) {
+          throw new Error(result.error)
+        }
+
+        return result.data.url
+      })
+
+      const imageUrls = await Promise.all(uploadPromises)
+      setUploadedImages((prev) => [...prev, ...imageUrls])
+    } catch (error) {
+      setUploadError(error instanceof Error ? error.message : "Failed to upload images")
+    } finally {
+      setUploading(false)
+    }
+  }
+
+  const removeImage = (imageUrl: string) => {
+    setUploadedImages((prev) => prev.filter((url) => url !== imageUrl))
+  }
+
   const [newService, setNewService] = useState("")
 
   const handleInputChange = (field: string, value: any) => {
@@ -124,7 +166,10 @@ export default function RegisterBusiness() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          ...formData,
+          images: uploadedImages,
+        }),
       })
 
       const result = await response.json()
@@ -513,12 +558,66 @@ export default function RegisterBusiness() {
 
                 <div>
                   <Label>Business Images</Label>
-                  <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
-                    <Upload className="h-8 w-8 mx-auto mb-2 text-gray-400" />
-                    <p className="text-sm text-gray-600 mb-2">Upload photos of your business, products, or services</p>
-                    <Button type="button" variant="outline" size="sm">
-                      Choose Files
-                    </Button>
+                  <div className="space-y-4">
+                    <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+                      <Upload className="h-8 w-8 mx-auto mb-2 text-gray-400" />
+                      <p className="text-sm text-gray-600 mb-2">
+                        Upload photos of your business, products, or services
+                      </p>
+                      <p className="text-xs text-gray-500 mb-4">Supported formats: JPEG, PNG, WebP (Max 5MB each)</p>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        multiple
+                        onChange={handleImageUpload}
+                        className="hidden"
+                        id="image-upload"
+                        disabled={uploading}
+                      />
+                      <Button type="button" variant="outline" size="sm" asChild disabled={uploading}>
+                        <label htmlFor="image-upload" className="cursor-pointer">
+                          {uploading ? (
+                            <>
+                              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                              Uploading...
+                            </>
+                          ) : (
+                            "Choose Files"
+                          )}
+                        </label>
+                      </Button>
+                    </div>
+
+                    {uploadError && (
+                      <Alert variant="destructive">
+                        <AlertCircle className="h-4 w-4" />
+                        <AlertDescription>{uploadError}</AlertDescription>
+                      </Alert>
+                    )}
+
+                    {uploadedImages.length > 0 && (
+                      <div>
+                        <Label className="text-sm font-medium">Uploaded Images</Label>
+                        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-2">
+                          {uploadedImages.map((imageUrl, index) => (
+                            <div key={index} className="relative group">
+                              <img
+                                src={imageUrl || "/placeholder.svg"}
+                                alt={`Business image ${index + 1}`}
+                                className="w-full h-24 object-cover rounded-lg border"
+                              />
+                              <button
+                                type="button"
+                                onClick={() => removeImage(imageUrl)}
+                                className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                              >
+                                <X className="h-3 w-3" />
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
               </CardContent>

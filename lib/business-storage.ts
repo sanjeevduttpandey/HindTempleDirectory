@@ -24,7 +24,7 @@ interface BusinessSubmission {
   reviewedAt?: string
   reviewNotes?: string
   rating?: number
-  image?: string
+  images?: string[] // Array of image URLs
 }
 
 interface ApprovedBusiness extends BusinessSubmission {
@@ -60,7 +60,7 @@ const approvedBusinesses: ApprovedBusiness[] = [
     approvedAt: "2024-01-16T09:00:00Z",
     reviewNotes: "Excellent dance school with great reputation",
     rating: 4.9,
-    image: "/placeholder.svg?height=200&width=300&text=Natraj+School+of+Dance",
+    images: ["/placeholder.svg?height=200&width=300&text=Natraj+School+of+Dance"],
     isActive: true,
   },
   {
@@ -96,7 +96,7 @@ const approvedBusinesses: ApprovedBusiness[] = [
     approvedAt: "2024-01-11T10:15:00Z",
     reviewNotes: "Reliable cleaning service with good customer feedback",
     rating: 4.8,
-    image: "/placeholder.svg?height=200&width=300&text=Wash+Rite+Cleaning",
+    images: ["/placeholder.svg?height=200&width=300&text=Wash+Rite+Cleaning"],
     isActive: true,
   },
 ]

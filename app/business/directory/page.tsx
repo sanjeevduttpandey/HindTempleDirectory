@@ -42,6 +42,7 @@ interface ApprovedBusiness {
   specialOffers?: string
   rating: number
   image?: string
+  images?: string[]
   established?: string
   founder?: string
   owner?: string
@@ -54,6 +55,7 @@ export default function BusinessDirectory() {
   const [selectedLocation, setSelectedLocation] = useState("All Locations")
   const [businesses, setBusinesses] = useState<ApprovedBusiness[]>([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     fetchApprovedBusinesses()
@@ -61,7 +63,15 @@ export default function BusinessDirectory() {
 
   const fetchApprovedBusinesses = async () => {
     try {
+      setLoading(true)
+      setError(null)
+
       const response = await fetch("/api/business/approved")
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`)
+      }
+
       const result = await response.json()
 
       if (result.success) {
@@ -70,11 +80,17 @@ export default function BusinessDirectory() {
           ...business,
           location: `${business.address}, ${business.city}`,
           specialties: business.services,
+          // Handle both single image and multiple images
+          image: business.images?.[0] || business.image,
+          images: business.images || (business.image ? [business.image] : []),
         }))
         setBusinesses(transformedBusinesses)
+      } else {
+        throw new Error(result.message || "Failed to fetch businesses")
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error fetching businesses:", error)
+      setError(error.message || "Failed to load businesses")
     } finally {
       setLoading(false)
     }
@@ -97,7 +113,28 @@ export default function BusinessDirectory() {
       <div className="min-h-screen bg-gradient-to-br from-orange-50 to-red-50">
         <StaticHeader />
         <div className="container mx-auto px-4 py-8">
-          <div className="text-center">Loading businesses...</div>
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-600 mx-auto mb-4"></div>
+            <p>Loading businesses...</p>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-orange-50 to-red-50">
+        <StaticHeader />
+        <div className="container mx-auto px-4 py-8">
+          <div className="text-center">
+            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+              <strong>Error:</strong> {error}
+            </div>
+            <Button onClick={fetchApprovedBusinesses} className="bg-orange-600 hover:bg-orange-700">
+              Try Again
+            </Button>
+          </div>
         </div>
       </div>
     )
@@ -178,9 +215,17 @@ export default function BusinessDirectory() {
             <Card key={business.id} className="hover:shadow-lg transition-shadow">
               <div className="aspect-video relative overflow-hidden rounded-t-lg">
                 <img
-                  src={business.image || "/placeholder.svg"}
+                  src={
+                    business.images?.[0] ||
+                    business.image ||
+                    "/placeholder.svg?height=200&width=300&text=Business+Image"
+                  }
                   alt={business.businessName}
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement
+                    target.src = "/placeholder.svg?height=200&width=300&text=Business+Image"
+                  }}
                 />
               </div>
 
@@ -267,6 +312,17 @@ export default function BusinessDirectory() {
             </Card>
           ))}
         </div>
+
+        {/* Empty State */}
+        {filteredBusinesses.length === 0 && !loading && !error && (
+          <div className="text-center py-12">
+            <div className="text-gray-500 mb-4">
+              <Search className="h-12 w-12 mx-auto mb-4 opacity-50" />
+              <h3 className="text-lg font-medium">No businesses found</h3>
+              <p>Try adjusting your search criteria or check back later for new listings.</p>
+            </div>
+          </div>
+        )}
 
         {/* Call to Action */}
         <Card className="mt-12 bg-gradient-to-r from-orange-600 to-red-600 text-white">
