@@ -3,7 +3,7 @@ import { addBusinessSubmission } from "@/lib/business-storage"
 
 export async function POST(request: NextRequest) {
   try {
-    const formData = await request.json()
+    const body = await request.json()
 
     // Validate required fields
     const requiredFields = [
@@ -18,45 +18,69 @@ export async function POST(request: NextRequest) {
       "ownerEmail",
       "ownerPhone",
     ]
-    const missingFields = requiredFields.filter((field) => !formData[field])
 
-    if (missingFields.length > 0) {
-      return NextResponse.json({ error: `Missing required fields: ${missingFields.join(", ")}` }, { status: 400 })
+    for (const field of requiredFields) {
+      if (!body[field]) {
+        return NextResponse.json({ success: false, error: `Missing required field: ${field}` }, { status: 400 })
+      }
     }
 
-    // Store the business submission
-    const submission = addBusinessSubmission({
-      businessName: formData.businessName,
-      category: formData.category,
-      description: formData.description,
-      address: formData.address,
-      city: formData.city,
-      phone: formData.phone,
-      email: formData.email,
-      website: formData.website,
-      ownerName: formData.ownerName,
-      ownerEmail: formData.ownerEmail,
-      ownerPhone: formData.ownerPhone,
-      services: formData.services || [],
-      socialMedia: formData.socialMedia || {},
-      operatingHours: formData.operatingHours,
-      specialOffers: formData.specialOffers,
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(body.email) || !emailRegex.test(body.ownerEmail)) {
+      return NextResponse.json({ success: false, error: "Invalid email format" }, { status: 400 })
+    }
+
+    // Validate terms agreement
+    if (!body.agreeToTerms) {
+      return NextResponse.json({ success: false, error: "You must agree to the terms and conditions" }, { status: 400 })
+    }
+
+    // Create submission object
+    const submission = {
+      businessName: body.businessName,
+      category: body.category,
+      description: body.description,
+      address: body.address,
+      city: body.city,
+      phone: body.phone,
+      email: body.email,
+      website: body.website || "",
+      ownerName: body.ownerName,
+      ownerEmail: body.ownerEmail,
+      ownerPhone: body.ownerPhone,
+      services: body.services || [],
+      socialMedia: body.socialMedia || {},
+      operatingHours: body.operatingHours || "",
+      specialOffers: body.specialOffers || "",
+      images: body.images || [], // Include uploaded images
+    }
+
+    // Add to storage
+    const newSubmission = addBusinessSubmission(submission)
+
+    console.log("New business submission:", {
+      id: newSubmission.id,
+      businessName: newSubmission.businessName,
+      category: newSubmission.category,
+      city: newSubmission.city,
+      imagesCount: newSubmission.images?.length || 0,
     })
 
-    console.log("Business registration stored:", submission)
-
-    // Return success response
     return NextResponse.json({
       success: true,
-      message: "Business registration submitted successfully!",
+      message: "Business registration submitted successfully! We'll review your application within 2-3 business days.",
       data: {
-        businessId: submission.id,
-        status: submission.status,
-        estimatedReviewTime: "2-3 business days",
+        id: newSubmission.id,
+        businessName: newSubmission.businessName,
+        submittedAt: newSubmission.submittedAt,
       },
     })
   } catch (error) {
-    console.error("Business registration error:", error)
-    return NextResponse.json({ error: "Failed to process business registration" }, { status: 500 })
+    console.error("Registration error:", error)
+    return NextResponse.json(
+      { success: false, error: "Failed to process registration. Please try again." },
+      { status: 500 },
+    )
   }
 }

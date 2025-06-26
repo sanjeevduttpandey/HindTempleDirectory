@@ -1,6 +1,4 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { writeFile } from "fs/promises"
-import { join } from "path"
 
 export async function POST(request: NextRequest) {
   try {
@@ -26,29 +24,24 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: false, error: "File size too large. Maximum 5MB allowed." }, { status: 400 })
     }
 
-    const bytes = await file.arrayBuffer()
-    const buffer = Buffer.from(bytes)
+    // For now, we'll use a placeholder URL since we can't write to filesystem in this environment
+    // In production, you would upload to a cloud storage service like AWS S3, Cloudinary, etc.
 
-    // Generate unique filename
+    // Generate a unique filename for reference
     const timestamp = Date.now()
     const randomString = Math.random().toString(36).substring(2, 15)
     const extension = file.name.split(".").pop()
     const filename = `business-${timestamp}-${randomString}.${extension}`
 
-    // Save to public/uploads directory
-    const uploadDir = join(process.cwd(), "public", "uploads")
-    const filepath = join(uploadDir, filename)
+    // Create a placeholder URL that includes the original filename for better UX
+    const imageUrl = `/placeholder.svg?height=300&width=400&text=${encodeURIComponent(file.name.replace(/\.[^/.]+$/, ""))}`
 
-    try {
-      await writeFile(filepath, buffer)
-    } catch (error) {
-      // If uploads directory doesn't exist, create it and try again
-      const { mkdir } = await import("fs/promises")
-      await mkdir(uploadDir, { recursive: true })
-      await writeFile(filepath, buffer)
-    }
+    // In a real application, you would:
+    // 1. Upload to cloud storage (AWS S3, Cloudinary, Vercel Blob, etc.)
+    // 2. Return the actual URL from the storage service
+    // 3. Store the URL in your database
 
-    const imageUrl = `/uploads/${filename}`
+    console.log(`File upload simulated: ${filename} (${file.size} bytes, ${file.type})`)
 
     return NextResponse.json({
       success: true,
@@ -57,10 +50,11 @@ export async function POST(request: NextRequest) {
         url: imageUrl,
         size: file.size,
         type: file.type,
+        originalName: file.name,
       },
     })
   } catch (error) {
     console.error("Upload error:", error)
-    return NextResponse.json({ success: false, error: "Failed to upload file" }, { status: 500 })
+    return NextResponse.json({ success: false, error: "Failed to process upload" }, { status: 500 })
   }
 }

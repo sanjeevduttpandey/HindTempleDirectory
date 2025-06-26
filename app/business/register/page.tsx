@@ -11,8 +11,8 @@ import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Badge } from "@/components/ui/badge"
-import { Upload, X, CheckCircle, AlertCircle, Loader2 } from "lucide-react"
-import { StaticHeader } from "@/components/static-header"
+import { Upload, X, CheckCircle, AlertCircle, Loader2, ImageIcon } from "lucide-react"
+import StaticHeader from "@/components/static-header"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 
 const businessCategories = [
@@ -89,6 +89,17 @@ export default function RegisterBusiness() {
 
     try {
       const uploadPromises = Array.from(files).map(async (file) => {
+        // Validate file before upload
+        const allowedTypes = ["image/jpeg", "image/jpg", "image/png", "image/webp"]
+        if (!allowedTypes.includes(file.type)) {
+          throw new Error(`Invalid file type: ${file.name}. Only JPEG, PNG, and WebP are allowed.`)
+        }
+
+        const maxSize = 5 * 1024 * 1024 // 5MB
+        if (file.size > maxSize) {
+          throw new Error(`File too large: ${file.name}. Maximum 5MB allowed.`)
+        }
+
         const formData = new FormData()
         formData.append("file", file)
 
@@ -97,10 +108,15 @@ export default function RegisterBusiness() {
           body: formData,
         })
 
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({ error: "Upload failed" }))
+          throw new Error(errorData.error || `Upload failed for ${file.name}`)
+        }
+
         const result = await response.json()
 
         if (!result.success) {
-          throw new Error(result.error)
+          throw new Error(result.error || `Upload failed for ${file.name}`)
         }
 
         return result.data.url
@@ -108,7 +124,11 @@ export default function RegisterBusiness() {
 
       const imageUrls = await Promise.all(uploadPromises)
       setUploadedImages((prev) => [...prev, ...imageUrls])
+
+      // Clear the input so the same files can be selected again if needed
+      event.target.value = ""
     } catch (error) {
+      console.error("Upload error:", error)
       setUploadError(error instanceof Error ? error.message : "Failed to upload images")
     } finally {
       setUploading(false)
@@ -172,9 +192,14 @@ export default function RegisterBusiness() {
         }),
       })
 
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ error: "Registration failed" }))
+        throw new Error(errorData.error || "Registration failed")
+      }
+
       const result = await response.json()
 
-      if (response.ok) {
+      if (result.success) {
         setSubmitStatus("success")
         setSubmitMessage(result.message)
         // Reset form or redirect
@@ -182,12 +207,12 @@ export default function RegisterBusiness() {
           window.location.href = "/business/directory"
         }, 3000)
       } else {
-        setSubmitStatus("error")
-        setSubmitMessage(result.error || "Registration failed")
+        throw new Error(result.error || "Registration failed")
       }
     } catch (error) {
+      console.error("Registration error:", error)
       setSubmitStatus("error")
-      setSubmitMessage("Network error. Please try again.")
+      setSubmitMessage(error instanceof Error ? error.message : "Network error. Please try again.")
     } finally {
       setIsSubmitting(false)
     }
@@ -557,35 +582,40 @@ export default function RegisterBusiness() {
                 </div>
 
                 <div>
-                  <Label>Business Images</Label>
+                  <Label>Business Images (Optional)</Label>
                   <div className="space-y-4">
-                    <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
-                      <Upload className="h-8 w-8 mx-auto mb-2 text-gray-400" />
-                      <p className="text-sm text-gray-600 mb-2">
-                        Upload photos of your business, products, or services
-                      </p>
-                      <p className="text-xs text-gray-500 mb-4">Supported formats: JPEG, PNG, WebP (Max 5MB each)</p>
-                      <input
-                        type="file"
-                        accept="image/*"
-                        multiple
-                        onChange={handleImageUpload}
-                        className="hidden"
-                        id="image-upload"
-                        disabled={uploading}
-                      />
-                      <Button type="button" variant="outline" size="sm" asChild disabled={uploading}>
-                        <label htmlFor="image-upload" className="cursor-pointer">
-                          {uploading ? (
-                            <>
-                              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                              Uploading...
-                            </>
-                          ) : (
-                            "Choose Files"
-                          )}
-                        </label>
-                      </Button>
+                    <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-orange-400 transition-colors">
+                      <div className="flex flex-col items-center">
+                        <ImageIcon className="h-12 w-12 text-gray-400 mb-3" />
+                        <p className="text-sm text-gray-600 mb-2">
+                          Upload photos of your business, products, or services
+                        </p>
+                        <p className="text-xs text-gray-500 mb-4">Supported formats: JPEG, PNG, WebP (Max 5MB each)</p>
+                        <input
+                          type="file"
+                          accept="image/jpeg,image/jpg,image/png,image/webp"
+                          multiple
+                          onChange={handleImageUpload}
+                          className="hidden"
+                          id="image-upload"
+                          disabled={uploading}
+                        />
+                        <Button type="button" variant="outline" size="sm" asChild disabled={uploading}>
+                          <label htmlFor="image-upload" className="cursor-pointer">
+                            {uploading ? (
+                              <>
+                                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                                Uploading...
+                              </>
+                            ) : (
+                              <>
+                                <Upload className="h-4 w-4 mr-2" />
+                                Choose Images
+                              </>
+                            )}
+                          </label>
+                        </Button>
+                      </div>
                     </div>
 
                     {uploadError && (
@@ -597,19 +627,24 @@ export default function RegisterBusiness() {
 
                     {uploadedImages.length > 0 && (
                       <div>
-                        <Label className="text-sm font-medium">Uploaded Images</Label>
-                        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-2">
+                        <Label className="text-sm font-medium">Uploaded Images ({uploadedImages.length})</Label>
+                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-2">
                           {uploadedImages.map((imageUrl, index) => (
                             <div key={index} className="relative group">
                               <img
                                 src={imageUrl || "/placeholder.svg"}
                                 alt={`Business image ${index + 1}`}
-                                className="w-full h-24 object-cover rounded-lg border"
+                                className="w-full h-24 object-cover rounded-lg border border-gray-200 group-hover:border-orange-300 transition-colors"
+                                onError={(e) => {
+                                  const target = e.target as HTMLImageElement
+                                  target.src = "/placeholder.svg?height=96&width=128&text=Image"
+                                }}
                               />
                               <button
                                 type="button"
                                 onClick={() => removeImage(imageUrl)}
-                                className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                                className="absolute -top-2 -right-2 bg-red-500 hover:bg-red-600 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity shadow-lg"
+                                title="Remove image"
                               >
                                 <X className="h-3 w-3" />
                               </button>
@@ -653,6 +688,11 @@ export default function RegisterBusiness() {
                     {formData.services.length > 0 && (
                       <p>
                         <strong>Services:</strong> {formData.services.join(", ")}
+                      </p>
+                    )}
+                    {uploadedImages.length > 0 && (
+                      <p>
+                        <strong>Images:</strong> {uploadedImages.length} uploaded
                       </p>
                     )}
                   </div>
