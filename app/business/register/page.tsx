@@ -11,10 +11,13 @@ import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Badge } from "@/components/ui/badge"
-import { Upload, X, CheckCircle } from "lucide-react"
+import { Upload, X, CheckCircle, AlertCircle, Loader2 } from "lucide-react"
 import { StaticHeader } from "@/components/static-header"
+import { Alert, AlertDescription } from "@/components/ui/alert"
 
 const businessCategories = [
+  "Arts & Culture",
+  "Cleaning Services",
   "Restaurants & Food",
   "Grocery & Spices",
   "Clothing & Jewelry",
@@ -44,6 +47,10 @@ const cities = [
 
 export default function RegisterBusiness() {
   const [currentStep, setCurrentStep] = useState(1)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [submitStatus, setSubmitStatus] = useState<"idle" | "success" | "error">("idle")
+  const [submitMessage, setSubmitMessage] = useState("")
+
   const [formData, setFormData] = useState({
     businessName: "",
     category: "",
@@ -70,6 +77,7 @@ export default function RegisterBusiness() {
   })
 
   const [uploadedImages, setUploadedImages] = useState<string[]>([])
+  const [newService, setNewService] = useState("")
 
   const handleInputChange = (field: string, value: any) => {
     setFormData((prev) => ({
@@ -94,6 +102,7 @@ export default function RegisterBusiness() {
         ...prev,
         services: [...prev.services, service],
       }))
+      setNewService("")
     }
   }
 
@@ -106,9 +115,37 @@ export default function RegisterBusiness() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    // Handle form submission
-    console.log("Business registration data:", formData)
-    // Show success message or redirect
+    setIsSubmitting(true)
+    setSubmitStatus("idle")
+
+    try {
+      const response = await fetch("/api/business/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      })
+
+      const result = await response.json()
+
+      if (response.ok) {
+        setSubmitStatus("success")
+        setSubmitMessage(result.message)
+        // Reset form or redirect
+        setTimeout(() => {
+          window.location.href = "/business/directory"
+        }, 3000)
+      } else {
+        setSubmitStatus("error")
+        setSubmitMessage(result.error || "Registration failed")
+      }
+    } catch (error) {
+      setSubmitStatus("error")
+      setSubmitMessage("Network error. Please try again.")
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   const nextStep = () => {
@@ -121,6 +158,48 @@ export default function RegisterBusiness() {
     if (currentStep > 1) {
       setCurrentStep(currentStep - 1)
     }
+  }
+
+  const isStepValid = () => {
+    switch (currentStep) {
+      case 1:
+        return formData.businessName && formData.category && formData.description && formData.address && formData.city
+      case 2:
+        return formData.phone && formData.email && formData.ownerName && formData.ownerEmail && formData.ownerPhone
+      case 3:
+        return true // Optional fields
+      case 4:
+        return formData.agreeToTerms
+      default:
+        return false
+    }
+  }
+
+  if (submitStatus === "success") {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-orange-50 to-red-50">
+        <StaticHeader />
+        <div className="container mx-auto px-4 py-16">
+          <Card className="max-w-2xl mx-auto text-center">
+            <CardContent className="p-8">
+              <CheckCircle className="h-16 w-16 text-green-500 mx-auto mb-4" />
+              <h1 className="text-3xl font-bold text-gray-900 mb-4">Registration Successful!</h1>
+              <p className="text-lg text-gray-600 mb-6">{submitMessage}</p>
+              <div className="bg-green-50 p-4 rounded-lg mb-6">
+                <h3 className="font-semibold text-green-800 mb-2">What happens next?</h3>
+                <ul className="text-sm text-green-700 space-y-1 text-left">
+                  <li>• Your business will be reviewed within 2-3 business days</li>
+                  <li>• You'll receive an email confirmation once approved</li>
+                  <li>• Your business will appear in our directory</li>
+                  <li>• You can update your listing anytime by contacting us</li>
+                </ul>
+              </div>
+              <p className="text-sm text-gray-500">Redirecting to directory in 3 seconds...</p>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -155,6 +234,14 @@ export default function RegisterBusiness() {
             ))}
           </div>
         </div>
+
+        {/* Error/Success Messages */}
+        {submitStatus === "error" && (
+          <Alert className="max-w-4xl mx-auto mb-6" variant="destructive">
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription>{submitMessage}</AlertDescription>
+          </Alert>
+        )}
 
         <form onSubmit={handleSubmit} className="max-w-4xl mx-auto">
           {/* Step 1: Basic Information */}
@@ -409,23 +496,16 @@ export default function RegisterBusiness() {
                   <div className="flex gap-2">
                     <Input
                       placeholder="Add a service or product"
+                      value={newService}
+                      onChange={(e) => setNewService(e.target.value)}
                       onKeyPress={(e) => {
                         if (e.key === "Enter") {
                           e.preventDefault()
-                          addService((e.target as HTMLInputElement).value)
-                          ;(e.target as HTMLInputElement).value = ""
+                          addService(newService)
                         }
                       }}
                     />
-                    <Button
-                      type="button"
-                      variant="outline"
-                      onClick={(e) => {
-                        const input = (e.target as HTMLElement).previousElementSibling as HTMLInputElement
-                        addService(input.value)
-                        input.value = ""
-                      }}
-                    >
+                    <Button type="button" variant="outline" onClick={() => addService(newService)}>
                       Add
                     </Button>
                   </div>
@@ -455,18 +535,28 @@ export default function RegisterBusiness() {
               <CardContent className="space-y-6">
                 <div className="bg-gray-50 p-4 rounded-lg">
                   <h3 className="font-semibold mb-2">Business Summary</h3>
-                  <p>
-                    <strong>Name:</strong> {formData.businessName}
-                  </p>
-                  <p>
-                    <strong>Category:</strong> {formData.category}
-                  </p>
-                  <p>
-                    <strong>Location:</strong> {formData.address}, {formData.city}
-                  </p>
-                  <p>
-                    <strong>Contact:</strong> {formData.phone} | {formData.email}
-                  </p>
+                  <div className="space-y-1 text-sm">
+                    <p>
+                      <strong>Name:</strong> {formData.businessName}
+                    </p>
+                    <p>
+                      <strong>Category:</strong> {formData.category}
+                    </p>
+                    <p>
+                      <strong>Location:</strong> {formData.address}, {formData.city}
+                    </p>
+                    <p>
+                      <strong>Contact:</strong> {formData.phone} | {formData.email}
+                    </p>
+                    <p>
+                      <strong>Owner:</strong> {formData.ownerName}
+                    </p>
+                    {formData.services.length > 0 && (
+                      <p>
+                        <strong>Services:</strong> {formData.services.join(", ")}
+                      </p>
+                    )}
+                  </div>
                 </div>
 
                 <div className="space-y-4">
@@ -499,7 +589,7 @@ export default function RegisterBusiness() {
                     <li>• Your business will be reviewed within 2-3 business days</li>
                     <li>• You'll receive an email confirmation once approved</li>
                     <li>• Your business will appear in our directory</li>
-                    <li>• You can update your listing anytime through your account</li>
+                    <li>• You can update your listing anytime by contacting us</li>
                   </ul>
                 </div>
               </CardContent>
@@ -513,12 +603,28 @@ export default function RegisterBusiness() {
             </Button>
 
             {currentStep < 4 ? (
-              <Button type="button" onClick={nextStep} className="bg-orange-600 hover:bg-orange-700">
+              <Button
+                type="button"
+                onClick={nextStep}
+                className="bg-orange-600 hover:bg-orange-700"
+                disabled={!isStepValid()}
+              >
                 Next
               </Button>
             ) : (
-              <Button type="submit" className="bg-orange-600 hover:bg-orange-700" disabled={!formData.agreeToTerms}>
-                Submit Registration
+              <Button
+                type="submit"
+                className="bg-orange-600 hover:bg-orange-700"
+                disabled={!formData.agreeToTerms || isSubmitting}
+              >
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Submitting...
+                  </>
+                ) : (
+                  "Submit Registration"
+                )}
               </Button>
             )}
           </div>

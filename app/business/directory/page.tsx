@@ -1,16 +1,19 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Search, MapPin, Phone, Globe, Star } from "lucide-react"
-import { StaticHeader } from "@/components/static-header"
+import { Search, MapPin, Phone, Globe, Star, Mail } from "lucide-react"
+import StaticHeader from "@/components/static-header"
+import Link from "next/link"
 
 const businessCategories = [
   "All Categories",
+  "Arts & Culture",
+  "Cleaning Services",
   "Restaurants & Food",
   "Grocery & Spices",
   "Clothing & Jewelry",
@@ -23,89 +26,82 @@ const businessCategories = [
   "Event Services",
 ]
 
-const sampleBusinesses = [
-  {
-    id: 1,
-    name: "Spice Palace Indian Grocery",
-    category: "Grocery & Spices",
-    description: "Authentic Indian spices, vegetables, and specialty items",
-    location: "Auckland Central",
-    phone: "+64 9 123 4567",
-    website: "www.spicepalace.co.nz",
-    rating: 4.8,
-    image: "/placeholder.svg?height=200&width=300&text=Spice+Palace",
-  },
-  {
-    id: 2,
-    name: "Maharaja Restaurant",
-    category: "Restaurants & Food",
-    description: "Traditional North Indian cuisine and vegetarian specialties",
-    location: "Wellington",
-    phone: "+64 4 987 6543",
-    website: "www.maharaja.co.nz",
-    rating: 4.6,
-    image: "/placeholder.svg?height=200&width=300&text=Maharaja+Restaurant",
-  },
-  {
-    id: 3,
-    name: "Ayurveda Wellness Centre",
-    category: "Health & Wellness",
-    description: "Traditional Ayurvedic treatments and consultations",
-    location: "Christchurch",
-    phone: "+64 3 456 7890",
-    website: "www.ayurvedanz.co.nz",
-    rating: 4.9,
-    image: "/placeholder.svg?height=200&width=300&text=Ayurveda+Centre",
-  },
-  {
-    id: 4,
-    name: "Sanskrit Learning Academy",
-    category: "Education & Tutoring",
-    description: "Sanskrit language classes and Hindu philosophy courses",
-    location: "Auckland North Shore",
-    phone: "+64 9 234 5678",
-    website: "www.sanskritacademy.co.nz",
-    rating: 4.7,
-    image: "/placeholder.svg?height=200&width=300&text=Sanskrit+Academy",
-  },
-  {
-    id: 5,
-    name: "Devi Sarees & Jewelry",
-    category: "Clothing & Jewelry",
-    description: "Beautiful Indian sarees, lehengas, and traditional jewelry",
-    location: "Hamilton",
-    phone: "+64 7 345 6789",
-    website: "www.devisarees.co.nz",
-    rating: 4.5,
-    image: "/placeholder.svg?height=200&width=300&text=Devi+Sarees",
-  },
-  {
-    id: 6,
-    name: "Om Shanti Event Planning",
-    category: "Event Services",
-    description: "Hindu wedding planning and religious ceremony coordination",
-    location: "Auckland",
-    phone: "+64 9 567 8901",
-    website: "www.omshantievents.co.nz",
-    rating: 4.8,
-    image: "/placeholder.svg?height=200&width=300&text=Om+Shanti+Events",
-  },
-]
+interface ApprovedBusiness {
+  id: string
+  businessName: string
+  category: string
+  description: string
+  address: string
+  city: string
+  phone: string
+  email: string
+  website?: string
+  ownerName: string
+  services: string[]
+  operatingHours?: string
+  specialOffers?: string
+  rating: number
+  image?: string
+  established?: string
+  founder?: string
+  owner?: string
+  specialties?: string[]
+}
 
 export default function BusinessDirectory() {
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedCategory, setSelectedCategory] = useState("All Categories")
   const [selectedLocation, setSelectedLocation] = useState("All Locations")
+  const [businesses, setBusinesses] = useState<ApprovedBusiness[]>([])
+  const [loading, setLoading] = useState(true)
 
-  const filteredBusinesses = sampleBusinesses.filter((business) => {
+  useEffect(() => {
+    fetchApprovedBusinesses()
+  }, [])
+
+  const fetchApprovedBusinesses = async () => {
+    try {
+      const response = await fetch("/api/business/approved")
+      const result = await response.json()
+
+      if (result.success) {
+        // Transform the data to match the expected format
+        const transformedBusinesses = result.data.map((business: any) => ({
+          ...business,
+          location: `${business.address}, ${business.city}`,
+          specialties: business.services,
+        }))
+        setBusinesses(transformedBusinesses)
+      }
+    } catch (error) {
+      console.error("Error fetching businesses:", error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const filteredBusinesses = businesses.filter((business) => {
     const matchesSearch =
-      business.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      business.description.toLowerCase().includes(searchTerm.toLowerCase())
+      business.businessName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      business.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (business.specialties &&
+        business.specialties.some((specialty) => specialty.toLowerCase().includes(searchTerm.toLowerCase())))
     const matchesCategory = selectedCategory === "All Categories" || business.category === selectedCategory
-    const matchesLocation = selectedLocation === "All Locations" || business.location.includes(selectedLocation)
+    const matchesLocation = selectedLocation === "All Locations" || business.city.includes(selectedLocation)
 
     return matchesSearch && matchesCategory && matchesLocation
   })
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-orange-50 to-red-50">
+        <StaticHeader />
+        <div className="container mx-auto px-4 py-8">
+          <div className="text-center">Loading businesses...</div>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 to-red-50">
@@ -170,7 +166,7 @@ export default function BusinessDirectory() {
         {/* Results Count */}
         <div className="mb-6">
           <p className="text-gray-600">
-            Showing {filteredBusinesses.length} businesses
+            Showing {filteredBusinesses.length} business{filteredBusinesses.length !== 1 ? "es" : ""}
             {selectedCategory !== "All Categories" && ` in ${selectedCategory}`}
             {selectedLocation !== "All Locations" && ` in ${selectedLocation}`}
           </p>
@@ -183,14 +179,14 @@ export default function BusinessDirectory() {
               <div className="aspect-video relative overflow-hidden rounded-t-lg">
                 <img
                   src={business.image || "/placeholder.svg"}
-                  alt={business.name}
+                  alt={business.businessName}
                   className="w-full h-full object-cover"
                 />
               </div>
 
               <CardHeader>
                 <div className="flex justify-between items-start">
-                  <CardTitle className="text-lg">{business.name}</CardTitle>
+                  <CardTitle className="text-lg">{business.businessName}</CardTitle>
                   <div className="flex items-center gap-1">
                     <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
                     <span className="text-sm font-medium">{business.rating}</span>
@@ -202,12 +198,32 @@ export default function BusinessDirectory() {
               </CardHeader>
 
               <CardContent>
-                <CardDescription className="mb-4">{business.description}</CardDescription>
+                <CardDescription className="mb-4">
+                  {business.description}
+                  {business.established && (
+                    <div className="mt-2 text-sm text-orange-600 font-medium">
+                      Established: {business.established} • Founded by: {business.founder}
+                    </div>
+                  )}
+                  {business.owner && !business.established && (
+                    <div className="mt-2 text-sm text-orange-600 font-medium">Owner: {business.owner}</div>
+                  )}
+                </CardDescription>
+
+                {business.specialties && (
+                  <div className="flex flex-wrap gap-1 mb-3">
+                    {business.specialties.map((specialty, index) => (
+                      <Badge key={index} variant="outline" className="text-xs">
+                        {specialty}
+                      </Badge>
+                    ))}
+                  </div>
+                )}
 
                 <div className="space-y-2 text-sm text-gray-600">
                   <div className="flex items-center gap-2">
                     <MapPin className="h-4 w-4" />
-                    <span>{business.location}</span>
+                    <span>{business.city}</span>
                   </div>
 
                   <div className="flex items-center gap-2">
@@ -215,17 +231,28 @@ export default function BusinessDirectory() {
                     <span>{business.phone}</span>
                   </div>
 
-                  <div className="flex items-center gap-2">
-                    <Globe className="h-4 w-4" />
-                    <a
-                      href={`https://${business.website}`}
-                      className="text-orange-600 hover:underline"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      {business.website}
-                    </a>
-                  </div>
+                  {business.email && (
+                    <div className="flex items-center gap-2">
+                      <Mail className="h-4 w-4" />
+                      <a href={`mailto:${business.email}`} className="text-orange-600 hover:underline">
+                        {business.email}
+                      </a>
+                    </div>
+                  )}
+
+                  {business.website && (
+                    <div className="flex items-center gap-2">
+                      <Globe className="h-4 w-4" />
+                      <a
+                        href={business.website.startsWith("http") ? business.website : `https://${business.website}`}
+                        className="text-orange-600 hover:underline"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        {business.website.replace("https://", "").replace("http://", "")}
+                      </a>
+                    </div>
+                  )}
                 </div>
 
                 <div className="flex gap-2 mt-4">
@@ -248,8 +275,8 @@ export default function BusinessDirectory() {
             <p className="text-lg mb-6 opacity-90">
               Join our directory and connect with the Hindu community across New Zealand
             </p>
-            <Button size="lg" variant="secondary" className="bg-white text-orange-600 hover:bg-gray-100">
-              Register Your Business
+            <Button size="lg" variant="secondary" className="bg-white text-orange-600 hover:bg-gray-100" asChild>
+              <Link href="/business/register">Register Your Business</Link>
             </Button>
           </CardContent>
         </Card>
