@@ -106,7 +106,7 @@ export default function HomePage() {
 
             <nav className="hidden md:flex items-center space-x-8">
               <Link href="/temples" className="text-gray-700 hover:text-orange-600 font-medium transition-colors">
-                Temples
+                Mandirs
               </Link>
               <Link href="/events" className="text-gray-700 hover:text-orange-600 font-medium transition-colors">
                 Events
@@ -164,7 +164,7 @@ export default function HomePage() {
             >
               <Link href="/temples">
                 <Building2 className="mr-2 h-5 w-5" />
-                Find Temples
+                Find Mandirs
               </Link>
             </Button>
             <Button
@@ -239,7 +239,7 @@ export default function HomePage() {
               <Building2 className="h-4 w-4 text-orange-700" />
               <span className="text-sm font-medium text-orange-800">Sacred Spaces</span>
             </div>
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">Featured Temples</h2>
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">Featured Mandirs</h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
               Discover beautiful Sanatan temples across New Zealand, each offering unique spiritual experiences and
               vibrant community programs.
@@ -279,7 +279,7 @@ export default function HomePage() {
                     </span>
                     <Button size="sm" className="bg-orange-600 hover:bg-orange-700" asChild>
                       <Link href={`/temples/${temple.id}`}>
-                        Visit Temple
+                        Visit Mandirs
                         <ArrowRight className="ml-1 h-3 w-3" />
                       </Link>
                     </Button>
@@ -297,7 +297,7 @@ export default function HomePage() {
               asChild
             >
               <Link href="/temples">
-                View All Temples
+                View All Mandirs
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Link>
             </Button>
@@ -471,7 +471,7 @@ export default function HomePage() {
             <Button
               size="lg"
               variant="outline"
-              className="border-2 border-white text-white hover:bg-white hover:text-orange-600 text-lg px-8 py-4"
+              className="border-2 border-white bg-white hover:bg-gray text-orange-600 text-lg px-8 py-4"
               asChild
             >
               <Link href="/temples">
