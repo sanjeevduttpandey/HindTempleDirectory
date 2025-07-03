@@ -126,7 +126,7 @@ export default function JoinPage() {
             </div>
             <h2 className="text-4xl font-bold text-gray-900 mb-4">Join Our Community</h2>
             <p className="text-xl text-gray-600">
-              Connect with fellow Hindus across New Zealand and be part of our vibrant spiritual community
+              Connect with fellow Sanatan devotees across New Zealand and be part of our vibrant spiritual community
             </p>
           </div>
 

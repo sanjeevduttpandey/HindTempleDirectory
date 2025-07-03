@@ -189,7 +189,7 @@ export async function logDevoteeActivity(
   devoteeId: number,
   activityType: string,
   description: string,
-  relatedTempleId?: number,
+  relatedMandirId?: number,
   relatedEventId?: number,
 ) {
   const sqlInstance = getSqlClient()
@@ -200,7 +200,7 @@ export async function logDevoteeActivity(
     )
     VALUES (
       ${devoteeId}, ${activityType}, ${description},
-      ${relatedTempleId || null}, ${relatedEventId || null}
+      ${relatedMandirId || null}, ${relatedEventId || null}
     )
   `
 }
@@ -208,7 +208,7 @@ export async function logDevoteeActivity(
 export async function getDevoteeActivities(devoteeId: number, limit = 20) {
   const sqlInstance = getSqlClient()
   const result = await sqlInstance`
-    SELECT da.*, t.name as temple_name, e.title as event_title
+    SELECT da.*, t.name as mandir_name, e.title as event_title
     FROM devotee_activities da
     LEFT JOIN temples t ON da.related_temple_id = t.id
     LEFT JOIN events e ON da.related_event_id = e.id
@@ -223,7 +223,7 @@ export async function addDevoteeActivity(activityData: {
   devotee_id: number
   activity_type: string
   activity_description: string
-  temple_id?: number | null
+  mandir_id?: number | null
   event_id?: number | null
   amount?: string | null
   metadata?: any
@@ -238,7 +238,7 @@ export async function addDevoteeActivity(activityData: {
       ${activityData.devotee_id},
       ${activityData.activity_type},
       ${activityData.activity_description},
-      ${activityData.temple_id || null},
+      ${activityData.mandir_id || null},
       ${activityData.event_id || null},
       ${activityData.amount || null},
       ${JSON.stringify(activityData.metadata || {})}
@@ -248,8 +248,8 @@ export async function addDevoteeActivity(activityData: {
   return result[0]
 }
 
-// Temple related queries
-export async function getTemples(city?: string, limit = 10) {
+// Mandir related queries
+export async function getMandirs(city?: string, limit = 10) {
   const sqlInstance = getSqlClient()
   if (city) {
     return await sqlInstance`
@@ -271,6 +271,16 @@ export async function getTemples(city?: string, limit = 10) {
     LIMIT ${limit}
   `
 }
+
+/**
+ * ---------------------------------------------------------------------------
+ *  BACKWARD-COMPATIBILITY ALIAS
+ * ---------------------------------------------------------------------------
+ * Some parts of the codebase still import `getTemples`.  We keep an alias that
+ * simply calls the new `getMandirs` implementation, avoiding any breaking
+ * changes while we finish migrating all call-sites.
+ */
+export const getTemples = getMandirs
 
 // Event related queries
 export async function getUpcomingEvents(limit = 10) {

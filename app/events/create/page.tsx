@@ -170,8 +170,14 @@ export default function CreateEventPage() {
         if (formData.startTime && formData.endTime && formData.startTime >= formData.endTime) {
           newErrors.endTime = "End time must be after start time"
         }
-        if (formData.date && new Date(formData.date) < new Date()) {
-          newErrors.date = "Event date cannot be in the past"
+        // Validate date is not in the past (using local time for comparison)
+        if (formData.date) {
+          const selectedDate = new Date(formData.date)
+          const today = new Date()
+          today.setHours(0, 0, 0, 0) // Normalize today's date to start of day for comparison
+          if (selectedDate < today) {
+            newErrors.date = "Event date cannot be in the past"
+          }
         }
         break
 
@@ -306,7 +312,7 @@ export default function CreateEventPage() {
               <Button className="w-full bg-orange-600 hover:bg-orange-700" asChild>
                 <Link href="/events">Browse Events</Link>
               </Button>
-              <Button variant="outline" className="w-full" asChild>
+              <Button variant="outline" className="w-full bg-transparent" asChild>
                 <Link href="/events/create">Create Another Event</Link>
               </Button>
             </div>
@@ -384,7 +390,7 @@ export default function CreateEventPage() {
                 value={formData.date}
                 onChange={(e) => setFormData({ ...formData, date: e.target.value })}
                 className={errors.date ? "border-red-500" : ""}
-                min={new Date().toISOString().split("T")[0]}
+                min={new Date().toISOString().split("T")[0]} // Ensures date picker starts from today in local time
               />
               {errors.date && <p className="text-sm text-red-500">{errors.date}</p>}
             </div>
@@ -540,7 +546,7 @@ export default function CreateEventPage() {
               <Label htmlFor="organizer">Organization/Organizer Name *</Label>
               <Input
                 id="organizer"
-                placeholder="e.g., Auckland Hindu Society"
+                placeholder="e.g., Auckland Sanatan Society"
                 value={formData.organizer}
                 onChange={(e) => setFormData({ ...formData, organizer: e.target.value })}
                 className={errors.organizer ? "border-red-500" : ""}
@@ -639,7 +645,7 @@ export default function CreateEventPage() {
                     className="hidden"
                     id="image-upload"
                   />
-                  <Button type="button" variant="outline" className="mt-4" asChild>
+                  <Button type="button" variant="outline" className="mt-4 bg-transparent" asChild>
                     <label htmlFor="image-upload" className="cursor-pointer">
                       Choose Files
                     </label>
@@ -785,7 +791,7 @@ export default function CreateEventPage() {
                       </Button>
                     )}
 
-                    <Button type="button" variant="outline" onClick={saveDraft} className="ml-auto">
+                    <Button type="button" variant="outline" onClick={saveDraft} className="ml-auto bg-transparent">
                       <Save className="mr-2 h-4 w-4" />
                       {isDraftSaved ? "Saved!" : "Save Draft"}
                     </Button>

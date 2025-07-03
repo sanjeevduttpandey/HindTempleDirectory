@@ -8,11 +8,11 @@ import { Toaster } from "@/components/ui/toaster"
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "Sanatan New Zealand - Hindu Community & Temples",
+  title: "Sanatan New Zealand - Sanatan Community & Temples",
   description:
-    "Connect with the Hindu community in New Zealand. Find temples, events, festivals, and spiritual gatherings across Auckland, Wellington, Christchurch and more.",
+    "Connect with the Sanatan community in New Zealand. Find temples, events, festivals, and spiritual gatherings across Auckland, Wellington, Christchurch and more.",
   keywords:
-    "Hindu temples New Zealand, Sanatan Dharma, Indian community NZ, Hindu festivals, temples Auckland, temples Wellington, temples Christchurch, Hindu events",
+    "Sanatan temples New Zealand, Sanatan Dharma, Indian community NZ, Sanatan festivals, temples Auckland, temples Wellington, temples Christchurch, Sanatan events",
   authors: [{ name: "Sanatan New Zealand" }],
   creator: "Sanatan New Zealand",
   publisher: "Sanatan New Zealand",
@@ -26,9 +26,9 @@ export const metadata: Metadata = {
     canonical: "/",
   },
   openGraph: {
-    title: "Sanatan New Zealand - Hindu Community & Temples",
+    title: "Sanatan New Zealand - Sanatan Community & Temples",
     description:
-      "Connect with the Hindu community in New Zealand. Find temples, events, festivals, and spiritual gatherings.",
+      "Connect with the Sanatan community in New Zealand. Find temples, events, festivals, and spiritual gatherings.",
     url: "https://sanatannewzealand.org",
     siteName: "Sanatan New Zealand",
     images: [
@@ -36,7 +36,7 @@ export const metadata: Metadata = {
         url: "/images/og-image.jpg",
         width: 1200,
         height: 630,
-        alt: "Sanatan New Zealand - Hindu Community",
+        alt: "Sanatan New Zealand - Sanatan Community",
       },
     ],
     locale: "en_NZ",
@@ -44,9 +44,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Sanatan New Zealand - Hindu Community & Temples",
+    title: "Sanatan New Zealand - Sanatan Community & Temples",
     description:
-      "Connect with the Hindu community in New Zealand. Find temples, events, festivals, and spiritual gatherings.",
+      "Connect with the Sanatan community in New Zealand. Find temples, events, festivals, and spiritual gatherings.",
     images: ["/images/og-image.jpg"],
     creator: "@SanatanNZ",
   },
@@ -65,7 +65,7 @@ export const metadata: Metadata = {
     google: "your-google-verification-code",
   },
   category: "religion",
-    generator: 'v0.dev'
+  generator: "v0.dev",
 }
 
 export default function RootLayout({

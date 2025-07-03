@@ -109,9 +109,9 @@ export default function AboutPage() {
           <h2 className="text-3xl font-bold text-orange-800 text-center mb-12">Our Story</h2>
           <div className="prose prose-lg max-w-none text-gray-700">
             <p className="text-xl leading-relaxed mb-6">
-              Sanatan New Zealand was born from a vision to create a unified platform that connects the diverse Hindu
-              and Sanatan Dharma communities across Aotearoa. Founded by passionate community members who recognized the
-              need for better coordination and communication among temples, cultural organizations, and individuals.
+              Sanatan New Zealand was born from a vision to create a unified platform that connects the diverse Sanatan
+              Dharma communities across Aotearoa. Founded by passionate community members who recognized the need for
+              better coordination and communication among temples, cultural organizations, and individuals.
             </p>
             <p className="text-lg leading-relaxed mb-6">
               Our journey began with the simple observation that while New Zealand is home to numerous temples, cultural

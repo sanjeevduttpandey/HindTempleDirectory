@@ -50,7 +50,7 @@ const Navbar = () => {
                 Panchang
               </Link>
               <Link href="/festivals" className="block px-4 py-2 hover:bg-gray-600">
-                Hindu Festivals
+                Sanatan Festivals
               </Link>
               <Link href="/datetime" className="block px-4 py-2 hover:bg-gray-600">
                 Date &amp; Time

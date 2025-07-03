@@ -1,805 +1,400 @@
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+"use client"
+
+import { useState } from "react"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Badge } from "@/components/ui/badge"
-import { Calendar, Info } from "lucide-react"
+import { Calendar, Search } from "lucide-react"
+import Link from "next/link"
+import Image from "next/image"
 
-// Festival type definition
-type Festival = {
-  name: string
-  date: string
-  hinduDate: string
-  description: string
-  significance: string
-  major: boolean
-}
-
-// Festival data by year
-const festivals2024: Festival[] = [
+const festivals = [
   {
-    name: "Makar Sankranti",
-    date: "January 15, 2024",
-    hinduDate: "Paush Shukla Paksha",
-    description: "Marks the transition of the Sun into Capricorn and the beginning of longer days.",
-    significance: "Celebrates the harvest season and is considered auspicious for spiritual practices.",
-    major: true,
+    id: 1,
+    title: "Diwali",
+    date: "2024-11-12",
+    description: "The five-day festival of lights, celebrated by Sanatan, Jains, Sikhs and some Buddhists.",
+    image: "/placeholder.svg?height=200&width=400",
+    category: "Major Festival",
+    significance:
+      "Symbolizes the victory of light over darkness, good over evil, and knowledge over ignorance. Celebrated with lamps, fireworks, sweets, and family gatherings.",
+    rituals: [
+      "Lighting of diyas and candles",
+      "Lakshmi Puja (worship of Goddess Lakshmi)",
+      "Exchanging sweets and gifts",
+      "Fireworks display",
+      "Family gatherings and feasts",
+    ],
+    associatedDeities: ["Goddess Lakshmi", "Lord Ganesha", "Lord Rama"],
   },
   {
-    name: "Republic Day",
-    date: "January 26, 2024",
-    hinduDate: "Magh Krishna Paksha",
-    description: "Celebrates the day when the Constitution of India came into effect.",
-    significance: "National holiday celebrating India's democratic values.",
-    major: false,
+    id: 2,
+    title: "Holi",
+    date: "2025-03-14",
+    description: "The festival of colors, celebrating the arrival of spring and the triumph of good over evil.",
+    image: "/placeholder.svg?height=200&width=400",
+    category: "Major Festival",
+    significance:
+      "Celebrates the eternal and divine love of Radha Krishna. It also signifies the triumph of good over evil, as it commemorates the victory of Lord Vishnu as Narasimha over Hiranyakashipu.",
+    rituals: [
+      "Holika Dahan (bonfire on the eve of Holi)",
+      "Playing with colors (gulal and water)",
+      "Singing and dancing to folk songs",
+      "Enjoying traditional sweets like Gujiya",
+      "Visiting friends and family",
+    ],
+    associatedDeities: ["Lord Krishna", "Radha"],
   },
   {
-    name: "Vasant Panchami",
-    date: "February 14, 2024",
-    hinduDate: "Magh Shukla Panchami",
-    description: "Festival dedicated to Saraswati, the goddess of knowledge, music, and arts.",
-    significance: "Marks the beginning of spring season and preparation for Holi.",
-    major: true,
+    id: 3,
+    title: "Navratri",
+    date: "2024-10-03",
+    description: "A nine-night festival dedicated to the worship of the Goddess Durga.",
+    image: "/placeholder.svg?height=200&width=400",
+    category: "Major Festival",
+    significance:
+      "Celebrates the victory of Goddess Durga over the demon Mahishasura. Each of the nine nights is dedicated to a different form of Goddess Durga.",
+    rituals: [
+      "Fasting and prayers",
+      "Garba and Dandiya Raas dances",
+      "Worship of the nine forms of Durga",
+      "Decorating homes and Mandir",
+      "Feasting on the tenth day (Dussehra)",
+    ],
+    associatedDeities: ["Goddess Durga", "Goddess Lakshmi", "Goddess Saraswati"],
   },
   {
-    name: "Maha Shivaratri",
-    date: "March 8, 2024",
-    hinduDate: "Phalguna Krishna Chaturdashi",
-    description: "The great night of Shiva, celebrated with night-long prayers and fasting.",
-    significance: "One of the most important festivals for devotees of Lord Shiva.",
-    major: true,
+    id: 4,
+    title: "Maha Shivaratri",
+    date: "2025-02-26",
+    description: "The Great Night of Shiva, celebrating the convergence of Shiva and Shakti.",
+    image: "/placeholder.svg?height=200&width=400",
+    category: "Religious Observance",
+    significance:
+      "Commemorates the night when Lord Shiva performs the heavenly dance of creation, preservation and destruction. Devotees observe fasts and offer prayers to Lord Shiva.",
+    rituals: [
+      "Fasting throughout the day and night",
+      "Performing Lingam Puja with milk, water, bilva leaves",
+      "Chanting Om Namah Shivaya",
+      "Staying awake all night (Jagran)",
+      "Visiting Shiva Mandir",
+    ],
+    associatedDeities: ["Lord Shiva", "Goddess Parvati"],
   },
   {
-    name: "Holi",
-    date: "March 25, 2024",
-    hinduDate: "Phalguna Purnima",
-    description: "Festival of colors celebrating the victory of good over evil.",
-    significance: "Marks the end of winter and beginning of spring, symbolizing new beginnings.",
-    major: true,
+    id: 5,
+    title: "Janmashtami",
+    date: "2024-08-26",
+    description: "The birthday of Lord Krishna, celebrated with great devotion and enthusiasm.",
+    image: "/placeholder.svg?height=200&width=400",
+    category: "Major Festival",
+    significance:
+      "Celebrates the birth of Lord Krishna, the eighth incarnation of Lord Vishnu. It signifies the victory of good over evil and the importance of dharma.",
+    rituals: [
+      "Fasting until midnight",
+      "Decorating Mandir and homes with cradles and idols of baby Krishna",
+      "Singing bhajans and kirtans",
+      "Performing Abhishek (ritual bathing) of Krishna idol",
+      "Breaking fast with Prasad (offerings)",
+    ],
+    associatedDeities: ["Lord Krishna", "Radha"],
   },
   {
-    name: "Ugadi/Gudi Padwa",
-    date: "April 9, 2024",
-    hinduDate: "Chaitra Shukla Pratipada",
-    description: "New Year's Day for people from Andhra Pradesh, Telangana, Karnataka, and Maharashtra.",
-    significance: "Marks the beginning of the Hindu lunar calendar.",
-    major: true,
+    id: 6,
+    title: "Ganesh Chaturthi",
+    date: "2024-09-07",
+    description: "A 10-day festival celebrating the birth of Lord Ganesha.",
+    image: "/placeholder.svg?height=200&width=400",
+    category: "Major Festival",
+    significance:
+      "Celebrates the birth of Lord Ganesha, the god of wisdom, prosperity, and good fortune. He is worshipped before any new venture.",
+    rituals: [
+      "Installation of Ganesha idols in homes and public pandals",
+      "Daily pujas and aartis",
+      "Offering modaks (sweet dumplings)",
+      "Cultural programs and community gatherings",
+      "Immersion of idols (Visarjan) on the last day",
+    ],
+    associatedDeities: ["Lord Ganesha"],
   },
   {
-    name: "Ram Navami",
-    date: "April 17, 2024",
-    hinduDate: "Chaitra Shukla Navami",
-    description: "Celebrates the birth of Lord Rama, the seventh avatar of Vishnu.",
-    significance: "Devotees observe fasting and engage in continuous recitation of the Ramayana.",
-    major: true,
+    id: 7,
+    title: "Rama Navami",
+    date: "2025-04-06",
+    description: "The birthday of Lord Rama, celebrated with devotion and spiritual fervor.",
+    image: "/placeholder.svg?height=200&width=400",
+    category: "Religious Observance",
+    significance:
+      "Celebrates the birth of Lord Rama, the seventh incarnation of Lord Vishnu. It signifies the victory of good over evil and the establishment of Dharma.",
+    rituals: [
+      "Recitation of Ramayana and other sacred texts",
+      "Fasting and prayers",
+      "Processions and bhajans",
+      "Decorating Mandir and homes",
+      "Offering sweets and fruits",
+    ],
+    associatedDeities: ["Lord Rama", "Sita", "Lakshmana", "Hanuman"],
   },
   {
-    name: "Hanuman Jayanti",
-    date: "April 23, 2024",
-    hinduDate: "Chaitra Purnima",
-    description: "Celebrates the birth of Lord Hanuman.",
-    significance: "Devotees worship Hanuman for strength, devotion, and protection.",
-    major: true,
+    id: 8,
+    title: "Raksha Bandhan",
+    date: "2024-08-19",
+    description: "A festival celebrating the bond between brothers and sisters.",
+    image: "/placeholder.svg?height=200&width=400",
+    category: "Cultural Festival",
+    significance:
+      "Symbolizes the bond of protection between siblings. Sisters tie a rakhi (sacred thread) on their brothers' wrists, who in turn promise to protect them.",
+    rituals: [
+      "Tying of rakhi by sisters on brothers' wrists",
+      "Exchanging gifts and sweets",
+      "Family gatherings and special meals",
+      "Prayers for siblings' well-being",
+    ],
+    associatedDeities: [],
   },
   {
-    name: "Akshaya Tritiya",
-    date: "May 10, 2024",
-    hinduDate: "Vaishakha Shukla Tritiya",
-    description: "Considered one of the most auspicious days in the Hindu calendar.",
-    significance: "Believed to bring good fortune and success to new ventures.",
-    major: true,
+    id: 9,
+    title: "Dussehra (Vijayadashami)",
+    date: "2024-10-12",
+    description: "Celebrates the victory of Lord Rama over the demon king Ravana.",
+    image: "/placeholder.svg?height=200&width=400",
+    category: "Major Festival",
+    significance:
+      "Marks the end of Navratri and symbolizes the victory of good over evil. It also commemorates Goddess Durga's victory over Mahishasura.",
+    rituals: [
+      "Burning effigies of Ravana, Meghnad, and Indrajit",
+      "Processions depicting scenes from Ramayana",
+      "Aarti and prayers",
+      "Feasting and family gatherings",
+      "Visiting Mandir",
+    ],
+    associatedDeities: ["Lord Rama", "Goddess Durga"],
   },
   {
-    name: "Buddha Purnima",
-    date: "May 23, 2024",
-    hinduDate: "Vaishakha Purnima",
-    description: "Celebrates the birth, enlightenment, and death of Gautama Buddha.",
-    significance: "Important day for Buddhists worldwide.",
-    major: false,
-  },
-  {
-    name: "Ganga Dussehra",
-    date: "June 17, 2024",
-    hinduDate: "Jyeshtha Shukla Dashami",
-    description: "Celebrates the descent of the Ganges River to Earth.",
-    significance: "Devotees take a holy dip in the Ganges to cleanse their sins.",
-    major: false,
-  },
-  {
-    name: "Guru Purnima",
-    date: "July 21, 2024",
-    hinduDate: "Ashadha Purnima",
-    description: "Day to honor spiritual and academic teachers.",
-    significance: "Marks the birth anniversary of Sage Vyasa, who compiled the Vedas.",
-    major: true,
-  },
-  {
-    name: "Hariyali Teej",
-    date: "August 7, 2024",
-    hinduDate: "Shravana Shukla Tritiya",
-    description: "Festival celebrated by women for marital bliss.",
-    significance: "Women pray to Goddess Parvati for a happy married life.",
-    major: false,
-  },
-  {
-    name: "Raksha Bandhan",
-    date: "August 19, 2024",
-    hinduDate: "Shravana Purnima",
-    description: "Celebrates the bond between brothers and sisters.",
-    significance: "Sisters tie a rakhi on their brothers' wrists, and brothers promise to protect them.",
-    major: true,
-  },
-  {
-    name: "Krishna Janmashtami",
-    date: "August 26, 2024",
-    hinduDate: "Bhadrapada Krishna Ashtami",
-    description: "Celebrates the birth of Lord Krishna.",
-    significance: "One of the most widely celebrated festivals in Hinduism.",
-    major: true,
-  },
-  {
-    name: "Ganesh Chaturthi",
-    date: "September 7, 2024",
-    hinduDate: "Bhadrapada Shukla Chaturthi",
-    description: "Celebrates the birth of Lord Ganesha.",
-    significance: "10-day festival ending with the immersion of Ganesha idols.",
-    major: true,
-  },
-  {
-    name: "Onam",
-    date: "September 15, 2024",
-    hinduDate: "Bhadrapada Shukla Dwadashi",
-    description: "Harvest festival celebrated in Kerala.",
-    significance: "Commemorates King Mahabali and Vamana avatar of Vishnu.",
-    major: false,
-  },
-  {
-    name: "Navratri Begins",
-    date: "October 3, 2024",
-    hinduDate: "Ashwin Shukla Pratipada",
-    description: "Nine-night festival worshipping the divine feminine.",
-    significance: "Devotees worship different forms of Goddess Durga.",
-    major: true,
-  },
-  {
-    name: "Dussehra/Vijayadashami",
-    date: "October 12, 2024",
-    hinduDate: "Ashwin Shukla Dashami",
-    description: "Celebrates the victory of Lord Rama over Ravana.",
-    significance: "Symbolizes the triumph of good over evil.",
-    major: true,
-  },
-  {
-    name: "Karwa Chauth",
-    date: "October 20, 2024",
-    hinduDate: "Kartik Krishna Chaturthi",
-    description: "Fast observed by married women for the well-being of their husbands.",
-    significance: "Women break their fast after sighting the moon.",
-    major: false,
-  },
-  {
-    name: "Dhanteras",
-    date: "October 29, 2024",
-    hinduDate: "Kartik Krishna Trayodashi",
-    description: "First day of Diwali celebrations.",
-    significance: "Considered auspicious for purchasing gold, silver, and new utensils.",
-    major: true,
-  },
-  {
-    name: "Diwali",
-    date: "November 1, 2024",
-    hinduDate: "Kartik Amavasya",
-    description: "Festival of lights celebrating the return of Lord Rama to Ayodhya.",
-    significance: "Symbolizes the victory of light over darkness and knowledge over ignorance.",
-    major: true,
-  },
-  {
-    name: "Bhai Dooj",
-    date: "November 3, 2024",
-    hinduDate: "Kartik Shukla Dwitiya",
-    description: "Celebrates the bond between brothers and sisters.",
-    significance: "Sisters pray for their brothers' long life and prosperity.",
-    major: false,
-  },
-  {
-    name: "Tulsi Vivah",
-    date: "November 13, 2024",
-    hinduDate: "Kartik Shukla Ekadashi",
-    description: "Ceremonial marriage of Tulsi plant with Lord Vishnu.",
-    significance: "Marks the beginning of the Hindu wedding season.",
-    major: false,
-  },
-  {
-    name: "Gita Jayanti",
-    date: "December 11, 2024",
-    hinduDate: "Margashirsha Shukla Ekadashi",
-    description: "Celebrates the day when Lord Krishna imparted the knowledge of Bhagavad Gita to Arjuna.",
-    significance: "Devotees read and recite the Bhagavad Gita.",
-    major: false,
-  },
-  {
-    name: "Christmas",
-    date: "December 25, 2024",
-    hinduDate: "Pausha Krishna Paksha",
-    description: "Celebrates the birth of Jesus Christ.",
-    significance: "Important festival for Christians worldwide.",
-    major: false,
+    id: 10,
+    title: "Karwa Chauth",
+    date: "2024-10-20",
+    description: "A one-day festival observed by Sanatan women for the longevity and safety of their husbands.",
+    image: "/placeholder.svg?height=200&width=400",
+    category: "Religious Observance",
+    significance:
+      "Married women observe a day-long fast for the well-being and longevity of their husbands. They break the fast after sighting the moon.",
+    rituals: [
+      "Nirjala Vrat (fasting without food or water)",
+      "Listening to Karwa Chauth Katha (story)",
+      "Worship of Goddess Parvati and Lord Shiva",
+      "Sighting the moon and offering prayers",
+      "Breaking fast with husband's hand",
+    ],
+    associatedDeities: ["Goddess Parvati", "Lord Shiva", "Lord Kartikeya", "Lord Ganesha", "Moon God"],
   },
 ]
-
-const festivals2025: Festival[] = [
-  {
-    name: "Makar Sankranti",
-    date: "January 14, 2025",
-    hinduDate: "Paush Shukla Paksha",
-    description: "Marks the transition of the Sun into Capricorn and the beginning of longer days.",
-    significance: "Celebrates the harvest season and is considered auspicious for spiritual practices.",
-    major: true,
-  },
-  {
-    name: "Republic Day",
-    date: "January 26, 2025",
-    hinduDate: "Magh Krishna Paksha",
-    description: "Celebrates the day when the Constitution of India came into effect.",
-    significance: "National holiday celebrating India's democratic values.",
-    major: false,
-  },
-  {
-    name: "Vasant Panchami",
-    date: "February 3, 2025",
-    hinduDate: "Magh Shukla Panchami",
-    description: "Festival dedicated to Saraswati, the goddess of knowledge, music, and arts.",
-    significance: "Marks the beginning of spring season and preparation for Holi.",
-    major: true,
-  },
-  {
-    name: "Maha Shivaratri",
-    date: "February 26, 2025",
-    hinduDate: "Phalguna Krishna Chaturdashi",
-    description: "The great night of Shiva, celebrated with night-long prayers and fasting.",
-    significance: "One of the most important festivals for devotees of Lord Shiva.",
-    major: true,
-  },
-  {
-    name: "Holi",
-    date: "March 14, 2025",
-    hinduDate: "Phalguna Purnima",
-    description: "Festival of colors celebrating the victory of good over evil.",
-    significance: "Marks the end of winter and beginning of spring, symbolizing new beginnings.",
-    major: true,
-  },
-  {
-    name: "Ugadi/Gudi Padwa",
-    date: "March 29, 2025",
-    hinduDate: "Chaitra Shukla Pratipada",
-    description: "New Year's Day for people from Andhra Pradesh, Telangana, Karnataka, and Maharashtra.",
-    significance: "Marks the beginning of the Hindu lunar calendar.",
-    major: true,
-  },
-  {
-    name: "Ram Navami",
-    date: "April 6, 2025",
-    hinduDate: "Chaitra Shukla Navami",
-    description: "Celebrates the birth of Lord Rama, the seventh avatar of Vishnu.",
-    significance: "Devotees observe fasting and engage in continuous recitation of the Ramayana.",
-    major: true,
-  },
-  {
-    name: "Hanuman Jayanti",
-    date: "April 12, 2025",
-    hinduDate: "Chaitra Purnima",
-    description: "Celebrates the birth of Lord Hanuman.",
-    significance: "Devotees worship Hanuman for strength, devotion, and protection.",
-    major: true,
-  },
-  {
-    name: "Akshaya Tritiya",
-    date: "April 30, 2025",
-    hinduDate: "Vaishakha Shukla Tritiya",
-    description: "Considered one of the most auspicious days in the Hindu calendar.",
-    significance: "Believed to bring good fortune and success to new ventures.",
-    major: true,
-  },
-  {
-    name: "Buddha Purnima",
-    date: "May 12, 2025",
-    hinduDate: "Vaishakha Purnima",
-    description: "Celebrates the birth, enlightenment, and death of Gautama Buddha.",
-    significance: "Important day for Buddhists worldwide.",
-    major: false,
-  },
-  {
-    name: "Ganga Dussehra",
-    date: "June 7, 2025",
-    hinduDate: "Jyeshtha Shukla Dashami",
-    description: "Celebrates the descent of the Ganges River to Earth.",
-    significance: "Devotees take a holy dip in the Ganges to cleanse their sins.",
-    major: false,
-  },
-  {
-    name: "Guru Purnima",
-    date: "July 11, 2025",
-    hinduDate: "Ashadha Purnima",
-    description: "Day to honor spiritual and academic teachers.",
-    significance: "Marks the birth anniversary of Sage Vyasa, who compiled the Vedas.",
-    major: true,
-  },
-  {
-    name: "Raksha Bandhan",
-    date: "August 9, 2025",
-    hinduDate: "Shravana Purnima",
-    description: "Celebrates the bond between brothers and sisters.",
-    significance: "Sisters tie a rakhi on their brothers' wrists, and brothers promise to protect them.",
-    major: true,
-  },
-  {
-    name: "Krishna Janmashtami",
-    date: "August 16, 2025",
-    hinduDate: "Bhadrapada Krishna Ashtami",
-    description: "Celebrates the birth of Lord Krishna.",
-    significance: "One of the most widely celebrated festivals in Hinduism.",
-    major: true,
-  },
-  {
-    name: "Ganesh Chaturthi",
-    date: "August 28, 2025",
-    hinduDate: "Bhadrapada Shukla Chaturthi",
-    description: "Celebrates the birth of Lord Ganesha.",
-    significance: "10-day festival ending with the immersion of Ganesha idols.",
-    major: true,
-  },
-  {
-    name: "Navratri Begins",
-    date: "September 23, 2025",
-    hinduDate: "Ashwin Shukla Pratipada",
-    description: "Nine-night festival worshipping the divine feminine.",
-    significance: "Devotees worship different forms of Goddess Durga.",
-    major: true,
-  },
-  {
-    name: "Dussehra/Vijayadashami",
-    date: "October 2, 2025",
-    hinduDate: "Ashwin Shukla Dashami",
-    description: "Celebrates the victory of Lord Rama over Ravana.",
-    significance: "Symbolizes the triumph of good over evil.",
-    major: true,
-  },
-  {
-    name: "Karwa Chauth",
-    date: "October 10, 2025",
-    hinduDate: "Kartik Krishna Chaturthi",
-    description: "Fast observed by married women for the well-being of their husbands.",
-    significance: "Women break their fast after sighting the moon.",
-    major: false,
-  },
-  {
-    name: "Dhanteras",
-    date: "October 19, 2025",
-    hinduDate: "Kartik Krishna Trayodashi",
-    description: "First day of Diwali celebrations.",
-    significance: "Considered auspicious for purchasing gold, silver, and new utensils.",
-    major: true,
-  },
-  {
-    name: "Diwali",
-    date: "October 21, 2025",
-    hinduDate: "Kartik Amavasya",
-    description: "Festival of lights celebrating the return of Lord Rama to Ayodhya.",
-    significance: "Symbolizes the victory of light over darkness and knowledge over ignorance.",
-    major: true,
-  },
-  {
-    name: "Bhai Dooj",
-    date: "October 23, 2025",
-    hinduDate: "Kartik Shukla Dwitiya",
-    description: "Celebrates the bond between brothers and sisters.",
-    significance: "Sisters pray for their brothers' long life and prosperity.",
-    major: false,
-  },
-  {
-    name: "Tulsi Vivah",
-    date: "November 3, 2025",
-    hinduDate: "Kartik Shukla Ekadashi",
-    description: "Ceremonial marriage of Tulsi plant with Lord Vishnu.",
-    significance: "Marks the beginning of the Hindu wedding season.",
-    major: false,
-  },
-  {
-    name: "Gita Jayanti",
-    date: "December 1, 2025",
-    hinduDate: "Margashirsha Shukla Ekadashi",
-    description: "Celebrates the day when Lord Krishna imparted the knowledge of Bhagavad Gita to Arjuna.",
-    significance: "Devotees read and recite the Bhagavad Gita.",
-    major: false,
-  },
-  {
-    name: "Christmas",
-    date: "December 25, 2025",
-    hinduDate: "Pausha Krishna Paksha",
-    description: "Celebrates the birth of Jesus Christ.",
-    significance: "Important festival for Christians worldwide.",
-    major: false,
-  },
-]
-
-const festivals2026: Festival[] = [
-  {
-    name: "Makar Sankranti",
-    date: "January 14, 2026",
-    hinduDate: "Paush Shukla Paksha",
-    description: "Marks the transition of the Sun into Capricorn and the beginning of longer days.",
-    significance: "Celebrates the harvest season and is considered auspicious for spiritual practices.",
-    major: true,
-  },
-  {
-    name: "Republic Day",
-    date: "January 26, 2026",
-    hinduDate: "Magh Krishna Paksha",
-    description: "Celebrates the day when the Constitution of India came into effect.",
-    significance: "National holiday celebrating India's democratic values.",
-    major: false,
-  },
-  {
-    name: "Vasant Panchami",
-    date: "January 23, 2026",
-    hinduDate: "Magh Shukla Panchami",
-    description: "Festival dedicated to Saraswati, the goddess of knowledge, music, and arts.",
-    significance: "Marks the beginning of spring season and preparation for Holi.",
-    major: true,
-  },
-  {
-    name: "Maha Shivaratri",
-    date: "February 15, 2026",
-    hinduDate: "Phalguna Krishna Chaturdashi",
-    description: "The great night of Shiva, celebrated with night-long prayers and fasting.",
-    significance: "One of the most important festivals for devotees of Lord Shiva.",
-    major: true,
-  },
-  {
-    name: "Holi",
-    date: "March 3, 2026",
-    hinduDate: "Phalguna Purnima",
-    description: "Festival of colors celebrating the victory of good over evil.",
-    significance: "Marks the end of winter and beginning of spring, symbolizing new beginnings.",
-    major: true,
-  },
-  {
-    name: "Ugadi/Gudi Padwa",
-    date: "March 18, 2026",
-    hinduDate: "Chaitra Shukla Pratipada",
-    description: "New Year's Day for people from Andhra Pradesh, Telangana, Karnataka, and Maharashtra.",
-    significance: "Marks the beginning of the Hindu lunar calendar.",
-    major: true,
-  },
-  {
-    name: "Ram Navami",
-    date: "March 26, 2026",
-    hinduDate: "Chaitra Shukla Navami",
-    description: "Celebrates the birth of Lord Rama, the seventh avatar of Vishnu.",
-    significance: "Devotees observe fasting and engage in continuous recitation of the Ramayana.",
-    major: true,
-  },
-  {
-    name: "Hanuman Jayanti",
-    date: "April 1, 2026",
-    hinduDate: "Chaitra Purnima",
-    description: "Celebrates the birth of Lord Hanuman.",
-    significance: "Devotees worship Hanuman for strength, devotion, and protection.",
-    major: true,
-  },
-  {
-    name: "Akshaya Tritiya",
-    date: "April 19, 2026",
-    hinduDate: "Vaishakha Shukla Tritiya",
-    description: "Considered one of the most auspicious days in the Hindu calendar.",
-    significance: "Believed to bring good fortune and success to new ventures.",
-    major: true,
-  },
-  {
-    name: "Buddha Purnima",
-    date: "May 1, 2026",
-    hinduDate: "Vaishakha Purnima",
-    description: "Celebrates the birth, enlightenment, and death of Gautama Buddha.",
-    significance: "Important day for Buddhists worldwide.",
-    major: false,
-  },
-  {
-    name: "Guru Purnima",
-    date: "July 1, 2026",
-    hinduDate: "Ashadha Purnima",
-    description: "Day to honor spiritual and academic teachers.",
-    significance: "Marks the birth anniversary of Sage Vyasa, who compiled the Vedas.",
-    major: true,
-  },
-  {
-    name: "Raksha Bandhan",
-    date: "July 29, 2026",
-    hinduDate: "Shravana Purnima",
-    description: "Celebrates the bond between brothers and sisters.",
-    significance: "Sisters tie a rakhi on their brothers' wrists, and brothers promise to protect them.",
-    major: true,
-  },
-  {
-    name: "Krishna Janmashtami",
-    date: "August 5, 2026",
-    hinduDate: "Bhadrapada Krishna Ashtami",
-    description: "Celebrates the birth of Lord Krishna.",
-    significance: "One of the most widely celebrated festivals in Hinduism.",
-    major: true,
-  },
-  {
-    name: "Ganesh Chaturthi",
-    date: "August 17, 2026",
-    hinduDate: "Bhadrapada Shukla Chaturthi",
-    description: "Celebrates the birth of Lord Ganesha.",
-    significance: "10-day festival ending with the immersion of Ganesha idols.",
-    major: true,
-  },
-  {
-    name: "Navratri Begins",
-    date: "September 12, 2026",
-    hinduDate: "Ashwin Shukla Pratipada",
-    description: "Nine-night festival worshipping the divine feminine.",
-    significance: "Devotees worship different forms of Goddess Durga.",
-    major: true,
-  },
-  {
-    name: "Dussehra/Vijayadashami",
-    date: "September 21, 2026",
-    hinduDate: "Ashwin Shukla Dashami",
-    description: "Celebrates the victory of Lord Rama over Ravana.",
-    significance: "Symbolizes the triumph of good over evil.",
-    major: true,
-  },
-  {
-    name: "Karwa Chauth",
-    date: "September 29, 2026",
-    hinduDate: "Kartik Krishna Chaturthi",
-    description: "Fast observed by married women for the well-being of their husbands.",
-    significance: "Women break their fast after sighting the moon.",
-    major: false,
-  },
-  {
-    name: "Dhanteras",
-    date: "October 8, 2026",
-    hinduDate: "Kartik Krishna Trayodashi",
-    description: "First day of Diwali celebrations.",
-    significance: "Considered auspicious for purchasing gold, silver, and new utensils.",
-    major: true,
-  },
-  {
-    name: "Diwali",
-    date: "October 10, 2026",
-    hinduDate: "Kartik Amavasya",
-    description: "Festival of lights celebrating the return of Lord Rama to Ayodhya.",
-    significance: "Symbolizes the victory of light over darkness and knowledge over ignorance.",
-    major: true,
-  },
-  {
-    name: "Bhai Dooj",
-    date: "October 12, 2026",
-    hinduDate: "Kartik Shukla Dwitiya",
-    description: "Celebrates the bond between brothers and sisters.",
-    significance: "Sisters pray for their brothers' long life and prosperity.",
-    major: false,
-  },
-  {
-    name: "Tulsi Vivah",
-    date: "October 23, 2026",
-    hinduDate: "Kartik Shukla Ekadashi",
-    description: "Ceremonial marriage of Tulsi plant with Lord Vishnu.",
-    significance: "Marks the beginning of the Hindu wedding season.",
-    major: false,
-  },
-  {
-    name: "Gita Jayanti",
-    date: "November 20, 2026",
-    hinduDate: "Margashirsha Shukla Ekadashi",
-    description: "Celebrates the day when Lord Krishna imparted the knowledge of Bhagavad Gita to Arjuna.",
-    significance: "Devotees read and recite the Bhagavad Gita.",
-    major: false,
-  },
-  {
-    name: "Christmas",
-    date: "December 25, 2026",
-    hinduDate: "Pausha Krishna Paksha",
-    description: "Celebrates the birth of Jesus Christ.",
-    significance: "Important festival for Christians worldwide.",
-    major: false,
-  },
-]
-
-// Group festivals by month for each year
-const groupFestivalsByMonth = (festivals: Festival[]) => {
-  const months: Record<string, Festival[]> = {}
-
-  festivals.forEach((festival) => {
-    const month = festival.date.split(" ")[0]
-    if (!months[month]) {
-      months[month] = []
-    }
-    months[month].push(festival)
-  })
-
-  return months
-}
-
-const months2024 = groupFestivalsByMonth(festivals2024)
-const months2025 = groupFestivalsByMonth(festivals2025)
-const months2026 = groupFestivalsByMonth(festivals2026)
 
 export default function FestivalsPage() {
+  const [searchTerm, setSearchTerm] = useState("")
+  const [selectedCategory, setSelectedCategory] = useState("All Categories")
+
+  const categories = ["All Categories", ...Array.from(new Set(festivals.map((f) => f.category)))]
+
+  const filteredFestivals = festivals.filter((festival) => {
+    const matchesSearch =
+      festival.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      festival.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      festival.significance.toLowerCase().includes(searchTerm.toLowerCase())
+    const matchesCategory = selectedCategory === "All Categories" || festival.category === selectedCategory
+    return matchesSearch && matchesCategory
+  })
+
+  // Formats date to New Zealand locale
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString)
+    return date.toLocaleDateString("en-NZ", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    })
+  }
+
   return (
-    <div className="min-h-screen bg-gradient-to-b from-orange-50 to-white py-12 px-4">
-      <div className="max-w-6xl mx-auto">
-        <h1 className="text-4xl font-bold text-orange-800 text-center mb-8">Hindu Festivals Calendar</h1>
-        <p className="text-xl text-center text-gray-700 mb-12 max-w-3xl mx-auto">
-          Explore the rich tapestry of Hindu festivals and celebrations across New Zealand for the years 2024-2026.
-        </p>
-
-        <Tabs defaultValue="2024" className="mb-12">
-          <TabsList className="grid grid-cols-3 max-w-md mx-auto mb-8">
-            <TabsTrigger value="2024">2024</TabsTrigger>
-            <TabsTrigger value="2025">2025</TabsTrigger>
-            <TabsTrigger value="2026">2026</TabsTrigger>
-          </TabsList>
-
-          {/* 2024 Festivals */}
-          <TabsContent value="2024">
-            <div className="space-y-8">
-              {Object.entries(months2024).map(([month, festivals]) => (
-                <Card key={month} className="border-orange-200 shadow-lg overflow-hidden">
-                  <CardHeader className="bg-orange-100">
-                    <CardTitle className="text-2xl text-orange-800 flex items-center">
-                      <Calendar className="w-6 h-6 mr-3" />
-                      {month} 2024
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="p-0">
-                    <div className="divide-y divide-gray-200">
-                      {festivals.map((festival, index) => (
-                        <div key={index} className="p-6 hover:bg-orange-50 transition-colors">
-                          <div className="flex flex-wrap items-start justify-between gap-2 mb-3">
-                            <h3 className="text-xl font-semibold text-gray-900 flex items-center">
-                              {festival.name}
-                              {festival.major && (
-                                <Badge variant="secondary" className="ml-2 bg-orange-100 text-orange-800">
-                                  Major Festival
-                                </Badge>
-                              )}
-                            </h3>
-                            <div className="text-gray-600 font-medium">{festival.date}</div>
-                          </div>
-                          <p className="text-gray-600 mb-3">
-                            <span className="font-medium">Hindu Date:</span> {festival.hinduDate}
-                          </p>
-                          <p className="text-gray-700 mb-3">{festival.description}</p>
-                          <div className="flex items-start text-gray-600">
-                            <Info className="w-5 h-5 mr-2 mt-0.5 flex-shrink-0" />
-                            <p>{festival.significance}</p>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </TabsContent>
-
-          {/* 2025 Festivals */}
-          <TabsContent value="2025">
-            <div className="space-y-8">
-              {Object.entries(months2025).map(([month, festivals]) => (
-                <Card key={month} className="border-orange-200 shadow-lg overflow-hidden">
-                  <CardHeader className="bg-orange-100">
-                    <CardTitle className="text-2xl text-orange-800 flex items-center">
-                      <Calendar className="w-6 h-6 mr-3" />
-                      {month} 2025
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="p-0">
-                    <div className="divide-y divide-gray-200">
-                      {festivals.map((festival, index) => (
-                        <div key={index} className="p-6 hover:bg-orange-50 transition-colors">
-                          <div className="flex flex-wrap items-start justify-between gap-2 mb-3">
-                            <h3 className="text-xl font-semibold text-gray-900 flex items-center">
-                              {festival.name}
-                              {festival.major && (
-                                <Badge variant="secondary" className="ml-2 bg-orange-100 text-orange-800">
-                                  Major Festival
-                                </Badge>
-                              )}
-                            </h3>
-                            <div className="text-gray-600 font-medium">{festival.date}</div>
-                          </div>
-                          <p className="text-gray-600 mb-3">
-                            <span className="font-medium">Hindu Date:</span> {festival.hinduDate}
-                          </p>
-                          <p className="text-gray-700 mb-3">{festival.description}</p>
-                          <div className="flex items-start text-gray-600">
-                            <Info className="w-5 h-5 mr-2 mt-0.5 flex-shrink-0" />
-                            <p>{festival.significance}</p>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </TabsContent>
-
-          {/* 2026 Festivals */}
-          <TabsContent value="2026">
-            <div className="space-y-8">
-              {Object.entries(months2026).map(([month, festivals]) => (
-                <Card key={month} className="border-orange-200 shadow-lg overflow-hidden">
-                  <CardHeader className="bg-orange-100">
-                    <CardTitle className="text-2xl text-orange-800 flex items-center">
-                      <Calendar className="w-6 h-6 mr-3" />
-                      {month} 2026
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="p-0">
-                    <div className="divide-y divide-gray-200">
-                      {festivals.map((festival, index) => (
-                        <div key={index} className="p-6 hover:bg-orange-50 transition-colors">
-                          <div className="flex flex-wrap items-start justify-between gap-2 mb-3">
-                            <h3 className="text-xl font-semibold text-gray-900 flex items-center">
-                              {festival.name}
-                              {festival.major && (
-                                <Badge variant="secondary" className="ml-2 bg-orange-100 text-orange-800">
-                                  Major Festival
-                                </Badge>
-                              )}
-                            </h3>
-                            <div className="text-gray-600 font-medium">{festival.date}</div>
-                          </div>
-                          <p className="text-gray-600 mb-3">
-                            <span className="font-medium">Hindu Date:</span> {festival.hinduDate}
-                          </p>
-                          <p className="text-gray-700 mb-3">{festival.description}</p>
-                          <div className="flex items-start text-gray-600">
-                            <Info className="w-5 h-5 mr-2 mt-0.5 flex-shrink-0" />
-                            <p>{festival.significance}</p>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </TabsContent>
-        </Tabs>
-
-        <div className="mt-12 bg-white p-6 rounded-lg shadow-md">
-          <h2 className="text-2xl font-bold text-orange-800 mb-4">Understanding Hindu Festivals</h2>
-          <div className="prose prose-lg max-w-none text-gray-700">
-            <p className="mb-4">
-              Hindu festivals are celebrated based on the Hindu lunar calendar, which is why their dates on the
-              Gregorian calendar change each year. These festivals are deeply rooted in mythology, spirituality, and
-              cultural traditions.
-            </p>
-            <p className="mb-4">
-              Major festivals like Diwali, Holi, and Navratri are celebrated with great enthusiasm across New Zealand's
-              Hindu community. They often involve special prayers, rituals, community gatherings, cultural performances,
-              and traditional foods.
-            </p>
-            <p>
-              The festival dates provided are based on the New Zealand time zone and may vary slightly from those
-              observed in India or other countries. Local temple announcements should be consulted for precise timings
-              of rituals and celebrations.
-            </p>
+    <div className="min-h-screen bg-gray-50">
+      {/* Header */}
+      <header className="border-b bg-white sticky top-0 z-50">
+        <div className="container mx-auto px-4 py-4">
+          <div className="flex items-center justify-between">
+            <Link href="/" className="flex items-center space-x-2">
+              <div className="w-10 h-10 bg-gradient-to-r from-orange-500 to-red-500 rounded-full flex items-center justify-center">
+                <span className="text-white font-bold text-lg">🕉</span>
+              </div>
+              <div>
+                <h1 className="text-xl font-bold text-gray-900">Sanatan New Zealand</h1>
+                <p className="text-sm text-gray-600">Sanatan Festivals</p>
+              </div>
+            </Link>
+            <nav className="hidden md:flex items-center space-x-6">
+              <Link href="/" className="text-gray-700 hover:text-orange-600 font-medium">
+                Home
+              </Link>
+              <Link href="/temples" className="text-gray-700 hover:text-orange-600 font-medium">
+                Mandirs
+              </Link>
+              <Link href="/events" className="text-gray-700 hover:text-orange-600 font-medium">
+                Events
+              </Link>
+              <Link href="/community" className="text-gray-700 hover:text-orange-600 font-medium">
+                Community
+              </Link>
+            </nav>
           </div>
         </div>
+      </header>
 
-        <div className="mt-8 text-center text-gray-600">
-          <p>
-            Note: Festival dates are approximate and may vary based on local customs and astronomical calculations.
-            Please check with your local temple for exact dates and celebration details.
+      {/* Hero Section */}
+      <section className="py-12 px-4 bg-gradient-to-r from-orange-600 to-red-600 text-white">
+        <div className="container mx-auto text-center">
+          <h2 className="text-4xl font-bold mb-4">Sanatan Festivals in New Zealand</h2>
+          <p className="text-xl mb-8 opacity-90">
+            Explore the rich calendar of Sanatan festivals celebrated across Aotearoa
           </p>
+          <div className="max-w-2xl mx-auto">
+            <div className="flex flex-col sm:flex-row gap-4">
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
+                <Input
+                  placeholder="Search festivals..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-10 bg-white text-gray-900"
+                />
+              </div>
+              <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+                <SelectTrigger className="w-full sm:w-48 bg-white text-gray-900">
+                  <SelectValue placeholder="Category" />
+                </SelectTrigger>
+                <SelectContent>
+                  {categories.map((category) => (
+                    <SelectItem key={category} value={category}>
+                      {category}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
         </div>
-      </div>
+      </section>
+
+      {/* Filters and Results */}
+      <section className="py-8 px-4">
+        <div className="container mx-auto">
+          <div className="mb-6">
+            <h3 className="text-2xl font-bold text-gray-900">
+              {filteredFestivals.length} Festival{filteredFestivals.length !== 1 ? "s" : ""} Found
+            </h3>
+            <p className="text-gray-600">
+              {selectedCategory !== "All Categories" ? `in ${selectedCategory}` : "across all categories"}
+            </p>
+          </div>
+
+          {/* Festivals Grid */}
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {filteredFestivals.map((festival) => (
+              <Card key={festival.id} className="overflow-hidden hover:shadow-lg transition-shadow">
+                <div className="relative h-48">
+                  <Image
+                    src={festival.image || "/placeholder.svg"}
+                    alt={festival.title}
+                    fill
+                    className="object-cover"
+                  />
+                  <Badge className="absolute top-4 right-4 bg-white/90 text-gray-900">{festival.category}</Badge>
+                </div>
+                <CardHeader>
+                  <CardTitle className="text-lg">{festival.title}</CardTitle>
+                  <CardDescription className="flex items-center">
+                    <Calendar className="h-4 w-4 mr-1" />
+                    {formatDate(festival.date)}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <p className="text-sm text-gray-600">{festival.description}</p>
+
+                  <div className="space-y-2 text-sm">
+                    <h4 className="font-medium text-gray-900">Significance:</h4>
+                    <p className="text-gray-600">{festival.significance}</p>
+                  </div>
+
+                  {festival.rituals.length > 0 && (
+                    <div className="space-y-2 text-sm">
+                      <h4 className="font-medium text-gray-900">Key Rituals:</h4>
+                      <ul className="list-disc list-inside text-gray-600">
+                        {festival.rituals.map((ritual, index) => (
+                          <li key={index}>{ritual}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+
+                  {festival.associatedDeities.length > 0 && (
+                    <div className="space-y-2 text-sm">
+                      <h4 className="font-medium text-gray-900">Associated Deities:</h4>
+                      <div className="flex flex-wrap gap-1">
+                        {festival.associatedDeities.map((deity, index) => (
+                          <Badge key={index} variant="outline" className="text-xs">
+                            {deity}
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="flex gap-2 pt-2">
+                    <Button size="sm" className="flex-1 bg-orange-600 hover:bg-orange-700" asChild>
+                      <Link href={`/festivals/${festival.id}`}>Learn More</Link>
+                    </Button>
+                    <Button size="sm" variant="outline" className="flex-1 bg-transparent" asChild>
+                      <Link href="/events">Find Events</Link>
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+
+          {filteredFestivals.length === 0 && (
+            <div className="text-center py-12">
+              <div className="text-gray-400 mb-4">
+                <Calendar className="h-16 w-16 mx-auto" />
+              </div>
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">No festivals found</h3>
+              <p className="text-gray-600 mb-4">Try adjusting your search criteria or browse all festivals.</p>
+              <Button
+                onClick={() => {
+                  setSearchTerm("")
+                  setSelectedCategory("All Categories")
+                }}
+                className="bg-orange-600 hover:bg-orange-700"
+              >
+                Clear Filters
+              </Button>
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* Contribute CTA */}
+      <section className="py-12 px-4 bg-orange-50">
+        <div className="container mx-auto text-center">
+          <h3 className="text-2xl font-bold text-gray-900 mb-4">Know of a festival not listed?</h3>
+          <p className="text-gray-600 mb-6 max-w-2xl mx-auto">
+            Help us enrich our festival calendar. Share details about Sanatan festivals important to your community.
+          </p>
+          <Button className="bg-orange-600 hover:bg-orange-700" asChild>
+            <Link href="/contact">Contribute Information</Link>
+          </Button>
+        </div>
+      </section>
     </div>
   )
 }

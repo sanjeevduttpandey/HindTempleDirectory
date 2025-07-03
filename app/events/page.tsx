@@ -18,7 +18,7 @@ const events = [
     time: "6:00 PM - 10:00 PM",
     location: "Auckland Town Hall",
     city: "Auckland",
-    organizer: "Auckland Hindu Society",
+    organizer: "Auckland Sanatan Society",
     attendees: 450,
     maxAttendees: 500,
     price: "Free",
@@ -33,9 +33,9 @@ const events = [
     title: "Hanuman Jayanti Celebration",
     date: "2024-11-15",
     time: "7:00 AM - 12:00 PM",
-    location: "Wellington Hindu Temple",
+    location: "Wellington Sanatan Mandir",
     city: "Wellington",
-    organizer: "Wellington Hindu Temple",
+    organizer: "Wellington Sanatan Mandir",
     attendees: 120,
     maxAttendees: 200,
     price: "Free",
@@ -50,7 +50,7 @@ const events = [
     time: "2:00 PM - 4:00 PM",
     location: "Christchurch Community Center",
     city: "Christchurch",
-    organizer: "Christchurch Hindu Mandir",
+    organizer: "Christchurch Sanatan Mandir Society",
     attendees: 25,
     maxAttendees: 40,
     price: "Free",
@@ -93,9 +93,9 @@ const events = [
     title: "Karthik Purnima Celebration",
     date: "2024-11-27",
     time: "6:30 PM - 9:00 PM",
-    location: "Dunedin Hindu Temple",
+    location: "Dunedin Sanatan Mandir",
     city: "Dunedin",
-    organizer: "Dunedin Hindu Temple",
+    organizer: "Dunedin Sanatan Mandir",
     attendees: 80,
     maxAttendees: 120,
     price: "Free",
@@ -137,6 +137,7 @@ export default function EventsPage() {
       }
     })
 
+  // Formats date to New Zealand locale
   const formatDate = (dateString: string) => {
     const date = new Date(dateString)
     return date.toLocaleDateString("en-NZ", {
@@ -166,10 +167,10 @@ export default function EventsPage() {
               <Link href="/" className="text-gray-700 hover:text-orange-600 font-medium">
                 Home
               </Link>
-              <Link href="/temples" className="text-gray-700 hover:text-orange-600 font-medium">
-                Temples
+              <Link href="/temples" className="text-orange-600 font-medium">
+                Mandirs
               </Link>
-              <Link href="/events" className="text-orange-600 font-medium">
+              <Link href="/events" className="text-gray-700 hover:text-orange-600 font-medium">
                 Events
               </Link>
               <Link href="/community" className="text-gray-700 hover:text-orange-600 font-medium">
@@ -185,7 +186,7 @@ export default function EventsPage() {
         <div className="container mx-auto text-center">
           <h2 className="text-4xl font-bold mb-4">Community Events</h2>
           <p className="text-xl mb-8 opacity-90">
-            Discover and join Hindu cultural events, festivals, and gatherings across New Zealand
+            Discover and join Sanatan cultural events, festivals, and gatherings across New Zealand
           </p>
           <div className="max-w-2xl mx-auto">
             <div className="flex flex-col sm:flex-row gap-4">
@@ -316,7 +317,7 @@ export default function EventsPage() {
                     <Button size="sm" className="flex-1 bg-orange-600 hover:bg-orange-700" asChild>
                       <Link href={`/events/${event.id}/register`}>Register</Link>
                     </Button>
-                    <Button size="sm" variant="outline" className="flex-1" asChild>
+                    <Button size="sm" variant="outline" className="flex-1 bg-transparent" asChild>
                       <Link href={`/events/${event.id}`}>Learn More</Link>
                     </Button>
                   </div>
@@ -352,7 +353,7 @@ export default function EventsPage() {
         <div className="container mx-auto text-center">
           <h3 className="text-2xl font-bold text-gray-900 mb-4">Organizing an event?</h3>
           <p className="text-gray-600 mb-6 max-w-2xl mx-auto">
-            Share your Hindu cultural events, festivals, or community gatherings with the wider community. Help bring
+            Share your Sanatan cultural events, festivals, or community gatherings with the wider community. Help bring
             people together through shared celebrations and learning.
           </p>
           <Button className="bg-orange-600 hover:bg-orange-700" asChild>

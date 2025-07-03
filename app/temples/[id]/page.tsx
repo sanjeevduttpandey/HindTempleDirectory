@@ -9,7 +9,7 @@ import Link from "next/link"
 import Image from "next/image"
 import { useParams } from "next/navigation"
 
-// Complete temple data with all temples
+// Complete mandir data with all mandirs
 const templeData = {
   1: {
     id: 1,
@@ -27,7 +27,7 @@ const templeData = {
       "/images/shri-sanatan-dharm-mandir-auckland.jpg",
     ],
     description:
-      "One of the largest and most prominent Hindu temples in New Zealand, Shri Sanatan Dharm Mandir has been serving the Auckland Hindu community since 1992. The temple is dedicated to multiple deities and hosts regular religious ceremonies, cultural events, and community gatherings.",
+      "One of the largest and most prominent Sanatan Mandir in New Zealand, Shri Sanatan Dharm Mandir has been serving the Auckland Sanatan community since 1992. The Mandir is dedicated to multiple deities and hosts regular religious ceremonies, cultural events, and community gatherings.",
     timings: "6:00 AM - 8:00 PM",
     deity: "Multi-deity",
     established: 1992,
@@ -74,11 +74,11 @@ const templeData = {
       },
     ],
     history:
-      "Established in 1992 by the Auckland Hindu community, this temple has grown to become a central hub for Hindu religious and cultural activities in New Zealand. The temple was built with donations from the community and continues to serve as a place of worship, learning, and cultural preservation.",
+      "Established in 1992 by the Auckland Sanatan community, this Mandir has grown to become a central hub for Sanatan religious and cultural activities in New Zealand. The Mandir was built with donations from the community and continues to serve as a place of worship, learning, and cultural preservation.",
   },
   2: {
     id: 2,
-    name: "Kurinchi Kumaran Temple",
+    name: "Kurinchi Kumaran Mandir",
     city: "Wellington",
     address: "3 Batchelor Street, Newlands, Wellington 6037",
     phone: "+64 4 477 4346",
@@ -92,7 +92,7 @@ const templeData = {
       "/images/kurinchi-kumaran-temple.jpg",
     ],
     description:
-      "Kurinchi Kumaran Temple is dedicated to Lord Murugan/Kumaran, serving the Wellington Hindu community with devotion and cultural programs. The temple is known for its peaceful atmosphere and regular spiritual activities.",
+      "Kurinchi Kumaran Mandir is dedicated to Lord Murugan/Kumaran, serving the Wellington Sanatan community with devotion and cultural programs. The Mandir is known for its peaceful atmosphere and regular spiritual activities.",
     timings: "6:00 AM - 8:00 PM",
     deity: "Murugan",
     established: 1995,
@@ -141,7 +141,7 @@ const templeData = {
       },
     ],
     history:
-      "Established in 1995, Kurinchi Kumaran Temple Wellington has been a spiritual haven for Murugan devotees in the capital city. The temple was founded by dedicated devotees who wanted to create a space for Tamil Hindu worship and cultural preservation in Wellington.",
+      "Established in 1995, Kurinchi Kumaran Mandir Wellington has been a spiritual haven for Murugan devotees in the capital city. The Mandir was founded by dedicated devotees who wanted to create a space for Tamil Sanatan worship and cultural preservation in Wellington.",
   },
   3: {
     id: 3,
@@ -159,7 +159,7 @@ const templeData = {
       "/images/wellington-indian-association.jpg",
     ],
     description:
-      "Wellington Indian Association is Wellington's premier Indian cultural organization, promoting Indian heritage, culture, and community activities. Established in 1950, WIA has been the cornerstone of Indian cultural preservation in Wellington.",
+      "Wellington's premier Indian cultural organization, promoting Indian heritage, culture, and community activities. Established in 1950, WIA has been the cornerstone of Indian cultural preservation in Wellington.",
     timings: "Office Hours: 9:00 AM - 5:00 PM, Events: Variable",
     deity: "Cultural Center",
     established: 1950,
@@ -212,7 +212,7 @@ const templeData = {
   },
   4: {
     id: 4,
-    name: "Shri Vishwa Vinayak Temple",
+    name: "Shri Vishwa Vinayak Mandir",
     city: "Wellington",
     address: "23 Hanson Street, Newtown, Wellington 6021",
     phone: "+64 4 389 4397",
@@ -226,7 +226,7 @@ const templeData = {
       "/images/vishwa-vinayak-temple.jpg",
     ],
     description:
-      "Shri Vishwa Vinayak Temple is a peaceful sanctuary dedicated to Lord Ganesha, hosting regular pujas and cultural events in Wellington. The temple serves as a spiritual center for Ganesha devotees and the broader Hindu community.",
+      "Shri Vishwa Vinayak Mandir is a peaceful sanctuary dedicated to Lord Ganesha, hosting regular pujas and cultural events in Wellington. The Mandir serves as a spiritual center for Ganesha devotees and the broader Sanatan community.",
     timings: "6:30 AM - 8:00 PM",
     deity: "Ganesha",
     established: 1998,
@@ -275,7 +275,7 @@ const templeData = {
       },
     ],
     history:
-      "Established in 1998, Shri Vishwa Vinayak Temple was founded by devotees of Lord Ganesha who wanted to create a dedicated space for Ganesha worship in Wellington. The temple has grown to become an important spiritual center for the Hindu community.",
+      "Established in 1998, Shri Vishwa Vinayak Mandir was founded by devotees of Lord Ganesha who wanted to create a dedicated space for Ganesha worship in Wellington. The Mandir has grown to become an important spiritual center for the Sanatan community.",
   },
   5: {
     id: 5,
@@ -289,7 +289,7 @@ const templeData = {
     reviews: 134,
     images: ["/images/iskcon-wellington.jpg", "/images/iskcon-wellington.jpg", "/images/iskcon-wellington.jpg"],
     description:
-      "ISKCON Wellington is part of the International Society for Krishna Consciousness, promoting Krishna consciousness through spiritual practices, community service, and cultural programs. The temple offers a complete spiritual experience with daily programs and festivals.",
+      "ISKCON Wellington is part of the International Society for Krishna Consciousness, promoting Krishna consciousness through spiritual practices, community service, and cultural programs. The Mandir offers a complete spiritual experience with daily programs and festivals.",
     timings: "4:30 AM - 9:00 PM",
     deity: "Krishna",
     established: 1975,
@@ -309,7 +309,7 @@ const templeData = {
       "Cultural Programs",
     ],
     facilities: [
-      "Temple Hall",
+      "Mandir Hall",
       "Prasadam Hall",
       "Kitchen Facilities",
       "Bookstore",
@@ -338,7 +338,7 @@ const templeData = {
       },
     ],
     history:
-      "ISKCON Wellington was established in 1975 as part of the global ISKCON movement founded by A.C. Bhaktivedanta Swami Prabhupada. The temple has been spreading Krishna consciousness in Wellington for nearly five decades, serving both the Indian community and local New Zealanders interested in Vedic culture and spirituality.",
+      "ISKCON Wellington was established in 1975 as part of the global ISKCON movement founded by A.C. Bhaktivedanta Swami Prabhupada. The Mandir has been spreading Krishna consciousness in Wellington for nearly five decades, serving both the Indian community and local New Zealanders interested in Vedic culture and spirituality.",
   },
   6: {
     id: 6,
@@ -352,7 +352,7 @@ const templeData = {
     reviews: 156,
     images: ["/images/baps-christchurch.jpg", "/images/baps-christchurch.jpg", "/images/baps-christchurch.jpg"],
     description:
-      "BAPS Shri Swaminarayan Mandir is a magnificent temple serving the Wellington community with traditional Swaminarayan worship, cultural programs, and spiritual guidance. The temple follows the BAPS tradition and offers comprehensive spiritual and cultural activities.",
+      "BAPS Shri Swaminarayan Mandir is a magnificent Mandir serving the Wellington community with traditional Swaminarayan worship, cultural programs, and spiritual guidance. The Mandir follows the BAPS tradition and offers comprehensive spiritual and cultural activities.",
     timings: "6:00 AM - 8:30 PM",
     deity: "Swaminarayan",
     established: 2008,
@@ -403,11 +403,11 @@ const templeData = {
       },
     ],
     history:
-      "BAPS Shri Swaminarayan Mandir Wellington was established in 2008 as part of the global BAPS organization. The temple serves the Swaminarayan community in Wellington and promotes the teachings of Bhagwan Swaminarayan through spiritual activities, cultural programs, and community service.",
+      "BAPS Shri Swaminarayan Mandir Wellington was established in 2008 as part of the global BAPS organization. The Mandir serves the Swaminarayan community in Wellington and promotes the teachings of Bhagwan Swaminarayan through spiritual activities, cultural programs, and community service.",
   },
   7: {
     id: 7,
-    name: "Hindu Temple Society of Canterbury",
+    name: "Sanatan Mandir Society of Canterbury",
     city: "Christchurch",
     address: "20 Ombersley Terrace, Opawa, Christchurch 8023",
     phone: "+64 3 332 1952",
@@ -421,7 +421,7 @@ const templeData = {
       "/images/hindu-temple-society-canterbury.jpg",
     ],
     description:
-      "The main Hindu temple in Christchurch, serving the Canterbury region with traditional worship and cultural programs. This temple has been a cornerstone of the Hindu community in the South Island.",
+      "The main Sanatan Mandir in Christchurch, serving the Canterbury region with traditional worship and cultural programs. This Mandir has been a cornerstone of the Sanatan community in the South Island.",
     timings: "6:30 AM - 8:00 PM",
     deity: "Multi-deity",
     established: 2010,
@@ -468,11 +468,11 @@ const templeData = {
       },
     ],
     history:
-      "Established in 2010, the Hindu Temple Society of Canterbury has served as the main Hindu temple for the Christchurch and Canterbury region. The temple was built with community support and continues to be a vital center for Hindu worship and cultural activities in the South Island.",
+      "Established in 2010, the Sanatan Mandir Society of Canterbury has served as the main Sanatan Mandir for the Christchurch and Canterbury region. The Mandir was built with community support and continues to be a vital center for Sanatan worship and cultural activities in the South Island.",
   },
   8: {
     id: 8,
-    name: "Hamilton Shiva Temple",
+    name: "Hamilton Shiva Mandir",
     city: "Hamilton",
     address: "12 Temple View Road, Hillcrest, Hamilton 3216",
     phone: "+64 7 855 4200",
@@ -486,7 +486,7 @@ const templeData = {
       "/images/hamilton-shiva-temple.jpg",
     ],
     description:
-      "Hamilton Shiva Temple is dedicated to Lord Shiva and serves the Waikato region with traditional worship and cultural programs. The temple is known for its peaceful atmosphere and strong community involvement.",
+      "Hamilton Shiva Mandir is dedicated to Lord Shiva and serves the Waikato region with traditional worship and cultural programs. The Mandir is known for its peaceful atmosphere and strong community involvement.",
     timings: "6:00 AM - 8:00 PM",
     deity: "Shiva",
     established: 2005,
@@ -537,11 +537,11 @@ const templeData = {
       },
     ],
     history:
-      "Hamilton Shiva Temple was established in 2005 to serve the Hindu community in the Waikato region. The temple is dedicated to Lord Shiva and has grown to become an important spiritual center for devotees in Hamilton and surrounding areas.",
+      "Hamilton Shiva Mandir was established in 2005 to serve the Sanatan community in the Waikato region. The Mandir is dedicated to Lord Shiva and has grown to become an important spiritual center for devotees in Hamilton and surrounding areas.",
   },
   10: {
     id: 10,
-    name: "Dunedin Hindu Temple",
+    name: "Dunedin Sanatan Mandir",
     city: "Dunedin",
     address: "156 Great King Street, North Dunedin, Dunedin 9016",
     phone: "+64 3 474 0800",
@@ -555,7 +555,7 @@ const templeData = {
       "/images/dunedin-hindu-temple.jpg",
     ],
     description:
-      "Dunedin Hindu Temple is the southernmost Hindu temple in New Zealand, serving the Otago region with traditional worship and cultural programs. The temple is dedicated to Goddess Durga and provides a spiritual home for the Hindu community in the South Island.",
+      "Dunedin Sanatan Mandir is the southernmost Sanatan Mandir in New Zealand, serving the Otago region with traditional worship and cultural programs. The Mandir is dedicated to Goddess Durga and provides a spiritual home for the Sanatan community in the South Island.",
     timings: "7:00 AM - 7:00 PM",
     deity: "Durga",
     established: 2008,
@@ -604,7 +604,7 @@ const templeData = {
       },
     ],
     history:
-      "Dunedin Hindu Temple was established in 2008 and holds the distinction of being the southernmost Hindu temple in New Zealand. The temple serves the Hindu community in Dunedin and the broader Otago region, providing traditional worship and cultural activities.",
+      "Dunedin Sanatan Mandir was established in 2008 and holds the distinction of being the southernmost Sanatan Mandir in New Zealand. The Mandir serves the Sanatan community in Dunedin and the broader Otago region, providing traditional worship and cultural activities.",
   },
   13: {
     id: 13,
@@ -622,7 +622,7 @@ const templeData = {
       "/images/bharatiya-mandir-auckland.jpg",
     ],
     description:
-      "One of Auckland's oldest Hindu temples, serving the community with traditional worship and cultural programs since 1987. The temple is known for its authentic religious practices and strong community involvement.",
+      "One of Auckland's oldest Sanatan Mandir, serving the community with traditional worship and cultural programs since 1987. The Mandir is known for its authentic religious practices and strong community involvement.",
     timings: "6:00 AM - 8:30 PM",
     deity: "Multi-deity",
     established: 1987,
@@ -661,7 +661,7 @@ const templeData = {
       },
     ],
     history:
-      "Established in 1987, Bharatiya Mandir is one of Auckland's oldest Hindu temples. It has been serving the community for over three decades, maintaining traditional Hindu practices while adapting to the needs of the New Zealand Hindu community.",
+      "Established in 1987, Bharatiya Mandir is one of Auckland's oldest Sanatan Mandir. It has been serving the community for over three decades, maintaining traditional Sanatan practices while adapting to the needs of the New Zealand Sanatan community.",
   },
   14: {
     id: 14,
@@ -679,7 +679,7 @@ const templeData = {
       "/images/thiru-subramaniyar-aalayam.jpg",
     ],
     description:
-      "A beautiful temple dedicated to Lord Murugan, serving the Tamil Hindu community in Auckland with traditional South Indian worship and cultural programs.",
+      "A beautiful Mandir dedicated to Lord Murugan, serving the Tamil Sanatan community in Auckland with traditional South Indian worship and cultural programs.",
     timings: "6:30 AM - 8:00 PM",
     deity: "Murugan",
     established: 1995,
@@ -715,11 +715,11 @@ const templeData = {
       },
     ],
     history:
-      "Established in 1995, Thiru Subramaniyar Aalayam has been serving the Tamil Hindu community in Auckland. The temple is dedicated to Lord Murugan and follows traditional South Indian temple practices.",
+      "Established in 1995, Thiru Subramaniyar Aalayam has been serving the Tamil Sanatan community in Auckland. The Mandir is dedicated to Lord Murugan and follows traditional South Indian Mandir practices.",
   },
   15: {
     id: 15,
-    name: "Auckland Sri Ganesh Temple",
+    name: "Auckland Sri Ganesh Mandir",
     city: "Auckland",
     address: "4 Dent Place, Papakura, Auckland",
     phone: "+64 9 298 4450",
@@ -733,7 +733,7 @@ const templeData = {
       "/images/auckland-sri-ganesh-temple.jpg",
     ],
     description:
-      "Established in 2002, this temple is dedicated to Lord Ganesha and has been developing with the grace of Lord Ganesha. The temple serves the South Auckland community with devotion and cultural programs.",
+      "Established in 2002, this Mandir is dedicated to Lord Ganesha and has been developing with the grace of Lord Ganesha. The Mandir serves the South Auckland community with devotion and cultural programs.",
     timings: "10:00 AM - 1:00 PM, 6:00 PM - 9:00 PM (Morning Arti at 11:30 AM, Evening Arti at 7:30 PM)",
     deity: "Ganesha",
     established: 2002,
@@ -769,11 +769,11 @@ const templeData = {
       },
     ],
     history:
-      "Auckland Sri Ganesh Temple was established in 2002 and has been growing with the blessings of Lord Ganesha. The temple serves the South Auckland Hindu community and is known for its peaceful atmosphere and regular spiritual activities.",
+      "Auckland Sri Ganesh Mandir was established in 2002 and has been growing with the blessings of Lord Ganesha. The Mandir serves the South Auckland Sanatan community and is known for its peaceful atmosphere and regular spiritual activities.",
   },
   16: {
     id: 16,
-    name: "NZ Thirumurugan Temple",
+    name: "NZ Thirumurugan Mandir",
     city: "Auckland",
     address: "21 Killarney Street, Takanini, Auckland 2112",
     phone: "+64 9 296 2000",
@@ -787,7 +787,7 @@ const templeData = {
       "/images/nz-thirumurugan-temple.jpg",
     ],
     description:
-      "A temple dedicated to Lord Murugan, offering traditional Tamil worship services and cultural programs for the Auckland Tamil community.",
+      "A Mandir dedicated to Lord Murugan, offering traditional Tamil worship services and cultural programs for the Auckland Tamil community.",
     timings: "6:00 AM - 8:00 PM",
     deity: "Murugan",
     established: 2004,
@@ -817,7 +817,7 @@ const templeData = {
       },
     ],
     history:
-      "NZ Thirumurugan Temple was established in 2004 to serve the Tamil Hindu community in Auckland. The temple is dedicated to Lord Murugan and provides traditional Tamil worship and cultural activities.",
+      "NZ Thirumurugan Mandir was established in 2004 to serve the Tamil Sanatan community in Auckland. The Mandir is dedicated to Lord Murugan and provides traditional Tamil worship and cultural activities.",
   },
   17: {
     id: 17,
@@ -835,7 +835,7 @@ const templeData = {
       "/images/isso-auckland-temple.jpg",
     ],
     description:
-      "A Swaminarayan temple serving the Auckland community with spiritual guidance and cultural activities following the ISSO tradition.",
+      "A Swaminarayan Mandir serving the Auckland community with spiritual guidance and cultural activities following the ISSO tradition.",
     timings: "6:30 AM - 8:30 PM",
     deity: "Swaminarayan",
     established: 2005,
@@ -865,7 +865,7 @@ const templeData = {
       },
     ],
     history:
-      "ISSO Auckland was established in 2005 as part of the International Swaminarayan Satsang Organisation. The temple serves the Swaminarayan community in Auckland with traditional worship and cultural programs.",
+      "ISSO Auckland was established in 2005 as part of the International Swaminarayan Satsang Organisation. The Mandir serves the Swaminarayan community in Auckland with traditional worship and cultural programs.",
   },
   18: {
     id: 18,
@@ -883,7 +883,7 @@ const templeData = {
       "/images/baps-auckland-avondale.jpg",
     ],
     description:
-      "A magnificent Swaminarayan temple in Avondale serving the Auckland community with traditional worship and cultural programs following the BAPS tradition.",
+      "A magnificent Swaminarayan Mandir in Avondale serving the Auckland community with traditional worship and cultural programs following the BAPS tradition.",
     timings: "6:00 AM - 8:30 PM",
     deity: "Swaminarayan",
     established: 2007,
@@ -921,11 +921,11 @@ const templeData = {
       },
     ],
     history:
-      "BAPS Shri Swaminarayan Mandir Avondale was established in 2007 as part of the global BAPS organization. The temple serves the Swaminarayan community in Auckland and promotes traditional Hindu values and culture.",
+      "BAPS Shri Swaminarayan Mandir Avondale was established in 2007 as part of the global BAPS organization. The Mandir serves the Swaminarayan community in Auckland and promotes traditional Sanatan values and culture.",
   },
   19: {
     id: 19,
-    name: "Shirdi Sai Baba Temple",
+    name: "Shirdi Sai Baba Mandir",
     city: "Auckland",
     address: "12 Princes Street, Onehunga, Auckland 1061",
     phone: "+64 9 636 5400",
@@ -939,7 +939,7 @@ const templeData = {
       "/images/shirdi-sai-baba-temple-auckland.jpg",
     ],
     description:
-      "A temple dedicated to Shirdi Sai Baba, offering spiritual guidance and community service to devotees in Auckland.",
+      "A Mandir dedicated to Shirdi Sai Baba, offering spiritual guidance and community service to devotees in Auckland.",
     timings: "7:00 AM - 8:00 PM",
     deity: "Sai Baba",
     established: 2003,
@@ -969,7 +969,7 @@ const templeData = {
       },
     ],
     history:
-      "Shirdi Sai Baba Temple Auckland was established in 2003 by devotees of Shirdi Sai Baba. The temple serves the Sai devotee community in Auckland with regular worship and community service activities.",
+      "Shirdi Sai Baba Mandir Auckland was established in 2003 by devotees of Shirdi Sai Baba. The Mandir serves the Sai devotee community in Auckland with regular worship and community service activities.",
   },
   20: {
     id: 20,
@@ -987,7 +987,7 @@ const templeData = {
       "/images/sanatan-dharam-hanuman-mandir.jpg",
     ],
     description:
-      "A temple dedicated to Lord Hanuman, offering traditional worship and spiritual activities for the Auckland Hindu community.",
+      "A Mandir dedicated to Lord Hanuman, offering traditional worship and spiritual activities for the Auckland Sanatan community.",
     timings: "6:30 AM - 8:00 PM",
     deity: "Hanuman",
     established: 2000,
@@ -1017,7 +1017,7 @@ const templeData = {
       },
     ],
     history:
-      "Sanatan Dharam Hanuman Mandir was established in 2000 and is dedicated to Lord Hanuman. The temple serves the Auckland Hindu community with traditional Hanuman worship and spiritual activities.",
+      "Sanatan Dharam Hanuman Mandir was established in 2000 and is dedicated to Lord Hanuman. The Mandir serves the Auckland Sanatan community with traditional Hanuman worship and spiritual activities.",
   },
   21: {
     id: 21,
@@ -1035,7 +1035,7 @@ const templeData = {
       "/images/shri-ram-mandir-henderson.jpg",
     ],
     description:
-      "A temple dedicated to Lord Ram, serving the West Auckland community with traditional worship and cultural programs.",
+      "A Mandir dedicated to Lord Ram, serving the West Auckland community with traditional worship and cultural programs.",
     timings: "6:00 AM - 8:00 PM",
     deity: "Rama",
     established: 2001,
@@ -1065,7 +1065,7 @@ const templeData = {
       },
     ],
     history:
-      "Shri Ram Mandir Henderson was established in 2001 to serve the West Auckland Hindu community. The temple is dedicated to Lord Ram and provides traditional worship and cultural activities.",
+      "Shri Ram Mandir Henderson was established in 2001 to serve the West Auckland Sanatan community. The Mandir is dedicated to Lord Ram and provides traditional worship and cultural activities.",
   },
   22: {
     id: 22,
@@ -1127,7 +1127,7 @@ const templeData = {
     reviews: 78,
     images: ["/images/baps-christchurch.jpg", "/images/baps-christchurch.jpg", "/images/baps-christchurch.jpg"],
     description:
-      "A beautiful Swaminarayan temple serving the Christchurch community with traditional worship and spiritual guidance following the BAPS tradition.",
+      "A beautiful Swaminarayan Mandir serving the Christchurch community with traditional worship and spiritual guidance following the BAPS tradition.",
     timings: "7:00 AM - 8:00 PM (Daily Arti at 7:00 AM & 7:00 PM)",
     deity: "Swaminarayan",
     established: 2012,
@@ -1159,56 +1159,7 @@ const templeData = {
       },
     ],
     history:
-      "BAPS Shri Swaminarayan Mandir Christchurch was established in 2012 as part of the global BAPS organization. The temple serves the Swaminarayan community in Christchurch and the Canterbury region.",
-  },
-  24: {
-    id: 24,
-    name: "Sri Guru Tegh Bahadur Sahib Ji Gurdwara",
-    city: "Christchurch",
-    address: "79 Mackenzie Avenue, Woolston, Christchurch 8023",
-    phone: "+64 3 389 5000",
-    email: "info@sgtc.org.nz",
-    website: "https://www.sgtc.org.nz/",
-    rating: 4.7,
-    reviews: 65,
-    images: [
-      "/images/sri-guru-tegh-bahadur-gurdwara.jpg",
-      "/images/sri-guru-tegh-bahadur-gurdwara.jpg",
-      "/images/sri-guru-tegh-bahadur-gurdwara.jpg",
-    ],
-    description:
-      "A Sikh Gurdwara serving the Christchurch community with spiritual guidance and langar (community kitchen), promoting Sikh values and community service.",
-    timings: "5:00 AM - 9:00 PM",
-    deity: "Sikh Gurdwara",
-    established: 2005,
-    featured: false,
-    services: [
-      "Sikh Worship",
-      "Langar Service",
-      "Community Support",
-      "Cultural Programs",
-      "Religious Education",
-      "Youth Programs",
-    ],
-    facilities: [
-      "Prayer Hall",
-      "Langar Hall",
-      "Kitchen Facilities",
-      "Library",
-      "Parking Available",
-      "Audio/Visual Equipment",
-      "Shoe Storage",
-      "Restrooms",
-    ],
-    upcomingEvents: [
-      {
-        title: "Guru Nanak Jayanti",
-        date: "2024-11-29",
-        time: "6:00 AM",
-      },
-    ],
-    history:
-      "Sri Guru Tegh Bahadur Sahib Ji Gurdwara was established in 2005 to serve the Sikh community in Christchurch. The Gurdwara provides spiritual guidance and community service through langar and other programs.",
+      "BAPS Shri Swaminarayan Mandir Christchurch was established in 2012 as part of the global BAPS organization. The Mandir serves the Swaminarayan community in Christchurch and the Canterbury region.",
   },
   25: {
     id: 25,
@@ -1222,7 +1173,7 @@ const templeData = {
     reviews: 72,
     images: ["/images/iskcon-christchurch.jpg", "/images/iskcon-christchurch.jpg", "/images/iskcon-christchurch.jpg"],
     description:
-      "International Society for Krishna Consciousness temple promoting Krishna consciousness through spiritual practices and community service in Christchurch.",
+      "International Society for Krishna Consciousness Mandir promoting Krishna consciousness through spiritual practices and community service in Christchurch.",
     timings: "5:00 AM - 8:30 PM",
     deity: "Krishna",
     established: 1980,
@@ -1236,7 +1187,7 @@ const templeData = {
       "Community Service",
     ],
     facilities: [
-      "Temple Hall",
+      "Mandir Hall",
       "Prasadam Hall",
       "Kitchen Facilities",
       "Bookstore",
@@ -1253,7 +1204,7 @@ const templeData = {
       },
     ],
     history:
-      "ISKCON Christchurch was established in 1980 as part of the global ISKCON movement. The temple has been serving the Christchurch community for over four decades, promoting Krishna consciousness and Vedic culture.",
+      "ISKCON Christchurch was established in 1980 as part of the global ISKCON movement. The Mandir has been serving the Christchurch community for over four decades, promoting Krishna consciousness and Vedic culture.",
   },
 }
 
@@ -1267,10 +1218,10 @@ export default function TempleDetailPage() {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <Card className="w-full max-w-md text-center">
           <CardContent className="pt-6">
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">Temple Not Found</h2>
-            <p className="text-gray-600 mb-6">The temple you're looking for doesn't exist or has been removed.</p>
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">Mandir Not Found</h2>
+            <p className="text-gray-600 mb-6">The Mandir you're looking for doesn't exist or has been removed.</p>
             <Button asChild className="bg-orange-600 hover:bg-orange-700">
-              <Link href="/temples">Browse All Temples</Link>
+              <Link href="/temples">Browse All Mandirs</Link>
             </Button>
           </CardContent>
         </Card>
@@ -1289,7 +1240,7 @@ export default function TempleDetailPage() {
             </div>
             <div>
               <h1 className="text-xl font-bold text-gray-900">Sanatan New Zealand</h1>
-              <p className="text-sm text-gray-600">Temple Details</p>
+              <p className="text-sm text-gray-600">Mandir Details</p>
             </div>
           </Link>
         </div>
@@ -1303,7 +1254,7 @@ export default function TempleDetailPage() {
             <div className="space-y-4">
               <div className="relative h-80 rounded-lg overflow-hidden">
                 <Image src={temple.images[0] || "/placeholder.svg"} alt={temple.name} fill className="object-cover" />
-                {temple.featured && <Badge className="absolute top-4 left-4 bg-orange-600">Featured Temple</Badge>}
+                {temple.featured && <Badge className="absolute top-4 left-4 bg-orange-600">Featured Mandir</Badge>}
               </div>
               <div className="grid grid-cols-2 gap-4">
                 {temple.images.slice(1).map((image, index) => (
@@ -1319,7 +1270,7 @@ export default function TempleDetailPage() {
               </div>
             </div>
 
-            {/* Temple Info */}
+            {/* Mandir Info */}
             <div className="space-y-6">
               <div>
                 <div className="flex items-center justify-between mb-2">
@@ -1393,7 +1344,7 @@ export default function TempleDetailPage() {
                 <Button variant="outline" asChild>
                   <Link href={`tel:${temple.phone}`}>
                     <Phone className="mr-2 h-4 w-4" />
-                    Call Temple
+                    Call Mandir
                   </Link>
                 </Button>
               </div>
@@ -1408,7 +1359,7 @@ export default function TempleDetailPage() {
               <Card>
                 <CardHeader>
                   <CardTitle>Services Offered</CardTitle>
-                  <CardDescription>Religious and cultural services available at this temple</CardDescription>
+                  <CardDescription>Religious and cultural services available at this Mandir</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="grid grid-cols-2 gap-3">
@@ -1475,7 +1426,7 @@ export default function TempleDetailPage() {
                       </p>
                     </div>
                   ))}
-                  <Button variant="outline" className="w-full" asChild>
+                  <Button variant="outline" className="w-full bg-transparent" asChild>
                     <Link href="/events">View All Events</Link>
                   </Button>
                 </CardContent>
@@ -1487,15 +1438,15 @@ export default function TempleDetailPage() {
                   <CardTitle>Quick Actions</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-3">
-                  <Button variant="outline" className="w-full justify-start">
+                  <Button variant="outline" className="w-full justify-start bg-transparent">
                     <Users className="mr-2 h-4 w-4" />
-                    Join Temple Community
+                    Join Mandir Community
                   </Button>
-                  <Button variant="outline" className="w-full justify-start">
+                  <Button variant="outline" className="w-full justify-start bg-transparent">
                     <Calendar className="mr-2 h-4 w-4" />
                     Book Event Space
                   </Button>
-                  <Button variant="outline" className="w-full justify-start">
+                  <Button variant="outline" className="w-full justify-start bg-transparent">
                     <Heart className="mr-2 h-4 w-4" />
                     Make Donation
                   </Button>

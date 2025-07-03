@@ -27,7 +27,7 @@ const wellingtonTemples = [
   },
   {
     id: 2,
-    name: "Kurinchi Kumaran Temple",
+    name: "Kurinchi Kumaran Mandir",
     address: "3 Batchelor Street, Newlands, Wellington",
     phone: "+64 4 477 4346",
     website: "https://www.kktemplewellington.org.nz/",
@@ -35,7 +35,7 @@ const wellingtonTemples = [
     reviews: 95,
     image: "/images/kurinchi-kumaran-temple-ceremony.jpg",
     description:
-      "A beautiful temple dedicated to Lord Murugan, serving Wellington's Tamil Hindu community with devotion and cultural programs.",
+      "A beautiful Mandir dedicated to Lord Murugan, serving Wellington's Tamil Sanatan community with devotion and cultural programs.",
     timings: "6:00 AM - 8:00 PM",
     deity: "Murugan",
     established: 1995,
@@ -52,7 +52,7 @@ const wellingtonTemples = [
     reviews: 156,
     image: "/images/baps-wellington-interior.jpg",
     description:
-      "A magnificent Swaminarayan temple serving the Wellington community with traditional worship, cultural programs, and spiritual guidance following the BAPS tradition.",
+      "A magnificent Swaminarayan Mandir serving the Wellington community with traditional worship, cultural programs, and spiritual guidance following the BAPS tradition.",
     timings: "6:00 AM - 8:30 PM",
     deity: "Swaminarayan",
     established: 2008,
@@ -61,7 +61,7 @@ const wellingtonTemples = [
   },
   {
     id: 4,
-    name: "Shri Vishwa Vinayak Temple",
+    name: "Shri Vishwa Vinayak Mandir",
     address: "23 Hanson Street, Newtown, Wellington 6021",
     phone: "+64 4 389 4397",
     website: "https://www.svwt.org.nz/",
@@ -106,7 +106,7 @@ export default function WellingtonTemplesPage() {
             </div>
             <div>
               <h1 className="text-xl font-bold text-gray-900">Sanatan New Zealand</h1>
-              <p className="text-sm text-gray-600">Wellington Hindu Temples</p>
+              <p className="text-sm text-gray-600">Wellington Sanatan Mandir</p>
             </div>
           </Link>
         </div>
@@ -115,7 +115,7 @@ export default function WellingtonTemplesPage() {
       {/* Hero Section */}
       <section className="py-16 px-4 bg-gradient-to-r from-orange-600 to-red-600 text-white">
         <div className="container mx-auto text-center">
-          <h2 className="text-4xl font-bold mb-4">Hindu Temples in Wellington</h2>
+          <h2 className="text-4xl font-bold mb-4">Sanatan Mandir in Wellington</h2>
           <p className="text-xl mb-8 opacity-90">
             Discover sacred spaces and cultural centers in New Zealand's capital city
           </p>
@@ -123,13 +123,13 @@ export default function WellingtonTemplesPage() {
             <Button size="lg" className="bg-white text-orange-600 hover:bg-gray-100" asChild>
               <Link href="/temples">
                 <MapPin className="mr-2 h-5 w-5" />
-                All Temples
+                All Mandirs
               </Link>
             </Button>
             <Button
               size="lg"
               variant="outline"
-              className="border-white text-white hover:bg-white hover:text-orange-600"
+              className="border-white text-white hover:bg-white hover:text-orange-600 bg-transparent"
               asChild
             >
               <Link href="/events?city=Wellington">
@@ -144,24 +144,26 @@ export default function WellingtonTemplesPage() {
       {/* Wellington Overview */}
       <section className="py-12 px-4 bg-white">
         <div className="container mx-auto max-w-4xl text-center">
-          <h3 className="text-2xl font-bold text-gray-900 mb-4">Wellington's Hindu Community</h3>
+          <h3 className="text-2xl font-bold text-gray-900 mb-4">Wellington's Sanatan Community</h3>
           <p className="text-gray-600 leading-relaxed">
-            Wellington, New Zealand's capital city, hosts a vibrant Hindu community with several temples and cultural
+            Wellington, New Zealand's capital city, hosts a vibrant Sanatan community with several Mandir and cultural
             centers. These institutions serve as spiritual sanctuaries and community hubs, bringing together devotees
             from various traditions. From the historic Wellington Indian Association to the beautiful Kurinchi Kumaran
-            Temple, Wellington offers diverse spiritual and cultural experiences for the Hindu community.
+            Mandir, Wellington offers diverse spiritual and cultural experiences for the Sanatan community.
           </p>
         </div>
       </section>
 
-      {/* Temples Grid */}
+      {/* Mandir Grid */}
       <section className="py-12 px-4">
         <div className="container mx-auto">
           <div className="mb-8">
             <h3 className="text-2xl font-bold text-gray-900 mb-2">
-              {wellingtonTemples.length} Hindu Temples & Cultural Centers
+              {wellingtonTemples.length} Sanatan Mandir & Cultural Centers
             </h3>
-            <p className="text-gray-600">Serving the Wellington Hindu community with devotion and cultural programs</p>
+            <p className="text-gray-600">
+              Serving the Wellington Sanatan community with devotion and cultural programs
+            </p>
           </div>
 
           <div className="grid lg:grid-cols-2 gap-8">
@@ -237,7 +239,7 @@ export default function WellingtonTemplesPage() {
                     <Button size="sm" className="flex-1 bg-orange-600 hover:bg-orange-700" asChild>
                       <Link href={`/temples/${temple.id}`}>View Details</Link>
                     </Button>
-                    <Button size="sm" variant="outline" className="flex-1" asChild>
+                    <Button size="sm" variant="outline" className="flex-1 bg-transparent" asChild>
                       <Link href={`https://maps.google.com/?q=${encodeURIComponent(temple.address)}`} target="_blank">
                         Directions
                       </Link>
@@ -322,9 +324,9 @@ export default function WellingtonTemplesPage() {
       {/* Call to Action */}
       <section className="py-12 px-4 bg-white">
         <div className="container mx-auto text-center">
-          <h3 className="text-2xl font-bold text-gray-900 mb-4">Connect with Wellington's Hindu Community</h3>
+          <h3 className="text-2xl font-bold text-gray-900 mb-4">Connect with Wellington's Sanatan Community</h3>
           <p className="text-gray-600 mb-8 max-w-2xl mx-auto">
-            Whether you're new to Wellington or looking to deepen your spiritual practice, our temples and cultural
+            Whether you're new to Wellington or looking to deepen your spiritual practice, our Mandir and cultural
             centers welcome you with open arms. Join us for worship, festivals, and community activities.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">

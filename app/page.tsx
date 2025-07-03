@@ -20,7 +20,7 @@ import {
 } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
-import HinduTimeWidget from "@/components/hindu-time-widget"
+import SanatanTimeWidget from "@/components/sanatan-time-widget"
 
 export default function HomePage() {
   const featuredTemples = [
@@ -100,7 +100,7 @@ export default function HomePage() {
                 <h1 className="text-xl font-bold bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent">
                   Sanatan New Zealand
                 </h1>
-                <p className="text-sm text-gray-600">Hindu Community Platform</p>
+                <p className="text-sm text-gray-600">Sanatan Community Platform</p>
               </div>
             </Link>
 
@@ -140,7 +140,7 @@ export default function HomePage() {
         <div className="container mx-auto text-center relative z-10">
           <div className="inline-flex items-center gap-2 bg-white/80 backdrop-blur-sm px-4 py-2 rounded-full border border-orange-200 mb-6">
             <Sparkles className="h-4 w-4 text-orange-600" />
-            <span className="text-sm font-medium text-orange-800">Welcome to New Zealand's Hindu Community</span>
+            <span className="text-sm font-medium text-orange-800">Welcome to New Zealand's Sanatan Community</span>
           </div>
 
           <h1 className="text-6xl md:text-7xl font-bold mb-6">
@@ -183,7 +183,7 @@ export default function HomePage() {
           {/* Quick Stats */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto">
             {[
-              { number: "50+", label: "Hindu Temples", icon: Building2 },
+              { number: "50+", label: "Sanatan Temples", icon: Building2 },
               { number: "200+", label: "Monthly Events", icon: Calendar },
               { number: "5000+", label: "Community Members", icon: Users },
               { number: "15+", label: "Cities Covered", icon: MapPin },
@@ -207,17 +207,17 @@ export default function HomePage() {
           <div className="text-center mb-12">
             <div className="inline-flex items-center gap-2 bg-amber-100 px-4 py-2 rounded-full border border-amber-200 mb-4">
               <Clock className="h-4 w-4 text-amber-700" />
-              <span className="text-sm font-medium text-amber-800">Live Hindu Calendar</span>
+              <span className="text-sm font-medium text-amber-800">Live Sanatan Calendar</span>
             </div>
             <h2 className="text-4xl font-bold text-gray-900 mb-4">आज का पंचांग - Today's Panchang</h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Stay connected with Hindu time and auspicious moments. Access live panchang data, muhurat timings, and
+              Stay connected with Sanatan time and auspicious moments. Access live panchang data, muhurat timings, and
               spiritual guidance for your daily practices.
             </p>
           </div>
 
           <div className="flex justify-center mb-8">
-            <HinduTimeWidget />
+            <SanatanTimeWidget />
           </div>
 
           <div className="text-center">
@@ -241,7 +241,7 @@ export default function HomePage() {
             </div>
             <h2 className="text-4xl font-bold text-gray-900 mb-4">Featured Temples</h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Discover beautiful Hindu temples across New Zealand, each offering unique spiritual experiences and
+              Discover beautiful Sanatan temples across New Zealand, each offering unique spiritual experiences and
               vibrant community programs.
             </p>
           </div>
@@ -401,7 +401,7 @@ export default function HomePage() {
               {
                 icon: Building2,
                 title: "Temple Directory",
-                description: "Find Hindu temples across all major cities in New Zealand with detailed information",
+                description: "Find Sanatan temples across all major cities in New Zealand with detailed information",
                 color: "from-orange-500 to-red-500",
               },
               {
@@ -419,7 +419,7 @@ export default function HomePage() {
               {
                 icon: BookOpen,
                 title: "Spiritual Tools",
-                description: "Access panchang, Hindu calendar, mantras, and other spiritual resources daily",
+                description: "Access panchang, Sanatan calendar, mantras, and other spiritual resources daily",
                 color: "from-orange-500 to-amber-500",
               },
             ].map((feature, index) => (
@@ -495,7 +495,7 @@ export default function HomePage() {
                 <span className="text-2xl font-bold">Sanatan NZ</span>
               </div>
               <p className="text-gray-400 leading-relaxed mb-4">
-                Connecting the Hindu community across New Zealand through dharma, culture, and unity.
+                Connecting the Sanatan community across New Zealand through dharma, culture, and unity.
               </p>
               <div className="text-sm text-gray-500">Serving the community since 2020</div>
             </div>

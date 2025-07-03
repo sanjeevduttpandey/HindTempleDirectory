@@ -28,6 +28,7 @@ const businessCategories = [
   "Travel & Tourism",
   "Religious Items",
   "Event Services",
+  "IT",
   "Other",
 ]
 
