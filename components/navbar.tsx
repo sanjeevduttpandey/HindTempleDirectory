@@ -43,6 +43,13 @@ const Navbar = () => {
             </div>
           </div>
 
+          {/* Changed "Temples" to "Mandirs" */}
+          <div className="relative group">
+            <Link href="/temples" className="text-gray-300 hover:text-white">
+              Mandirs
+            </Link>
+          </div>
+
           <div className="relative group">
             <button className="text-gray-300 hover:text-white">Spiritual Tools</button>
             <div className="absolute hidden group-hover:block bg-gray-700 text-white py-2 rounded shadow-lg mt-2 w-48">
