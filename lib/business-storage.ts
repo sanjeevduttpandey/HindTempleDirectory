@@ -1,21 +1,3 @@
-import { unstable_noStore as noStore } from "next/cache"
-import { sql } from "@vercel/postgres"
-
-/**
- * Shape of a business record returned to the front-end.
- * (Matches what our SQL SELECT query fetches.)
- */
-export interface Business {
-  id: string
-  name: string
-  description: string
-  logoUrl: string | null
-  website: string | null
-  phone: string | null
-  email: string | null
-  address: string | null
-}
-
 interface BusinessSubmission {
   id: string
   businessName: string
@@ -34,8 +16,6 @@ interface BusinessSubmission {
     facebook?: string
     instagram?: string
     twitter?: string
-    linkedin?: string
-    website?: string
   }
   operatingHours?: string
   specialOffers?: string
@@ -44,7 +24,7 @@ interface BusinessSubmission {
   reviewedAt?: string
   reviewNotes?: string
   rating?: number
-  images?: string[]
+  images?: string[] // Array of image URLs/data URLs
 }
 
 interface ApprovedBusiness extends BusinessSubmission {
@@ -53,269 +33,100 @@ interface ApprovedBusiness extends BusinessSubmission {
   approvedAt: string
 }
 
-export async function addBusinessSubmission(
+// In-memory storage (replace with database in production)
+const businessSubmissions: BusinessSubmission[] = []
+const approvedBusinesses: ApprovedBusiness[] = []
+
+export function addBusinessSubmission(
   submission: Omit<BusinessSubmission, "id" | "submittedAt" | "status">,
-): Promise<BusinessSubmission> {
-  const sqlInstance = sql()
-
-  const result = await sqlInstance`
-    INSERT INTO business_submissions (
-      business_name, category, description, address, city, phone, email, website,
-      owner_name, owner_email, owner_phone, services, social_media, 
-      operating_hours, special_offers, status, submitted_at, images
-    )
-    VALUES (
-      ${submission.businessName},
-      ${submission.category},
-      ${submission.description},
-      ${submission.address},
-      ${submission.city},
-      ${submission.phone},
-      ${submission.email},
-      ${submission.website || ""},
-      ${submission.ownerName},
-      ${submission.ownerEmail},
-      ${submission.ownerPhone},
-      ${JSON.stringify(submission.services)},
-      ${JSON.stringify(submission.socialMedia)},
-      ${submission.operatingHours || ""},
-      ${submission.specialOffers || ""},
-      'pending',
-      NOW(),
-      ${JSON.stringify(submission.images || [])}
-    )
-    RETURNING id, business_name as "businessName", category, description, 
-              address, city, phone, email, website, owner_name as "ownerName",
-              owner_email as "ownerEmail", owner_phone as "ownerPhone",
-              services, social_media as "socialMedia", operating_hours as "operatingHours",
-              special_offers as "specialOffers", status, submitted_at as "submittedAt",
-              images
-  `
-
-  const newSubmission = result[0]
-  return {
-    ...newSubmission,
-    services: JSON.parse(newSubmission.services || "[]"),
-    socialMedia: JSON.parse(newSubmission.socialMedia || "{}"),
-    images: JSON.parse(newSubmission.images || "[]"),
-  }
-}
-
-export async function getAllBusinessSubmissions(): Promise<BusinessSubmission[]> {
-  const sqlInstance = sql()
-
-  const result = await sqlInstance`
-    SELECT id, business_name as "businessName", category, description, 
-           address, city, phone, email, website, owner_name as "ownerName",
-           owner_email as "ownerEmail", owner_phone as "ownerPhone",
-           services, social_media as "socialMedia", operating_hours as "operatingHours",
-           special_offers as "specialOffers", status, submitted_at as "submittedAt",
-           reviewed_at as "reviewedAt", review_notes as "reviewNotes", rating, images
-    FROM business_submissions
-    ORDER BY submitted_at DESC
-  `
-
-  return result.map((submission) => ({
+): BusinessSubmission {
+  const newSubmission: BusinessSubmission = {
     ...submission,
-    services: JSON.parse(submission.services || "[]"),
-    socialMedia: JSON.parse(submission.socialMedia || "{}"),
-    images: JSON.parse(submission.images || "[]"),
-  }))
-}
-
-export async function getBusinessSubmissionById(id: string): Promise<BusinessSubmission | null> {
-  const sqlInstance = sql()
-
-  const result = await sqlInstance`
-    SELECT id, business_name as "businessName", category, description, 
-           address, city, phone, email, website, owner_name as "ownerName",
-           owner_email as "ownerEmail", owner_phone as "ownerPhone",
-           services, social_media as "socialMedia", operating_hours as "operatingHours",
-           special_offers as "specialOffers", status, submitted_at as "submittedAt",
-           reviewed_at as "reviewedAt", review_notes as "reviewNotes", rating, images
-    FROM business_submissions
-    WHERE id = ${id}
-  `
-
-  if (result.length === 0) return null
-
-  const submission = result[0]
-  return {
-    ...submission,
-    services: JSON.parse(submission.services || "[]"),
-    socialMedia: JSON.parse(submission.socialMedia || "{}"),
-    images: JSON.parse(submission.images || "[]"),
+    id: Date.now().toString(),
+    submittedAt: new Date().toISOString(),
+    status: "pending",
   }
+
+  businessSubmissions.push(newSubmission)
+  return newSubmission
 }
 
-export async function updateBusinessSubmissionStatus(
+export function getAllBusinessSubmissions(): BusinessSubmission[] {
+  return businessSubmissions
+}
+
+export function getBusinessSubmissionById(id: string): BusinessSubmission | null {
+  return businessSubmissions.find((submission) => submission.id === id) || null
+}
+
+export function updateBusinessSubmissionStatus(
   id: string,
   status: "pending" | "approved" | "rejected",
   reviewNotes?: string,
-): Promise<BusinessSubmission | null> {
-  const sqlInstance = sql()
+): BusinessSubmission | null {
+  const submissionIndex = businessSubmissions.findIndex((submission) => submission.id === id)
 
-  const result = await sqlInstance`
-    UPDATE business_submissions 
-    SET status = ${status}, 
-        reviewed_at = NOW(),
-        review_notes = ${reviewNotes || ""}
-    WHERE id = ${id}
-    RETURNING id, business_name as "businessName", category, description, 
-              address, city, phone, email, website, owner_name as "ownerName",
-              owner_email as "ownerEmail", owner_phone as "ownerPhone",
-              services, social_media as "socialMedia", operating_hours as "operatingHours",
-              special_offers as "specialOffers", status, submitted_at as "submittedAt",
-              reviewed_at as "reviewedAt", review_notes as "reviewNotes", rating, images
-  `
-
-  if (result.length === 0) return null
-
-  const submission = result[0]
-  return {
-    ...submission,
-    services: JSON.parse(submission.services || "[]"),
-    socialMedia: JSON.parse(submission.socialMedia || "{}"),
-    images: JSON.parse(submission.images || "[]"),
+  if (submissionIndex === -1) {
+    return null
   }
+
+  businessSubmissions[submissionIndex] = {
+    ...businessSubmissions[submissionIndex],
+    status,
+    reviewedAt: new Date().toISOString(),
+    reviewNotes,
+  }
+
+  // If approved, add to approved businesses
+  if (status === "approved") {
+    const approvedBusiness: ApprovedBusiness = {
+      ...businessSubmissions[submissionIndex],
+      status: "approved",
+      isActive: true,
+      approvedAt: new Date().toISOString(),
+      rating: 4.5, // Default rating
+    }
+    approvedBusinesses.push(approvedBusiness)
+  }
+
+  return businessSubmissions[submissionIndex]
 }
 
-/* ------------------------------------------------------------------ *
- * Server-side DB fetcher – used by the API route                      *
- * ------------------------------------------------------------------ */
-export async function getApprovedBusinessesFromDb(): Promise<Business[]> {
-  // Disable ISR/SSR caching – we want fresh data each call
-  noStore()
-
-  const { rows } = await sql<Business>`SELECT id,
-       name,
-       description,
-       logo_url  AS "logoUrl",
-       website,
-       phone,
-       email,
-       address
-     FROM businesses
-     WHERE approved = true
-     ORDER BY name`
-
-  return rows
+export function getApprovedBusinesses(): ApprovedBusiness[] {
+  return approvedBusinesses.filter((business) => business.isActive)
 }
 
-/**
- * Universal helper – works both on the server (RSC / Server Action) and the
- * client (React CSR).  It avoids a network round-trip when running on the
- * server, fixing “Failed to fetch” errors in `/business/directory`.
- */
-export async function getApprovedBusinesses(): Promise<Business[]> {
-  // Server-side?  Fetch data directly from the DB.
-  if (typeof window === "undefined") {
-    return getApprovedBusinessesFromDb()
+export function updateApprovedBusiness(id: string, updates: Partial<ApprovedBusiness>): ApprovedBusiness | null {
+  const businessIndex = approvedBusinesses.findIndex((business) => business.id === id)
+
+  if (businessIndex === -1) {
+    return null
   }
 
-  // Client-side: call the API route so we don’t bundle pg driver etc.
-  return getApprovedBusinessesClient()
+  approvedBusinesses[businessIndex] = {
+    ...approvedBusinesses[businessIndex],
+    ...updates,
+  }
+
+  return approvedBusinesses[businessIndex]
 }
 
-export async function getApprovedBusinessesClient(): Promise<Business[]> {
-  try {
-    const res = await fetch("/api/business/approved", { cache: "no-store" })
-    const payload = await res.json()
+export function delistBusiness(id: string): boolean {
+  const businessIndex = approvedBusinesses.findIndex((business) => business.id === id)
 
-    if (payload.success && Array.isArray(payload.data)) return payload.data
-
-    console.error("getApprovedBusinessesClient → API error:", payload.error)
-    return []
-  } catch (err) {
-    console.error("getApprovedBusinessesClient → fetch or JSON parse failed:", err)
-    return []
+  if (businessIndex === -1) {
+    return false
   }
+
+  approvedBusinesses[businessIndex].isActive = false
+  return true
 }
 
-export async function updateApprovedBusiness(
-  id: string,
-  updates: Partial<ApprovedBusiness>,
-): Promise<ApprovedBusiness | null> {
-  const sqlInstance = sql()
+export function getBusinessSubmissionStats() {
+  const total = businessSubmissions.length
+  const pending = businessSubmissions.filter((s) => s.status === "pending").length
+  const approved = businessSubmissions.filter((s) => s.status === "approved").length
+  const rejected = businessSubmissions.filter((s) => s.status === "rejected").length
 
-  // Build dynamic update query
-  const updateFields = []
-  const values = []
-  let paramIndex = 1
-
-  if (updates.businessName) {
-    updateFields.push(`business_name = $${paramIndex++}`)
-    values.push(updates.businessName)
-  }
-  if (updates.description) {
-    updateFields.push(`description = $${paramIndex++}`)
-    values.push(updates.description)
-  }
-  if (updates.rating) {
-    updateFields.push(`rating = $${paramIndex++}`)
-    values.push(updates.rating)
-  }
-
-  if (updateFields.length === 0) return null
-
-  const query = `
-    UPDATE business_submissions 
-    SET ${updateFields.join(", ")}, reviewed_at = NOW()
-    WHERE id = $${paramIndex} AND status = 'approved'
-    RETURNING id, business_name as "businessName", category, description, 
-              address, city, phone, email, website, owner_name as "ownerName",
-              owner_email as "ownerEmail", owner_phone as "ownerPhone",
-              services, social_media as "socialMedia", operating_hours as "operatingHours",
-              special_offers as "specialOffers", status, submitted_at as "submittedAt",
-              reviewed_at as "reviewedAt", review_notes as "reviewNotes", rating, images
-  `
-
-  values.push(id)
-  const result = await sqlInstance(query, values)
-
-  if (result.length === 0) return null
-
-  const business = result[0]
-  return {
-    ...business,
-    services: JSON.parse(business.services || "[]"),
-    socialMedia: JSON.parse(business.socialMedia || "{}"),
-    images: JSON.parse(business.images || "[]"),
-    isActive: true,
-    approvedAt: business.reviewedAt || business.submittedAt,
-  }
-}
-
-export async function delistBusiness(id: string): Promise<boolean> {
-  const sqlInstance = sql()
-
-  const result = await sqlInstance`
-    UPDATE business_submissions 
-    SET status = 'rejected', 
-        reviewed_at = NOW(),
-        review_notes = 'Business delisted by admin'
-    WHERE id = ${id}
-  `
-
-  return result.length > 0
-}
-
-export async function getBusinessSubmissionStats() {
-  const sqlInstance = sql()
-
-  const result = await sqlInstance`
-    SELECT 
-      COUNT(*) as total,
-      COUNT(CASE WHEN status = 'pending' THEN 1 END) as pending,
-      COUNT(CASE WHEN status = 'approved' THEN 1 END) as approved,
-      COUNT(CASE WHEN status = 'rejected' THEN 1 END) as rejected
-    FROM business_submissions
-  `
-
-  return {
-    total: Number.parseInt(result[0].total),
-    pending: Number.parseInt(result[0].pending),
-    approved: Number.parseInt(result[0].approved),
-    rejected: Number.parseInt(result[0].rejected),
-  }
+  return { total, pending, approved, rejected }
 }

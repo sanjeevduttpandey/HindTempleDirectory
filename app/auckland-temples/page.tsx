@@ -17,7 +17,7 @@ const aucklandTemples = [
     rating: 4.8,
     reviews: 120,
     image: "/images/shri-sanatan-dharm-mandir-auckland.jpg",
-    description: "One of the largest Hindu temples in New Zealand, serving the community since 1992.",
+    description: "One of the largest Sanatan Mandir in New Zealand, serving the community since 1992.",
     timings: "6:00 AM - 8:00 PM",
     deity: "Multi-deity",
     established: 1992,
@@ -40,7 +40,7 @@ const aucklandTemples = [
     reviews: 105,
     image: "/images/bharatiya-mandir-interior.jpg",
     description:
-      "One of Auckland's oldest Hindu temples, serving the community with traditional worship and cultural programs since 1987.",
+      "One of Auckland's oldest Sanatan Mandir, serving the community with traditional worship and cultural programs since 1987.",
     timings: "6:00 AM - 8:30 PM",
     deity: "Multi-deity",
     established: 1987,
@@ -49,7 +49,7 @@ const aucklandTemples = [
   },
   {
     id: 15,
-    name: "Auckland Sri Ganesh Temple",
+    name: "Auckland Sri Ganesh Mandir",
     address: "4 Dent Place, Papakura, Auckland",
     phone: "+64 9 298 4450",
     website: "https://www.aucklandsriganeshtemple.com/",
@@ -57,7 +57,7 @@ const aucklandTemples = [
     reviews: 112,
     image: "/images/auckland-sri-ganesh-temple-deity.jpg",
     description:
-      "Established in 2002, this temple is dedicated to Lord Ganesha and has been developing with the grace of Lord Ganesha.",
+      "Established in 2002, this Mandir is dedicated to Lord Ganesha and has been developing with the grace of Lord Ganesha.",
     timings: "10:00 AM - 1:00 PM, 6:00 PM - 9:00 PM (Morning Arti at 11:30 AM, Evening Arti at 7:30 PM)",
     deity: "Ganesha",
     established: 2002,
@@ -80,7 +80,7 @@ const aucklandTemples = [
     reviews: 98,
     image: "/images/thiru-subramaniyar-aalayam-naga.jpg",
     description:
-      "A beautiful temple dedicated to Lord Murugan, serving the Tamil Hindu community in Auckland with traditional South Indian worship.",
+      "A beautiful Mandir dedicated to Lord Murugan, serving the Tamil Sanatan community in Auckland with traditional South Indian worship.",
     timings: "6:30 AM - 8:00 PM",
     deity: "Murugan",
     established: 1995,
@@ -95,7 +95,7 @@ const aucklandTemples = [
   },
   {
     id: 16,
-    name: "NZ Thirumurugan Temple",
+    name: "NZ Thirumurugan Mandir",
     address: "21 Killarney Street, Takanini, Auckland 2112",
     phone: "+64 9 296 2000",
     website: "https://www.nzthirumurugan.org.nz/",
@@ -103,7 +103,7 @@ const aucklandTemples = [
     reviews: 87,
     image: "/images/nz-thirumurugan-temple-deity.jpg",
     description:
-      "A temple dedicated to Lord Murugan, offering traditional Tamil worship services and cultural programs.",
+      "A Mandir dedicated to Lord Murugan, offering traditional Tamil worship services and cultural programs.",
     timings: "6:00 AM - 8:00 PM",
     deity: "Murugan",
     established: 2004,
@@ -126,7 +126,7 @@ const aucklandTemples = [
     reviews: 124,
     image: "/images/baps-auckland-avondale-main.jpg",
     description:
-      "A magnificent Swaminarayan temple in Avondale serving the Auckland community with traditional worship and cultural programs.",
+      "A magnificent Swaminarayan Mandir in Avondale serving the Auckland community with traditional worship and cultural programs.",
     timings: "6:00 AM - 8:30 PM",
     deity: "Swaminarayan",
     established: 2007,
@@ -149,7 +149,7 @@ const aucklandTemples = [
     reviews: 95,
     image: "/images/isso-auckland-golden-shrine.jpg",
     description:
-      "A Swaminarayan temple serving the Auckland community with spiritual guidance and cultural activities.",
+      "A Swaminarayan Mandir serving the Auckland community with spiritual guidance and cultural activities.",
     timings: "6:30 AM - 8:30 PM",
     deity: "Swaminarayan",
     established: 2005,
@@ -164,14 +164,14 @@ const aucklandTemples = [
   },
   {
     id: 19,
-    name: "Shirdi Sai Baba Temple",
+    name: "Shirdi Sai Baba Mandir",
     address: "12 Princes Street, Onehunga, Auckland 1061",
     phone: "+64 9 636 5400",
     website: "https://www.saibabatemple.org.nz/",
     rating: 4.7,
     reviews: 89,
     image: "/images/shirdi-sai-baba-temple-auckland-exterior.jpg",
-    description: "A temple dedicated to Shirdi Sai Baba, offering spiritual guidance and community service.",
+    description: "A Mandir dedicated to Shirdi Sai Baba, offering spiritual guidance and community service.",
     timings: "7:00 AM - 8:00 PM",
     deity: "Sai Baba",
     established: 2003,
@@ -192,7 +192,7 @@ const aucklandTemples = [
     rating: 4.6,
     reviews: 76,
     image: "/images/sanatan-dharam-hanuman-mandir-deity.jpg",
-    description: "A temple dedicated to Lord Hanuman, offering traditional worship and spiritual activities.",
+    description: "A Mandir dedicated to Lord Hanuman, offering traditional worship and spiritual activities.",
     timings: "6:30 AM - 8:00 PM",
     deity: "Hanuman",
     established: 2000,
@@ -214,7 +214,7 @@ const aucklandTemples = [
     reviews: 82,
     image: "/images/shri-ram-mandir-auckland-exterior.jpg",
     description:
-      "A temple dedicated to Lord Ram, serving the West Auckland community with traditional worship and cultural programs.",
+      "A Mandir dedicated to Lord Ram, serving the West Auckland community with traditional worship and cultural programs.",
     timings: "6:00 AM - 8:00 PM",
     deity: "Rama",
     established: 2001,
@@ -263,7 +263,7 @@ export default function AucklandTemplesPage() {
             </div>
             <div>
               <h1 className="text-xl font-bold text-gray-900">Sanatan New Zealand</h1>
-              <p className="text-sm text-gray-600">Auckland Sanatan Temples</p>
+              <p className="text-sm text-gray-600">Auckland Sanatan Mandir</p>
             </div>
           </Link>
         </div>
@@ -272,7 +272,7 @@ export default function AucklandTemplesPage() {
       {/* Hero Section */}
       <section className="py-16 px-4 bg-gradient-to-r from-orange-600 to-red-600 text-white">
         <div className="container mx-auto text-center">
-          <h2 className="text-4xl font-bold mb-4">Sanatan Temples in Auckland</h2>
+          <h2 className="text-4xl font-bold mb-4">Sanatan Mandir in Auckland</h2>
           <p className="text-xl mb-8 opacity-90">
             Discover sacred spaces and cultural centers in New Zealand's largest city
           </p>
@@ -280,13 +280,13 @@ export default function AucklandTemplesPage() {
             <Button size="lg" className="bg-white text-orange-600 hover:bg-gray-100" asChild>
               <Link href="/temples">
                 <MapPin className="mr-2 h-5 w-5" />
-                All Temples
+                All Mandirs
               </Link>
             </Button>
             <Button
               size="lg"
               variant="outline"
-              className="border-white text-white hover:bg-white hover:text-orange-600"
+              className="border-white text-white hover:bg-white hover:text-orange-600 bg-transparent"
               asChild
             >
               <Link href="/events?city=Auckland">
@@ -304,19 +304,19 @@ export default function AucklandTemplesPage() {
           <h3 className="text-2xl font-bold text-gray-900 mb-4">Auckland's Sanatan Community</h3>
           <p className="text-gray-600 leading-relaxed">
             Auckland, New Zealand's largest city, is home to a vibrant and diverse Sanatan community. With over a dozen
-            temples and cultural centers representing various traditions and deities, Auckland offers numerous spiritual
-            and cultural spaces for the Hindu community. These institutions serve not only as places of worship but also
-            as community hubs that bring people together for festivals, cultural events, and spiritual growth.
+            Mandir and cultural centers representing various traditions and deities, Auckland offers numerous spiritual
+            and cultural spaces for the Sanatan community. These institutions serve not only as places of worship but
+            also as community hubs that bring people together for festivals, cultural events, and spiritual growth.
           </p>
         </div>
       </section>
 
-      {/* Temples Grid */}
+      {/* Mandir Grid */}
       <section className="py-12 px-4">
         <div className="container mx-auto">
           <div className="mb-8">
             <h3 className="text-2xl font-bold text-gray-900 mb-2">
-              {aucklandTemples.length} Sanatan Temples & Cultural Centers
+              {aucklandTemples.length} Sanatan Mandir & Cultural Centers
             </h3>
             <p className="text-gray-600">Serving the Auckland Sanatan community with devotion and cultural programs</p>
           </div>
@@ -394,7 +394,7 @@ export default function AucklandTemplesPage() {
                     <Button size="sm" className="flex-1 bg-orange-600 hover:bg-orange-700" asChild>
                       <Link href={`/temples/${temple.id}`}>View Details</Link>
                     </Button>
-                    <Button size="sm" variant="outline" className="flex-1" asChild>
+                    <Button size="sm" variant="outline" className="flex-1 bg-transparent" asChild>
                       <Link href={`https://maps.google.com/?q=${encodeURIComponent(temple.address)}`} target="_blank">
                         Directions
                       </Link>
@@ -431,66 +431,8 @@ export default function AucklandTemplesPage() {
                   <div className="w-2 h-2 bg-orange-600 rounded-full" />
                   <span className="text-sm">Youth and senior activities</span>
                 </div>
-                <div className="flex items-center space-x-2">
-                  <div className="w-2 h-2 bg-orange-600 rounded-full" />
-                  <span className="text-sm">Community support and counseling</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <div className="w-2 h-2 bg-orange-600 rounded-full" />
-                  <span className="text-sm">Language and spiritual education</span>
-                </div>
               </CardContent>
             </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center">
-                  <Calendar className="mr-2 h-5 w-5 text-orange-600" />
-                  Major Festivals
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <div className="flex items-center space-x-2">
-                  <div className="w-2 h-2 bg-orange-600 rounded-full" />
-                  <span className="text-sm">Diwali - Festival of Lights</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <div className="w-2 h-2 bg-orange-600 rounded-full" />
-                  <span className="text-sm">Janmashtami - Krishna's Birthday</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <div className="w-2 h-2 bg-orange-600 rounded-full" />
-                  <span className="text-sm">Ganesh Chaturthi - Ganesha Festival</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <div className="w-2 h-2 bg-orange-600 rounded-full" />
-                  <span className="text-sm">Holi - Festival of Colors</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <div className="w-2 h-2 bg-orange-600 rounded-full" />
-                  <span className="text-sm">Navratri - Nine Nights Festival</span>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </section>
-
-      {/* Call to Action */}
-      <section className="py-12 px-4 bg-white">
-        <div className="container mx-auto text-center">
-          <h3 className="text-2xl font-bold text-gray-900 mb-4">Connect with Auckland's Sanatan Community</h3>
-          <p className="text-gray-600 mb-8 max-w-2xl mx-auto">
-            Whether you're new to Auckland or looking to deepen your spiritual practice, our temples and cultural
-            centers welcome you with open arms. Join us for worship, festivals, and community activities.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button className="bg-orange-600 hover:bg-orange-700" asChild>
-              <Link href="/join">Join Our Community</Link>
-            </Button>
-            <Button variant="outline" asChild>
-              <Link href="/events?city=Auckland">View Auckland Events</Link>
-            </Button>
           </div>
         </div>
       </section>

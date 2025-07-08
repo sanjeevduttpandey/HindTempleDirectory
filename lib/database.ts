@@ -1,44 +1,34 @@
-import { neon } from "@neondatabase/serverless"
+import type { NeonQueryFunction } from "@neondatabase/serverless"
 
-/**
- * Returns an instance of the neon SQL client (singleton-style so we don’t
- * reconnect on every invocation).
- *
- * We support several env var names so the project works in local/dev/preview
- * and production without change.
- */
-let cachedSql: ReturnType<typeof neon> | null = null
+let sqlClient: NeonQueryFunction<false, false> | null = null
 
-export function sql() {
-  if (cachedSql) return cachedSql
+// Lazy initialization of SQL client - only at runtime
+const getSqlClient = () => {
+  if (!sqlClient) {
+    // Only import and initialize when actually needed
+    const { neon } = require("@neondatabase/serverless")
 
-  const url =
-    process.env.DATABASE_URL ||
-    process.env.POSTGRES_URL ||
-    process.env.POSTGRES_PRISMA_URL ||
-    process.env.POSTGRES_URL_NON_POOLING
-
-  if (!url) {
-    throw new Error(
-      "DATABASE_URL (or POSTGRES_URL / POSTGRES_PRISMA_URL / POSTGRES_URL_NON_POOLING) environment variable is not set",
-    )
+    if (!process.env.DATABASE_URL) {
+      throw new Error("DATABASE_URL environment variable is not set")
+    }
+    sqlClient = neon(process.env.DATABASE_URL)
   }
-
-  cachedSql = neon(url)
-  return cachedSql
+  return sqlClient
 }
+
+// Export the sql client for direct use - but wrapped to prevent build-time access
+export const sql = () => getSqlClient()
 
 // Database connection test
 export async function testConnection() {
   try {
-    const rows = await sql()`
-      SELECT 1                      -- ping
-    `
-    console.log("✅  Database connected:", rows)
-  } catch (err) {
-    /* eslint-disable no-console */
-    console.error("❌  Database connection failed:", err)
-    /* eslint-enable  no-console */
+    const sqlInstance = getSqlClient()
+    const result = await sqlInstance`SELECT 1 as test`
+    console.log("Database connected successfully:", result)
+    return true
+  } catch (error) {
+    console.error("Database connection failed:", error)
+    return false
   }
 }
 
@@ -63,7 +53,7 @@ export async function createDevotee(devoteeData: {
   subscribe_newsletter?: boolean
   allow_community_contact?: boolean
 }) {
-  const sqlInstance = sql()
+  const sqlInstance = getSqlClient()
   const result = await sqlInstance`
     INSERT INTO devotees (
       email, password_hash, first_name, last_name, 
@@ -101,7 +91,7 @@ export async function createDevotee(devoteeData: {
 }
 
 export async function getDevoteeByEmail(email: string) {
-  const sqlInstance = sql()
+  const sqlInstance = getSqlClient()
   const result = await sqlInstance`
     SELECT id, email, password_hash, first_name, last_name, 
            spiritual_name, phone, date_of_birth, gender, city, address,
@@ -115,7 +105,7 @@ export async function getDevoteeByEmail(email: string) {
 }
 
 export async function getDevoteeById(id: number) {
-  const sqlInstance = sql()
+  const sqlInstance = getSqlClient()
   const result = await sqlInstance`
     SELECT id, email, first_name, last_name, spiritual_name, 
            phone, date_of_birth, gender, city, address, bio, avatar_url,
@@ -129,7 +119,7 @@ export async function getDevoteeById(id: number) {
 }
 
 export async function updateDevoteeProfile(id: number, updates: Record<string, any>) {
-  const sqlInstance = sql()
+  const sqlInstance = getSqlClient()
 
   // Convert arrays to JSON strings for database storage
   const processedUpdates = { ...updates }
@@ -163,7 +153,7 @@ export async function updateDevoteeProfile(id: number, updates: Record<string, a
 
 // Session management
 export async function createSession(devoteeId: number, sessionToken: string, expiresAt: Date) {
-  const sqlInstance = sql()
+  const sqlInstance = getSqlClient()
   const result = await sqlInstance`
     INSERT INTO user_sessions (devotee_id, session_token, expires_at)
     VALUES (${devoteeId}, ${sessionToken}, ${expiresAt})
@@ -173,7 +163,7 @@ export async function createSession(devoteeId: number, sessionToken: string, exp
 }
 
 export async function getSessionByToken(sessionToken: string) {
-  const sqlInstance = sql()
+  const sqlInstance = getSqlClient()
   const result = await sqlInstance`
     SELECT us.id, us.devotee_id, us.session_token, us.expires_at,
            d.email, d.first_name, d.last_name, d.spiritual_name, d.avatar_url
@@ -187,7 +177,7 @@ export async function getSessionByToken(sessionToken: string) {
 }
 
 export async function deleteSession(sessionToken: string) {
-  const sqlInstance = sql()
+  const sqlInstance = getSqlClient()
   await sqlInstance`
     DELETE FROM user_sessions 
     WHERE session_token = ${sessionToken}
@@ -199,10 +189,10 @@ export async function logDevoteeActivity(
   devoteeId: number,
   activityType: string,
   description: string,
-  relatedTempleId?: number,
+  relatedMandirId?: number,
   relatedEventId?: number,
 ) {
-  const sqlInstance = sql()
+  const sqlInstance = getSqlClient()
   await sqlInstance`
     INSERT INTO devotee_activities (
       devotee_id, activity_type, activity_description,
@@ -210,15 +200,15 @@ export async function logDevoteeActivity(
     )
     VALUES (
       ${devoteeId}, ${activityType}, ${description},
-      ${relatedTempleId || null}, ${relatedEventId || null}
+      ${relatedMandirId || null}, ${relatedEventId || null}
     )
   `
 }
 
 export async function getDevoteeActivities(devoteeId: number, limit = 20) {
-  const sqlInstance = sql()
+  const sqlInstance = getSqlClient()
   const result = await sqlInstance`
-    SELECT da.*, t.name as temple_name, e.title as event_title
+    SELECT da.*, t.name as mandir_name, e.title as event_title
     FROM devotee_activities da
     LEFT JOIN temples t ON da.related_temple_id = t.id
     LEFT JOIN events e ON da.related_event_id = e.id
@@ -233,12 +223,12 @@ export async function addDevoteeActivity(activityData: {
   devotee_id: number
   activity_type: string
   activity_description: string
-  temple_id?: number | null
+  mandir_id?: number | null
   event_id?: number | null
   amount?: string | null
   metadata?: any
 }) {
-  const sqlInstance = sql()
+  const sqlInstance = getSqlClient()
   const result = await sqlInstance`
     INSERT INTO devotee_activities (
       devotee_id, activity_type, activity_description,
@@ -248,7 +238,7 @@ export async function addDevoteeActivity(activityData: {
       ${activityData.devotee_id},
       ${activityData.activity_type},
       ${activityData.activity_description},
-      ${activityData.temple_id || null},
+      ${activityData.mandir_id || null},
       ${activityData.event_id || null},
       ${activityData.amount || null},
       ${JSON.stringify(activityData.metadata || {})}
@@ -258,9 +248,9 @@ export async function addDevoteeActivity(activityData: {
   return result[0]
 }
 
-// Temple related queries
-export async function getTemples(city?: string, limit = 10) {
-  const sqlInstance = sql()
+// Mandir related queries
+export async function getMandirs(city?: string, limit = 10) {
+  const sqlInstance = getSqlClient()
   if (city) {
     return await sqlInstance`
       SELECT id, name, main_deity, description, address, city, 
@@ -282,9 +272,19 @@ export async function getTemples(city?: string, limit = 10) {
   `
 }
 
+/**
+ * ---------------------------------------------------------------------------
+ *  BACKWARD-COMPATIBILITY ALIAS
+ * ---------------------------------------------------------------------------
+ * Some parts of the codebase still import `getTemples`.  We keep an alias that
+ * simply calls the new `getMandirs` implementation, avoiding any breaking
+ * changes while we finish migrating all call-sites.
+ */
+export const getTemples = getMandirs
+
 // Event related queries
 export async function getUpcomingEvents(limit = 10) {
-  const sqlInstance = sql()
+  const sqlInstance = getSqlClient()
   return await sqlInstance`
     SELECT e.id, e.title, e.description, e.event_type, e.start_date, 
            e.start_time, e.location, e.city, e.max_participants, 
@@ -300,7 +300,7 @@ export async function getUpcomingEvents(limit = 10) {
 
 // Panchang data
 export async function getTodayPanchang() {
-  const sqlInstance = sql()
+  const sqlInstance = getSqlClient()
   const today = new Date().toISOString().split("T")[0]
   const result = await sqlInstance`
     SELECT * FROM panchang_data 
@@ -311,7 +311,7 @@ export async function getTodayPanchang() {
 
 // Get Panchang data for a specific date
 export async function getPanchangByDate(date: string) {
-  const sqlInstance = sql()
+  const sqlInstance = getSqlClient()
   const result = await sqlInstance`
     SELECT * FROM panchang_data 
     WHERE date = ${date}
