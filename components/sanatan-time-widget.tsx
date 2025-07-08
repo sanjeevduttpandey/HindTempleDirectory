@@ -5,7 +5,6 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Clock, Sun, Moon, MapPin, Calendar, Info } from "lucide-react"
-import { format } from "date-fns" // Import format from date-fns
 
 interface SanatanTimeData {
   standardTime: Date
@@ -118,7 +117,6 @@ export default function SanatanTimeWidget() {
   useEffect(() => {
     const updateTime = () => {
       const now = new Date()
-      // Ujjain time (IST) is used for Sanatan calculations
       const ujjainTime = new Date(now.toLocaleString("en-US", { timeZone: "Asia/Kolkata" }))
 
       const hours = ujjainTime.getHours()
@@ -131,20 +129,16 @@ export default function SanatanTimeWidget() {
       const pal = Math.floor(remainingSeconds / 24)
       const vipal = Math.floor(((remainingSeconds % 24) * 60) / 24)
 
-      // Determine current period based on Ujjain time
+      // Determine current period
       const currentTimeStr = `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}`
-      let currentPeriod = "शुभ काल" // Default
+      let currentPeriod = "शुभ काल"
 
-      // Update isActive status for muhurtData and choghadiyaData based on current Ujjain time
-      muhurtData.forEach((slot) => {
-        slot.isActive = currentTimeStr >= slot.startTime && currentTimeStr <= slot.endTime
-      })
-      choghadiyaData.forEach((slot) => {
-        slot.isActive = currentTimeStr >= slot.startTime && currentTimeStr <= slot.endTime
-        if (slot.isActive) {
-          currentPeriod = slot.name // Set current period from active choghadiya
+      for (const period of choghadiyaData) {
+        if (currentTimeStr >= period.startTime && currentTimeStr <= period.endTime) {
+          currentPeriod = period.name
+          break
         }
-      })
+      }
 
       setTimeData({
         standardTime: ujjainTime,
@@ -152,15 +146,15 @@ export default function SanatanTimeWidget() {
         pal,
         vipal,
         location: "Ujjain, India",
-        sunrise: "05:42:04", // These would be dynamic from an API for Ujjain
-        sunset: "19:08:04", // These would be dynamic from an API for Ujjain
+        sunrise: "05:42:04",
+        sunset: "19:08:04",
         dayDuration: "13:26:00",
         nightDuration: "10:33:54",
-        tithi: "सप्तमी", // Placeholder, would be dynamic
-        paksha: "शुक्ल पक्ष", // Placeholder, would be dynamic
-        month: "ज्येष्ठ", // Placeholder, would be dynamic
-        shakaYear: 1947, // Placeholder, would be dynamic
-        moonPosition: "वृषभ 17°32'", // Placeholder, would be dynamic
+        tithi: "सप्तमी",
+        paksha: "शुक्ल पक्ष",
+        month: "ज्येष्ठ",
+        shakaYear: 1947,
+        moonPosition: "वृषभ 17°32'",
         currentPeriod,
       })
       setCurrentTime(ujjainTime)
@@ -188,17 +182,6 @@ export default function SanatanTimeWidget() {
       </Card>
     )
   }
-
-  // Format the Ujjain date for display in the header
-  const ujjainDateFormatted = format(timeData.standardTime, "dd MMMM yyyy, EEEE", {
-    locale: {
-      localize: {
-        day: (n) => ["रविवार", "सोमवार", "मंगलवार", "बुधवार", "गुरुवार", "शुक्रवार", "शनिवार"][n],
-        month: (n) =>
-          ["जनवरी", "फरवरी", "मार्च", "अप्रैल", "मई", "जून", "जुलाई", "अगस्त", "सितंबर", "अक्टूबर", "नवंबर", "दिसंबर"][n],
-      },
-    },
-  })
 
   const renderOverview = () => (
     <div className="space-y-6">
@@ -335,32 +318,25 @@ export default function SanatanTimeWidget() {
 
           {/* Day periods */}
           {choghadiyaData.map((period, index) => {
-            // Calculate angles for each 45-degree segment (360 / 8 periods)
-            const startAngle = index * 45 - 90 // -90 to start from top
+            const startAngle = index * 45 - 90
             const endAngle = (index + 1) * 45 - 90
             const isAuspicious = period.type === "शुभ"
             const isActive = period.isActive
 
-            // Path for a segment of a circle
-            const largeArcFlag = endAngle - startAngle <= 180 ? 0 : 1
-            const startX = 100 + 80 * Math.cos((startAngle * Math.PI) / 180)
-            const startY = 100 + 80 * Math.sin((startAngle * Math.PI) / 180)
-            const endX = 100 + 80 * Math.cos((endAngle * Math.PI) / 180)
-            const endY = 100 + 80 * Math.sin((endAngle * Math.PI) / 180)
-
             return (
-              <path
-                key={index}
-                d={`M 100 100 L ${startX} ${startY} A 80 80 0 ${largeArcFlag} 1 ${endX} ${endY} Z`}
-                fill={isActive ? "#f59e0b" : isAuspicious ? "#10b981" : "#ef4444"}
-                opacity={isActive ? 0.9 : 0.6}
-                stroke="white"
-                strokeWidth="2"
-              />
+              <g key={index}>
+                <path
+                  d={`M 100 100 L ${100 + 80 * Math.cos((startAngle * Math.PI) / 180)} ${100 + 80 * Math.sin((startAngle * Math.PI) / 180)} A 80 80 0 0 1 ${100 + 80 * Math.cos((endAngle * Math.PI) / 180)} ${100 + 80 * Math.sin((endAngle * Math.PI) / 180)} Z`}
+                  fill={isActive ? "#f59e0b" : isAuspicious ? "#10b981" : "#ef4444"}
+                  opacity={isActive ? 0.9 : 0.6}
+                  stroke="white"
+                  strokeWidth="2"
+                />
+              </g>
             )
           })}
 
-          {/* Clock hand - points to Ghati (60 Ghati in a day, so 6 degrees per Ghati) */}
+          {/* Clock hand */}
           <line
             x1="100"
             y1="100"
@@ -419,7 +395,7 @@ export default function SanatanTimeWidget() {
                 <Clock className="h-6 w-6" />
                 सनातन पंचांग
               </h2>
-              <p className="text-amber-100 mt-1">{ujjainDateFormatted}</p>
+              <p className="text-amber-100 mt-1">02 जून 2025, सोमवार</p>
             </div>
             <div className="text-right">
               <div className="flex items-center gap-1 text-amber-100">
@@ -482,11 +458,7 @@ export default function SanatanTimeWidget() {
               <span>दिन की अवधि: {timeData.dayDuration}</span>
               <span>रात्रि की अवधि: {timeData.nightDuration}</span>
             </div>
-            <Button
-              size="sm"
-              variant="outline"
-              className="text-amber-700 border-amber-300 hover:bg-amber-50 bg-transparent"
-            >
+            <Button size="sm" variant="outline" className="text-amber-700 border-amber-300 hover:bg-amber-50">
               घटी पल Converter
             </Button>
           </div>

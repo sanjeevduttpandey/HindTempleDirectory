@@ -18,7 +18,7 @@ const events = [
     time: "6:00 PM - 10:00 PM",
     location: "Auckland Town Hall",
     city: "Auckland",
-    organizer: "Auckland Sanatan Society",
+    organizer: "Auckland Hindu Society",
     attendees: 450,
     maxAttendees: 500,
     price: "Free",
@@ -33,9 +33,9 @@ const events = [
     title: "Hanuman Jayanti Celebration",
     date: "2024-11-15",
     time: "7:00 AM - 12:00 PM",
-    location: "Wellington Sanatan Mandir",
+    location: "Wellington Hindu Temple",
     city: "Wellington",
-    organizer: "Wellington Sanatan Mandir",
+    organizer: "Wellington Hindu Temple",
     attendees: 120,
     maxAttendees: 200,
     price: "Free",
@@ -50,7 +50,7 @@ const events = [
     time: "2:00 PM - 4:00 PM",
     location: "Christchurch Community Center",
     city: "Christchurch",
-    organizer: "Christchurch Sanatan Mandir Society",
+    organizer: "Christchurch Hindu Mandir",
     attendees: 25,
     maxAttendees: 40,
     price: "Free",
@@ -93,9 +93,9 @@ const events = [
     title: "Karthik Purnima Celebration",
     date: "2024-11-27",
     time: "6:30 PM - 9:00 PM",
-    location: "Dunedin Sanatan Mandir",
+    location: "Dunedin Hindu Temple",
     city: "Dunedin",
-    organizer: "Dunedin Sanatan Mandir",
+    organizer: "Dunedin Hindu Temple",
     attendees: 80,
     maxAttendees: 120,
     price: "Free",
@@ -137,7 +137,6 @@ export default function EventsPage() {
       }
     })
 
-  // Formats date to New Zealand locale
   const formatDate = (dateString: string) => {
     const date = new Date(dateString)
     return date.toLocaleDateString("en-NZ", {
@@ -167,10 +166,10 @@ export default function EventsPage() {
               <Link href="/" className="text-gray-700 hover:text-orange-600 font-medium">
                 Home
               </Link>
-              <Link href="/temples" className="text-orange-600 font-medium">
-                Mandirs
+              <Link href="/temples" className="text-gray-700 hover:text-orange-600 font-medium">
+                Temples
               </Link>
-              <Link href="/events" className="text-gray-700 hover:text-orange-600 font-medium">
+              <Link href="/events" className="text-orange-600 font-medium">
                 Events
               </Link>
               <Link href="/community" className="text-gray-700 hover:text-orange-600 font-medium">
@@ -317,7 +316,7 @@ export default function EventsPage() {
                     <Button size="sm" className="flex-1 bg-orange-600 hover:bg-orange-700" asChild>
                       <Link href={`/events/${event.id}/register`}>Register</Link>
                     </Button>
-                    <Button size="sm" variant="outline" className="flex-1 bg-transparent" asChild>
+                    <Button size="sm" variant="outline" className="flex-1" asChild>
                       <Link href={`/events/${event.id}`}>Learn More</Link>
                     </Button>
                   </div>

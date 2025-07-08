@@ -43,13 +43,6 @@ const Navbar = () => {
             </div>
           </div>
 
-          {/* Changed "Temples" to "Mandirs" */}
-          <div className="relative group">
-            <Link href="/temples" className="text-gray-300 hover:text-white">
-              Mandirs
-            </Link>
-          </div>
-
           <div className="relative group">
             <button className="text-gray-300 hover:text-white">Spiritual Tools</button>
             <div className="absolute hidden group-hover:block bg-gray-700 text-white py-2 rounded shadow-lg mt-2 w-48">
@@ -57,7 +50,7 @@ const Navbar = () => {
                 Panchang
               </Link>
               <Link href="/festivals" className="block px-4 py-2 hover:bg-gray-600">
-                Sanatan Festivals
+                Hindu Festivals
               </Link>
               <Link href="/datetime" className="block px-4 py-2 hover:bg-gray-600">
                 Date &amp; Time

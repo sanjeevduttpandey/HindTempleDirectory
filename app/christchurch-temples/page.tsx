@@ -10,7 +10,7 @@ import Image from "next/image"
 const christchurchTemples = [
   {
     id: 7,
-    name: "Sanatan Mandir Society of Canterbury",
+    name: "Hindu Temple Society of Canterbury",
     address: "20 Ombersley Terrace, Opawa, Christchurch 8023",
     phone: "+64 3 332 1952",
     website: "https://www.hindutemple.org.nz/",
@@ -18,7 +18,7 @@ const christchurchTemples = [
     reviews: 92,
     image: "/images/hindu-temple-society-canterbury-exterior.jpg",
     description:
-      "The main Sanatan Mandir in Christchurch, serving the Canterbury region with traditional worship and cultural programs.",
+      "The main Hindu temple in Christchurch, serving the Canterbury region with traditional worship and cultural programs.",
     timings: "6:30 AM - 8:00 PM",
     deity: "Multi-deity",
     established: 2010,
@@ -35,7 +35,7 @@ const christchurchTemples = [
     reviews: 78,
     image: "/images/baps-christchurch-interior.jpg",
     description:
-      "A beautiful Swaminarayan Mandir serving the Christchurch community with traditional worship and spiritual guidance.",
+      "A beautiful Swaminarayan temple serving the Christchurch community with traditional worship and spiritual guidance.",
     timings: "7:00 AM - 8:00 PM (Daily Arti at 7:00 AM & 7:00 PM)",
     deity: "Swaminarayan",
     established: 2012,
@@ -52,12 +52,29 @@ const christchurchTemples = [
     reviews: 72,
     image: "/images/iskcon-christchurch-deities.jpg",
     description:
-      "International Society for Krishna Consciousness Mandir promoting Krishna consciousness through spiritual practices and community service in Christchurch.",
+      "International Society for Krishna Consciousness temple promoting Krishna consciousness through spiritual practices and community service in Christchurch.",
     timings: "5:00 AM - 8:30 PM",
     deity: "Krishna",
     established: 1980,
     featured: true,
     specialties: ["Krishna Bhajan", "Bhagavad Gita Classes", "Prasadam Distribution", "Spiritual Festivals"],
+  },
+  {
+    id: 24,
+    name: "Sri Guru Tegh Bahadur Sahib Ji Gurdwara",
+    address: "79 Mackenzie Avenue, Woolston, Christchurch 8023",
+    phone: "+64 3 389 5000",
+    website: "https://www.sgtc.org.nz/",
+    rating: 4.7,
+    reviews: 65,
+    image: "/images/sri-guru-tegh-bahadur-gurdwara.jpg",
+    description:
+      "A Sikh Gurdwara serving the Christchurch community with spiritual guidance and langar (community kitchen).",
+    timings: "5:00 AM - 9:00 PM",
+    deity: "Sikh Gurdwara",
+    established: 2005,
+    featured: false,
+    specialties: ["Sikh Worship", "Langar Service", "Community Support", "Cultural Programs"],
   },
 ]
 
@@ -73,7 +90,7 @@ export default function ChristchurchTemplesPage() {
             </div>
             <div>
               <h1 className="text-xl font-bold text-gray-900">Sanatan New Zealand</h1>
-              <p className="text-sm text-gray-600">Christchurch Sanatan Mandir</p>
+              <p className="text-sm text-gray-600">Christchurch Sanatan Temples</p>
             </div>
           </Link>
         </div>
@@ -82,19 +99,19 @@ export default function ChristchurchTemplesPage() {
       {/* Hero Section */}
       <section className="py-16 px-4 bg-gradient-to-r from-orange-600 to-red-600 text-white">
         <div className="container mx-auto text-center">
-          <h2 className="text-4xl font-bold mb-4">Sanatan Mandir in Christchurch</h2>
+          <h2 className="text-4xl font-bold mb-4">Sanatan Temples in Christchurch</h2>
           <p className="text-xl mb-8 opacity-90">Discover sacred spaces and cultural centers in the Garden City</p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center max-w-md mx-auto">
             <Button size="lg" className="bg-white text-orange-600 hover:bg-gray-100" asChild>
               <Link href="/temples">
                 <MapPin className="mr-2 h-5 w-5" />
-                All Mandirs
+                All Temples
               </Link>
             </Button>
             <Button
               size="lg"
               variant="outline"
-              className="border-white text-white hover:bg-white hover:text-orange-600 bg-transparent"
+              className="border-white text-white hover:bg-white hover:text-orange-600"
               asChild
             >
               <Link href="/events?city=Christchurch">
@@ -111,7 +128,7 @@ export default function ChristchurchTemplesPage() {
         <div className="container mx-auto max-w-4xl text-center">
           <h3 className="text-2xl font-bold text-gray-900 mb-4">Christchurch's Sanatan Community</h3>
           <p className="text-gray-600 leading-relaxed">
-            Christchurch, known as the Garden City, is home to a growing Sanatan community with several Mandir and
+            Christchurch, known as the Garden City, is home to a growing Sanatan community with several temples and
             cultural centers. Despite the challenges faced during the earthquakes, the community has rebuilt and
             strengthened its spiritual foundations. These institutions serve as beacons of hope, faith, and cultural
             preservation, bringing together devotees from various traditions in the Canterbury region.
@@ -119,12 +136,12 @@ export default function ChristchurchTemplesPage() {
         </div>
       </section>
 
-      {/* Mandir Grid */}
+      {/* Temples Grid */}
       <section className="py-12 px-4">
         <div className="container mx-auto">
           <div className="mb-8">
             <h3 className="text-2xl font-bold text-gray-900 mb-2">
-              {christchurchTemples.length} Sanatan Mandir & Cultural Centers
+              {christchurchTemples.length} Sanatan Temples & Cultural Centers
             </h3>
             <p className="text-gray-600">
               Serving the Canterbury Sanatan community with devotion and cultural programs
@@ -204,7 +221,7 @@ export default function ChristchurchTemplesPage() {
                     <Button size="sm" className="flex-1 bg-orange-600 hover:bg-orange-700" asChild>
                       <Link href={`/temples/${temple.id}`}>View Details</Link>
                     </Button>
-                    <Button size="sm" variant="outline" className="flex-1 bg-transparent" asChild>
+                    <Button size="sm" variant="outline" className="flex-1" asChild>
                       <Link href={`https://maps.google.com/?q=${encodeURIComponent(temple.address)}`} target="_blank">
                         Directions
                       </Link>
@@ -291,7 +308,7 @@ export default function ChristchurchTemplesPage() {
         <div className="container mx-auto text-center">
           <h3 className="text-2xl font-bold text-gray-900 mb-4">Connect with Christchurch's Sanatan Community</h3>
           <p className="text-gray-600 mb-8 max-w-2xl mx-auto">
-            Whether you're new to Christchurch or looking to deepen your spiritual practice, our Mandir and cultural
+            Whether you're new to Christchurch or looking to deepen your spiritual practice, our temples and cultural
             centers welcome you with open arms. Join us for worship, festivals, and community activities.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">

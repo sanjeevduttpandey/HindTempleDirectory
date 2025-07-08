@@ -20,7 +20,7 @@ const temples = [
     rating: 4.8,
     reviews: 120,
     image: "/images/shri-sanatan-dharm-mandir-auckland.jpg",
-    description: "One of the largest Sanatan Mandir in New Zealand, serving the community since 1992.",
+    description: "One of the largest Hindu temples in New Zealand, serving the community since 1992.",
     timings: "6:00 AM - 8:00 PM",
     deity: "Multi-deity",
     established: 1992,
@@ -36,7 +36,7 @@ const temples = [
     reviews: 105,
     image: "/images/bharatiya-mandir-interior.jpg",
     description:
-      "One of Auckland's oldest Sanatan Mandir, serving the community with traditional worship and cultural programs since 1987.",
+      "One of Auckland's oldest Hindu temples, serving the community with traditional worship and cultural programs since 1987.",
     timings: "6:00 AM - 8:30 PM",
     deity: "Multi-deity",
     established: 1987,
@@ -53,7 +53,7 @@ const temples = [
     reviews: 98,
     image: "/images/thiru-subramaniyar-aalayam-naga.jpg",
     description:
-      "A beautiful Mandir dedicated to Lord Murugan, serving the Tamil Sanatan community in Auckland with traditional South Indian worship.",
+      "A beautiful temple dedicated to Lord Murugan, serving the Tamil Hindu community in Auckland with traditional South Indian worship.",
     timings: "6:30 AM - 8:00 PM",
     deity: "Murugan",
     established: 1995,
@@ -62,7 +62,7 @@ const temples = [
   },
   {
     id: 15,
-    name: "Auckland Sri Ganesh Mandir",
+    name: "Auckland Sri Ganesh Temple",
     city: "Auckland",
     address: "4 Dent Place, Papakura, Auckland",
     phone: "+64 9 298 4450",
@@ -70,7 +70,7 @@ const temples = [
     reviews: 112,
     image: "/images/auckland-sri-ganesh-temple-deity.jpg",
     description:
-      "Established in 2002, this Mandir is dedicated to Lord Ganesha and has been developing with the grace of Lord Ganesha.",
+      "Established in 2002, this temple is dedicated to Lord Ganesha and has been developing with the grace of Lord Ganesha.",
     timings: "10:00 AM - 1:00 PM, 6:00 PM - 9:00 PM (Morning Arti at 11:30 AM, Evening Arti at 7:30 PM)",
     deity: "Ganesha",
     established: 2002,
@@ -79,7 +79,7 @@ const temples = [
   },
   {
     id: 16,
-    name: "NZ Thirumurugan Mandir",
+    name: "NZ Thirumurugan Temple",
     city: "Auckland",
     address: "21 Killarney Street, Takanini, Auckland 2112",
     phone: "+64 9 296 2000",
@@ -87,7 +87,7 @@ const temples = [
     reviews: 87,
     image: "/images/nz-thirumurugan-temple-deity.jpg",
     description:
-      "A Mandir dedicated to Lord Murugan, offering traditional Tamil worship services and cultural programs.",
+      "A temple dedicated to Lord Murugan, offering traditional Tamil worship services and cultural programs.",
     timings: "6:00 AM - 8:00 PM",
     deity: "Murugan",
     established: 2004,
@@ -104,7 +104,7 @@ const temples = [
     reviews: 95,
     image: "/images/isso-auckland-golden-shrine.jpg",
     description:
-      "A Swaminarayan Mandir serving the Auckland community with spiritual guidance and cultural activities.",
+      "A Swaminarayan temple serving the Auckland community with spiritual guidance and cultural activities.",
     timings: "6:30 AM - 8:30 PM",
     deity: "Swaminarayan",
     established: 2005,
@@ -121,7 +121,7 @@ const temples = [
     reviews: 124,
     image: "/images/baps-auckland-avondale-main.jpg",
     description:
-      "A magnificent Swaminarayan Mandir in Avondale serving the Auckland community with traditional worship and cultural programs.",
+      "A magnificent Swaminarayan temple in Avondale serving the Auckland community with traditional worship and cultural programs.",
     timings: "6:00 AM - 8:30 PM",
     deity: "Swaminarayan",
     established: 2007,
@@ -130,14 +130,14 @@ const temples = [
   },
   {
     id: 19,
-    name: "Shirdi Sai Baba Mandir",
+    name: "Shirdi Sai Baba Temple",
     city: "Auckland",
     address: "12 Princes Street, Onehunga, Auckland 1061",
     phone: "+64 9 636 5400",
     rating: 4.7,
     reviews: 89,
     image: "/images/shirdi-sai-baba-temple-auckland-exterior.jpg",
-    description: "A Mandir dedicated to Shirdi Sai Baba, offering spiritual guidance and community service.",
+    description: "A temple dedicated to Shirdi Sai Baba, offering spiritual guidance and community service.",
     timings: "7:00 AM - 8:00 PM",
     deity: "Sai Baba",
     established: 2003,
@@ -153,7 +153,7 @@ const temples = [
     rating: 4.6,
     reviews: 76,
     image: "/images/sanatan-dharam-hanuman-mandir-deity.jpg",
-    description: "A Mandir dedicated to Lord Hanuman, offering traditional worship and spiritual activities.",
+    description: "A temple dedicated to Lord Hanuman, offering traditional worship and spiritual activities.",
     timings: "6:30 AM - 8:00 PM",
     deity: "Hanuman",
     established: 2000,
@@ -169,7 +169,7 @@ const temples = [
     reviews: 82,
     image: "/images/shri-ram-mandir-auckland-exterior.jpg",
     description:
-      "A Mandir dedicated to Lord Ram, serving the West Auckland community with traditional worship and cultural programs.",
+      "A temple dedicated to Lord Ram, serving the West Auckland community with traditional worship and cultural programs.",
     timings: "6:00 AM - 8:00 PM",
     deity: "Rama",
     established: 2001,
@@ -210,7 +210,7 @@ const temples = [
   },
   {
     id: 2,
-    name: "Kurinchi Kumaran Mandir",
+    name: "Kurinchi Kumaran Temple",
     city: "Wellington",
     address: "3 Batchelor Street, Newlands, Wellington",
     phone: "+64 4 477 4346",
@@ -218,7 +218,7 @@ const temples = [
     reviews: 95,
     image: "/images/kurinchi-kumaran-temple-ceremony.jpg",
     description:
-      "A beautiful Mandir dedicated to Lord Murugan, serving the Wellington Sanatan community with devotion and cultural programs.",
+      "A beautiful temple dedicated to Lord Murugan, serving the Wellington Hindu community with devotion and cultural programs.",
     timings: "6:00 AM - 8:00 PM",
     deity: "Murugan",
     established: 1995,
@@ -236,7 +236,7 @@ const temples = [
     reviews: 156,
     image: "/images/baps-wellington-interior.jpg",
     description:
-      "A magnificent Swaminarayan Mandir serving the Wellington community with traditional worship, cultural programs, and spiritual guidance following the BAPS tradition.",
+      "A magnificent Swaminarayan temple serving the Wellington community with traditional worship, cultural programs, and spiritual guidance following the BAPS tradition.",
     timings: "6:00 AM - 8:30 PM",
     deity: "Swaminarayan",
     established: 2008,
@@ -246,7 +246,7 @@ const temples = [
   },
   {
     id: 4,
-    name: "Shri Vishwa Vinayak Mandir",
+    name: "Shri Vishwa Vinayak Temple",
     city: "Wellington",
     address: "23 Hanson Street, Newtown, Wellington 6021",
     phone: "+64 4 389 4397",
@@ -270,7 +270,7 @@ const temples = [
     reviews: 134,
     image: "/images/iskcon-wellington-altar.jpg",
     description:
-      "International Society for Krishna Consciousness Mandir promoting Krishna consciousness through spiritual practices and community service.",
+      "International Society for Krishna Consciousness temple promoting Krishna consciousness through spiritual practices and community service.",
     timings: "4:30 AM - 9:00 PM",
     deity: "Krishna",
     established: 1975,
@@ -279,7 +279,7 @@ const temples = [
   },
   {
     id: 7,
-    name: "Sanatan Mandir Society of Canterbury",
+    name: "Hindu Temple Society of Canterbury",
     city: "Christchurch",
     address: "20 Ombersley Terrace, Opawa, Christchurch 8023",
     phone: "+64 3 332 1952",
@@ -287,7 +287,7 @@ const temples = [
     reviews: 92,
     image: "/images/hindu-temple-society-canterbury-exterior.jpg",
     description:
-      "The main Sanatan Mandir in Christchurch, serving the Canterbury region with traditional worship and cultural programs.",
+      "The main Hindu temple in Christchurch, serving the Canterbury region with traditional worship and cultural programs.",
     timings: "6:30 AM - 8:00 PM",
     deity: "Multi-deity",
     established: 2010,
@@ -304,12 +304,29 @@ const temples = [
     reviews: 78,
     image: "/images/baps-christchurch-interior.jpg",
     description:
-      "A beautiful Swaminarayan Mandir serving the Christchurch community with traditional worship and spiritual guidance.",
+      "A beautiful Swaminarayan temple serving the Christchurch community with traditional worship and spiritual guidance.",
     timings: "7:00 AM - 8:00 PM (Daily Arti at 7:00 AM & 7:00 PM)",
     deity: "Swaminarayan",
     established: 2012,
     website: "https://www.baps.org/Global-Network/Asia-Pacific/Christchurch.aspx",
     featured: true,
+  },
+  {
+    id: 24,
+    name: "Sri Guru Tegh Bahadur Sahib Ji Gurdwara",
+    city: "Christchurch",
+    address: "79 Mackenzie Avenue, Woolston, Christchurch 8023",
+    phone: "+64 3 389 5000",
+    rating: 4.7,
+    reviews: 65,
+    image: "/images/sri-guru-tegh-bahadur-gurdwara.jpg",
+    description:
+      "A Sikh Gurdwara serving the Christchurch community with spiritual guidance and langar (community kitchen).",
+    timings: "5:00 AM - 9:00 PM",
+    deity: "Sikh Gurdwara",
+    established: 2005,
+    website: "https://www.sgtc.org.nz/",
+    featured: false,
   },
   {
     id: 25,
@@ -321,7 +338,7 @@ const temples = [
     reviews: 72,
     image: "/images/iskcon-christchurch-deities.jpg",
     description:
-      "International Society for Krishna Consciousness Mandir promoting Krishna consciousness through spiritual practices and community service in Christchurch.",
+      "International Society for Krishna Consciousness temple promoting Krishna consciousness through spiritual practices and community service in Christchurch.",
     timings: "5:00 AM - 8:30 PM",
     deity: "Krishna",
     established: 1980,
@@ -330,42 +347,42 @@ const temples = [
   },
   {
     id: 8,
-    name: "Hamilton Shiva Mandir",
+    name: "Hamilton Shiva Temple",
     city: "Hamilton",
     address: "12 Temple View Road, Hillcrest",
     phone: "+64 7 855 9876",
     rating: 4.5,
     reviews: 67,
     image: "/images/hamilton-shiva-temple-main.jpg",
-    description: "A beautiful Mandir dedicated to Lord Shiva, known for its peaceful atmosphere.",
+    description: "A beautiful temple dedicated to Lord Shiva, known for its peaceful atmosphere.",
     timings: "6:00 AM - 8:00 PM",
     deity: "Shiva",
     established: 2005,
   },
   {
     id: 9,
-    name: "Tauranga Sanatan Society",
+    name: "Tauranga Hindu Society",
     city: "Tauranga",
     address: "78 Cameron Road, Tauranga",
     phone: "+64 7 578 4321",
     rating: 4.4,
     reviews: 45,
     image: "/images/tauranga-hindu-society-altar.jpg",
-    description: "Serving the Bay of Plenty Sanatan community with devotion and cultural programs.",
+    description: "Serving the Bay of Plenty Hindu community with devotion and cultural programs.",
     timings: "7:00 AM - 7:00 PM",
     deity: "Ganesha",
     established: 2010,
   },
   {
     id: 10,
-    name: "Dunedin Sanatan Mandir",
+    name: "Dunedin Hindu Temple",
     city: "Dunedin",
     address: "156 Great King Street, North Dunedin",
     phone: "+64 3 474 5678",
     rating: 4.3,
     reviews: 38,
     image: "/images/dunedin-hindu-temple-interior.jpg",
-    description: "The southernmost Sanatan Mandir in New Zealand, serving the Otago region.",
+    description: "The southernmost Hindu temple in New Zealand, serving the Otago region.",
     timings: "6:30 AM - 7:00 PM",
     deity: "Durga",
     established: 2008,
@@ -379,21 +396,21 @@ const temples = [
     rating: 4.6,
     reviews: 52,
     image: "/images/palmerston-north-mandir.jpg",
-    description: "A vibrant Mandir serving the Manawatu region with regular festivals and events.",
+    description: "A vibrant temple serving the Manawatu region with regular festivals and events.",
     timings: "6:00 AM - 8:00 PM",
     deity: "Krishna",
     established: 2003,
   },
   {
     id: 12,
-    name: "Napier Sanatan Centre",
+    name: "Napier Hindu Centre",
     city: "Napier",
     address: "34 Munroe Street, Napier",
     phone: "+64 6 835 1234",
     rating: 4.2,
     reviews: 29,
     image: "/images/napier-hindu-centre.jpg",
-    description: "Serving the Hawke's Bay Sanatan community with traditional worship and cultural activities.",
+    description: "Serving the Hawke's Bay Hindu community with traditional worship and cultural activities.",
     timings: "7:00 AM - 7:00 PM",
     deity: "Hanuman",
     established: 2012,
@@ -441,7 +458,7 @@ export default function TemplesPage() {
               </div>
               <div>
                 <h1 className="text-xl font-bold text-gray-900">Sanatan New Zealand</h1>
-                <p className="text-sm text-gray-600">Sanatan Mandir Directory</p>
+                <p className="text-sm text-gray-600">Sanatan Temples Directory</p>
               </div>
             </Link>
             <nav className="hidden md:flex items-center space-x-6">
@@ -449,7 +466,7 @@ export default function TemplesPage() {
                 Home
               </Link>
               <Link href="/temples" className="text-orange-600 font-medium">
-                Mandirs
+                Temples
               </Link>
               <Link href="/events" className="text-gray-700 hover:text-orange-600 font-medium">
                 Events
@@ -465,7 +482,7 @@ export default function TemplesPage() {
       {/* Hero Section */}
       <section className="py-12 px-4 bg-gradient-to-r from-orange-600 to-red-600 text-white">
         <div className="container mx-auto text-center">
-          <h2 className="text-4xl font-bold mb-4">Sanatan Mandir in New Zealand</h2>
+          <h2 className="text-4xl font-bold mb-4">Sanatan Temples in New Zealand</h2>
           <p className="text-xl mb-8 opacity-90">
             Discover sacred spaces across Aotearoa where devotees gather to worship and celebrate
           </p>
@@ -474,7 +491,7 @@ export default function TemplesPage() {
               <div className="relative flex-1">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
                 <Input
-                  placeholder="Search mandirs, cities, or deities..."
+                  placeholder="Search Sanatan temples, cities, or deities..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="pl-10 bg-white text-gray-900"
@@ -503,7 +520,7 @@ export default function TemplesPage() {
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
             <div>
               <h3 className="text-2xl font-bold text-gray-900">
-                {filteredTemples.length} Mandir{filteredTemples.length !== 1 ? "s" : ""} Found
+                {filteredTemples.length} Temple{filteredTemples.length !== 1 ? "s" : ""} Found
               </h3>
               <p className="text-gray-600">{selectedCity !== "all" ? `in ${selectedCity}` : "across New Zealand"}</p>
             </div>
@@ -523,7 +540,7 @@ export default function TemplesPage() {
             </div>
           </div>
 
-          {/* Mandir Grid */}
+          {/* Temple Grid */}
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {filteredTemples.map((temple) => (
               <Card key={temple.id} className="overflow-hidden hover:shadow-lg transition-shadow">
@@ -572,7 +589,7 @@ export default function TemplesPage() {
                     <Button size="sm" className="flex-1 bg-orange-600 hover:bg-orange-700" asChild>
                       <Link href={`/temples/${temple.id}`}>View Details</Link>
                     </Button>
-                    <Button size="sm" variant="outline" className="flex-1 bg-transparent" asChild>
+                    <Button size="sm" variant="outline" className="flex-1" asChild>
                       <Link
                         href={`https://maps.google.com/?q=${encodeURIComponent(temple.address + ", " + temple.city)}`}
                         target="_blank"
@@ -591,8 +608,8 @@ export default function TemplesPage() {
               <div className="text-gray-400 mb-4">
                 <MapPin className="h-16 w-16 mx-auto" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">No Mandirs found</h3>
-              <p className="text-gray-600 mb-4">Try adjusting your search criteria or browse all Mandirs.</p>
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">No temples found</h3>
+              <p className="text-gray-600 mb-4">Try adjusting your search criteria or browse all temples.</p>
               <Button
                 onClick={() => {
                   setSearchTerm("")
@@ -607,16 +624,16 @@ export default function TemplesPage() {
         </div>
       </section>
 
-      {/* Add Mandir CTA */}
+      {/* Add Temple CTA */}
       <section className="py-12 px-4 bg-orange-50">
         <div className="container mx-auto text-center">
-          <h3 className="text-2xl font-bold text-gray-900 mb-4">Know of a Mandir that's not listed?</h3>
+          <h3 className="text-2xl font-bold text-gray-900 mb-4">Know of a temple that's not listed?</h3>
           <p className="text-gray-600 mb-6 max-w-2xl mx-auto">
-            Help us build a comprehensive directory of Sanatan Mandir in New Zealand. Submit Mandir information to help
+            Help us build a comprehensive directory of Sanatan temples in New Zealand. Submit temple information to help
             fellow devotees discover sacred spaces.
           </p>
           <Button className="bg-orange-600 hover:bg-orange-700" asChild>
-            <Link href="/temples/add">Add a Mandir</Link>
+            <Link href="/temples/add">Add a Temple</Link>
           </Button>
         </div>
       </section>

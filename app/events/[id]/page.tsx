@@ -9,7 +9,6 @@ import Image from "next/image"
 import { useParams } from "next/navigation"
 
 // Mock event data - in a real app, this would come from an API
-// Dates are assumed to be in NZ local time for simplicity of this mock.
 const eventData = {
   1: {
     id: 1,
@@ -19,10 +18,10 @@ const eventData = {
     location: "Auckland Town Hall",
     address: "301-305 Queen Street, Auckland Central, Auckland 1010",
     city: "Auckland",
-    organizer: "Auckland Sanatan Society",
+    organizer: "Auckland Hindu Society",
     organizerPhone: "+64 9 123 4567",
-    organizerEmail: "events@aucklandsanatan.org.nz",
-    organizerWebsite: "https://www.aucklandsanatan.org.nz",
+    organizerEmail: "events@aucklandhindu.org.nz",
+    organizerWebsite: "https://www.aucklandhindu.org.nz",
     attendees: 450,
     maxAttendees: 500,
     price: "Free",
@@ -32,7 +31,7 @@ const eventData = {
     image: "/placeholder.svg?height=400&width=800",
     featured: true,
     fullDescription: `
-      Celebrate the Festival of Lights with the Auckland Sanatan community in this grand Diwali celebration. This year's event will feature:
+      Celebrate the Festival of Lights with the Auckland Hindu community in this grand Diwali celebration. This year's event will feature:
       
       • Traditional Diwali prayers and ceremonies
       • Cultural performances including classical dance and music
@@ -64,12 +63,12 @@ const eventData = {
     title: "Hanuman Jayanti Celebration",
     date: "2024-11-15",
     time: "7:00 AM - 12:00 PM",
-    location: "Wellington Sanatan Mandir",
+    location: "Wellington Hindu Temple",
     address: "23 Hanson Street, Newtown, Wellington 6021",
     city: "Wellington",
-    organizer: "Wellington Sanatan Mandir",
+    organizer: "Wellington Hindu Temple",
     organizerPhone: "+64 4 389 4397",
-    organizerEmail: "info@wellingtonsanatan.org.nz",
+    organizerEmail: "info@wellingtonhindu.org.nz",
     attendees: 120,
     maxAttendees: 200,
     price: "Free",
@@ -111,9 +110,9 @@ const eventData = {
     location: "Christchurch Community Center",
     address: "20 Ombersley Terrace, Opawa, Christchurch 8023",
     city: "Christchurch",
-    organizer: "Christchurch Sanatan Mandir Society",
+    organizer: "Christchurch Hindu Mandir",
     organizerPhone: "+64 3 332 1952",
-    organizerEmail: "study@christchurchsanatan.org.nz",
+    organizerEmail: "study@christchurchhindu.org.nz",
     attendees: 25,
     maxAttendees: 40,
     price: "Free",
@@ -129,7 +128,7 @@ const eventData = {
       • Q&A sessions with experienced teachers
       • Take-home study materials
       
-      This study circle is suitable for beginners and advanced students alike. All are welcome regardless of background or experience with Sanatan scriptures.
+      This study circle is suitable for beginners and advanced students alike. All are welcome regardless of background or experience with Hindu scriptures.
     `,
     schedule: [
       { time: "2:00 PM", activity: "Welcome and Opening Prayer" },
@@ -168,7 +167,6 @@ export default function EventDetailPage() {
     )
   }
 
-  // Formats date to New Zealand locale
   const formatDate = (dateString: string) => {
     const date = new Date(dateString)
     return date.toLocaleDateString("en-NZ", {
@@ -393,7 +391,7 @@ export default function EventDetailPage() {
                     <h4 className="font-medium text-gray-900">{event.location}</h4>
                     <p className="text-sm text-gray-600">{event.address}</p>
                   </div>
-                  <Button variant="outline" className="w-full bg-transparent" asChild>
+                  <Button variant="outline" className="w-full" asChild>
                     <Link href={`https://maps.google.com/?q=${encodeURIComponent(event.address)}`} target="_blank">
                       <MapPin className="mr-2 h-4 w-4" />
                       View on Map
@@ -409,11 +407,11 @@ export default function EventDetailPage() {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-3">
-                    <Button variant="outline" className="w-full justify-start bg-transparent">
+                    <Button variant="outline" className="w-full justify-start">
                       <Share2 className="mr-2 h-4 w-4" />
                       Share on Social Media
                     </Button>
-                    <Button variant="outline" className="w-full justify-start bg-transparent">
+                    <Button variant="outline" className="w-full justify-start">
                       <Mail className="mr-2 h-4 w-4" />
                       Email to Friends
                     </Button>

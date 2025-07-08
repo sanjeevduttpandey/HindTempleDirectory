@@ -124,17 +124,17 @@ export default function AddTemplePage() {
             <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
               <CheckCircle className="h-8 w-8 text-green-600" />
             </div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">Mandir Submitted Successfully!</h2>
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">Temple Submitted Successfully!</h2>
             <p className="text-gray-600 mb-6">
-              Thank you for contributing to our mandir directory. We'll review the information and add it to our
+              Thank you for contributing to our temple directory. We'll review the information and add it to our
               listings within 2-3 business days.
             </p>
             <div className="space-y-3">
               <Button className="w-full bg-orange-600 hover:bg-orange-700" asChild>
-                <Link href="/temples">Browse Mandirs</Link>
+                <Link href="/temples">Browse Temples</Link>
               </Button>
-              <Button variant="outline" className="w-full bg-transparent" asChild>
-                <Link href="/temples/add">Add Another Mandir</Link>
+              <Button variant="outline" className="w-full" asChild>
+                <Link href="/temples/add">Add Another Temple</Link>
               </Button>
             </div>
           </CardContent>
@@ -154,7 +154,7 @@ export default function AddTemplePage() {
             </div>
             <div>
               <h1 className="text-xl font-bold text-gray-900">Sanatan New Zealand</h1>
-              <p className="text-sm text-gray-600">Add Mandir</p>
+              <p className="text-sm text-gray-600">Add Temple</p>
             </div>
           </Link>
         </div>
@@ -167,18 +167,18 @@ export default function AddTemplePage() {
             <div className="w-20 h-20 bg-gradient-to-r from-orange-500 to-red-500 rounded-full flex items-center justify-center mx-auto mb-6">
               <MapPin className="h-10 w-10 text-white" />
             </div>
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">Add a Sanatan Mandir</h2>
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">Add a Hindu Temple</h2>
             <p className="text-xl text-gray-600">
-              Help fellow devotees discover sacred spaces by adding mandir information to our directory
+              Help fellow devotees discover sacred spaces by adding temple information to our directory
             </p>
           </div>
 
           {/* Form */}
           <Card>
             <CardHeader>
-              <CardTitle>Mandir Information</CardTitle>
+              <CardTitle>Temple Information</CardTitle>
               <CardDescription>
-                Please provide accurate and complete information about the mandir. All submissions are reviewed before
+                Please provide accurate and complete information about the temple. All submissions are reviewed before
                 being published.
               </CardDescription>
             </CardHeader>
@@ -189,7 +189,7 @@ export default function AddTemplePage() {
                   <h3 className="text-lg font-semibold text-gray-900 border-b pb-2">Basic Information</h3>
 
                   <div className="space-y-2">
-                    <Label htmlFor="name">Mandir Name *</Label>
+                    <Label htmlFor="name">Temple Name *</Label>
                     <Input
                       id="name"
                       required
@@ -261,7 +261,7 @@ export default function AddTemplePage() {
                     <Textarea
                       id="description"
                       required
-                      placeholder="Provide a brief description of the mandir, its history, and significance..."
+                      placeholder="Provide a brief description of the temple, its history, and significance..."
                       value={formData.description}
                       onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                       rows={4}
@@ -290,7 +290,7 @@ export default function AddTemplePage() {
                       <Input
                         id="email"
                         type="email"
-                        placeholder="info@mandir.org.nz"
+                        placeholder="info@temple.org.nz"
                         value={formData.email}
                         onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                       />
@@ -302,7 +302,7 @@ export default function AddTemplePage() {
                     <Input
                       id="website"
                       type="url"
-                      placeholder="https://www.mandir.org.nz"
+                      placeholder="https://www.temple.org.nz"
                       value={formData.website}
                       onChange={(e) => setFormData({ ...formData, website: e.target.value })}
                     />
@@ -373,7 +373,7 @@ export default function AddTemplePage() {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="contactRole">Your Role/Relationship to Mandir *</Label>
+                      <Label htmlFor="contactRole">Your Role/Relationship to Temple *</Label>
                       <Input
                         id="contactRole"
                         required
@@ -387,12 +387,12 @@ export default function AddTemplePage() {
 
                 {/* Photo Upload */}
                 <div className="space-y-6">
-                  <h3 className="text-lg font-semibold text-gray-900 border-b pb-2">Mandir Photos (Optional)</h3>
+                  <h3 className="text-lg font-semibold text-gray-900 border-b pb-2">Temple Photos (Optional)</h3>
                   <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
                     <Upload className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                    <p className="text-gray-600 mb-2">Upload photos of the mandir</p>
+                    <p className="text-gray-600 mb-2">Upload photos of the temple</p>
                     <p className="text-sm text-gray-500">PNG, JPG up to 10MB each. Maximum 5 photos.</p>
-                    <Button type="button" variant="outline" className="mt-4 bg-transparent">
+                    <Button type="button" variant="outline" className="mt-4">
                       Choose Files
                     </Button>
                   </div>
@@ -408,7 +408,7 @@ export default function AddTemplePage() {
                       onCheckedChange={(checked) => setFormData({ ...formData, agreeToTerms: checked as boolean })}
                     />
                     <Label htmlFor="terms" className="text-sm leading-relaxed">
-                      I confirm that the information provided is accurate and I have permission to submit this mandir's
+                      I confirm that the information provided is accurate and I have permission to submit this temple's
                       details. I understand that all submissions are reviewed before publication and may be edited for
                       clarity. *
                     </Label>
@@ -417,7 +417,7 @@ export default function AddTemplePage() {
 
                 <Button type="submit" className="w-full bg-orange-600 hover:bg-orange-700" size="lg">
                   <MapPin className="mr-2 h-5 w-5" />
-                  Submit Mandir Information
+                  Submit Temple Information
                 </Button>
               </form>
             </CardContent>
