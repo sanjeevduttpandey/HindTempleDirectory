@@ -1,19 +1,15 @@
 "use client"
 
-/*  Business directory listing component
-    – added "IT" category
-    – re-branded to “Sanatan” everywhere
-*/
-
 import { useState, useEffect } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Search, MapPin, Phone, Globe, Star, Mail } from "lucide-react"
+import { Search, MapPin, Phone, Globe, Star, Mail, Facebook, Instagram, Twitter, Loader2 } from "lucide-react"
 import StaticHeader from "@/components/static-header"
 import Link from "next/link"
+import Image from "next/image" // Import Image component
 
 /* ---------- CATEGORY OPTIONS ---------- */
 const businessCategories = [
@@ -26,7 +22,7 @@ const businessCategories = [
   "Event Services",
   "Grocery & Spices",
   "Health & Wellness",
-  "IT", // 👈 NEW
+  "IT",
   "Professional Services",
   "Religious Items",
   "Restaurants & Food",
@@ -36,7 +32,7 @@ const businessCategories = [
 /* ---------- DATA TYPES ---------- */
 interface ApprovedBusiness {
   id: string
-  businessName: string
+  business_name: string // Changed to match database column
   category: string
   description: string
   address: string
@@ -44,17 +40,19 @@ interface ApprovedBusiness {
   phone: string
   email: string
   website?: string
-  ownerName: string
+  owner_name: string // Changed to match database column
   services: string[]
-  operatingHours?: string
-  specialOffers?: string
+  operating_hours?: string // Changed to match database column
+  special_offers?: string // Changed to match database column
   rating: number
-  image?: string
-  images?: string[]
-  established?: string
-  founder?: string
-  owner?: string
-  specialties?: string[]
+  images?: string[] // Changed to match database column
+  social_media?: {
+    // Added social_media
+    facebook?: string
+    instagram?: string
+    x?: string
+  }
+  // Removed established, founder, owner, specialties as they are not in BusinessSubmission
 }
 
 /* ---------- COMPONENT ---------- */
@@ -81,14 +79,9 @@ export default function BusinessDirectory() {
       const result = await response.json()
 
       if (result.success) {
-        const transformed = result.data.map((b: any) => ({
-          ...b,
-          location: `${b.address}, ${b.city}`,
-          specialties: b.services,
-          image: b.images?.[0] || b.image,
-          images: b.images || (b.image ? [b.image] : []),
-        }))
-        setBusinesses(transformed)
+        // Transform data to match the ApprovedBusiness interface if necessary
+        // Assuming the API now returns data directly matching the database columns
+        setBusinesses(result.data)
       } else {
         throw new Error(result.message || "Failed to fetch businesses")
       }
@@ -105,15 +98,14 @@ export default function BusinessDirectory() {
     const term = searchTerm.toLowerCase()
 
     // Safely normalise strings, defaulting to ""
-    const businessName = (b.businessName ?? "").toLowerCase()
+    const businessName = (b.business_name ?? "").toLowerCase()
     const description = (b.description ?? "").toLowerCase()
     const category = b.category ?? ""
     const city = b.city ?? ""
+    const services = b.services?.map((s) => s?.toLowerCase()) || [] // Ensure services are lowercased and handled safely
 
     const matchesSearch =
-      businessName.includes(term) ||
-      description.includes(term) ||
-      (b.specialties?.some((s) => s?.toLowerCase().includes(term)) ?? false)
+      businessName.includes(term) || description.includes(term) || services.some((s) => s.includes(term))
 
     const matchesCategory = selectedCategory === "All Categories" || category === selectedCategory
 
@@ -128,7 +120,7 @@ export default function BusinessDirectory() {
       <div className="min-h-screen bg-gradient-to-br from-orange-50 to-red-50">
         <StaticHeader />
         <div className="container mx-auto px-4 py-8 text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-600 mx-auto mb-4" />
+          <Loader2 className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-600 mx-auto mb-4" />
           <p>Loading businesses...</p>
         </div>
       </div>
@@ -225,16 +217,12 @@ export default function BusinessDirectory() {
             <Card key={b.id} className="hover:shadow-lg transition-shadow">
               {/* Image */}
               <div className="aspect-video relative overflow-hidden rounded-t-lg">
-                <img
-                  src={
-                    b.images?.[0] ||
-                    b.image ||
-                    "/placeholder.svg?height=200&width=300&query=Business%20Image" ||
-                    "/placeholder.svg" ||
-                    "/placeholder.svg"
-                  }
-                  alt={b.businessName}
-                  className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                <Image
+                  src={b.images?.[0] || "/placeholder.svg?height=200&width=300&query=Business%20Image"}
+                  alt={b.business_name}
+                  layout="fill"
+                  objectFit="cover"
+                  className="hover:scale-105 transition-transform duration-300"
                   onError={(e) => {
                     ;(e.target as HTMLImageElement).src = "/modern-office-collaboration.png"
                   }}
@@ -244,7 +232,7 @@ export default function BusinessDirectory() {
               {/* Card body */}
               <CardHeader>
                 <div className="flex justify-between items-start">
-                  <CardTitle className="text-lg">{b.businessName}</CardTitle>
+                  <CardTitle className="text-lg">{b.business_name}</CardTitle>
                   <div className="flex items-center gap-1">
                     <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
                     <span className="text-sm font-medium">{b.rating}</span>
@@ -256,21 +244,11 @@ export default function BusinessDirectory() {
               </CardHeader>
 
               <CardContent>
-                <CardDescription className="mb-4">
-                  {b.description}
-                  {b.established && (
-                    <div className="mt-2 text-sm text-orange-600 font-medium">
-                      Established: {b.established} • Founded by: {b.founder}
-                    </div>
-                  )}
-                  {b.owner && !b.established && (
-                    <div className="mt-2 text-sm text-orange-600 font-medium">Owner: {b.owner}</div>
-                  )}
-                </CardDescription>
+                <CardDescription className="mb-4">{b.description}</CardDescription>
 
-                {b.specialties && (
+                {b.services && b.services.length > 0 && (
                   <div className="flex flex-wrap gap-1 mb-3">
-                    {b.specialties.map((s, i) => (
+                    {b.services.map((s, i) => (
                       <Badge key={i} variant="outline" className="text-xs">
                         {s}
                       </Badge>
@@ -311,14 +289,43 @@ export default function BusinessDirectory() {
                       </a>
                     </div>
                   )}
+                  {b.social_media && (
+                    <div className="flex items-center gap-2">
+                      {b.social_media.facebook && (
+                        <Link href={b.social_media.facebook} target="_blank" rel="noopener noreferrer">
+                          <Facebook className="h-4 w-4 text-muted-foreground hover:text-primary" />
+                        </Link>
+                      )}
+                      {b.social_media.instagram && (
+                        <Link href={b.social_media.instagram} target="_blank" rel="noopener noreferrer">
+                          <Instagram className="h-4 w-4 text-muted-foreground hover:text-primary" />
+                        </Link>
+                      )}
+                      {b.social_media.x && (
+                        <Link href={b.social_media.x} target="_blank" rel="noopener noreferrer">
+                          <Twitter className="h-4 w-4 text-muted-foreground hover:text-primary" />
+                        </Link>
+                      )}
+                    </div>
+                  )}
                 </div>
 
                 <div className="flex gap-2 mt-4">
-                  <Button size="sm" className="flex-1 bg-orange-600">
-                    Contact
-                  </Button>
-                  <Button size="sm" variant="outline" className="flex-1 bg-transparent">
-                    View Details
+                  {b.email ? (
+                    <Button size="sm" className="flex-1 bg-orange-600" asChild>
+                      <a href={`mailto:${b.email}`}>Contact</a>
+                    </Button>
+                  ) : b.phone ? (
+                    <Button size="sm" className="flex-1 bg-orange-600" asChild>
+                      <a href={`tel:${b.phone}`}>Contact</a>
+                    </Button>
+                  ) : (
+                    <Button size="sm" className="flex-1 bg-orange-600" disabled>
+                      Contact
+                    </Button>
+                  )}
+                  <Button size="sm" variant="outline" className="flex-1 bg-transparent" asChild>
+                    <Link href={`/business/directory/${b.id}`}>View Details</Link>
                   </Button>
                 </div>
               </CardContent>
