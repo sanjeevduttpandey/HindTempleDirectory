@@ -1,9 +1,15 @@
 import { cookies } from "next/headers"
 
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "admin123" // Change this in production
+// ADMIN_PASSWORD will now strictly rely on the environment variable.
+// If process.env.ADMIN_PASSWORD is not set, admin login will not be possible.
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD
 const ADMIN_SESSION_DURATION = 24 * 60 * 60 * 1000 // 24 hours
 
 export async function verifyAdminPassword(password: string): Promise<boolean> {
+  // Ensure ADMIN_PASSWORD is defined before comparison
+  if (!ADMIN_PASSWORD) {
+    return false // No admin password set, so no access
+  }
   return password === ADMIN_PASSWORD
 }
 

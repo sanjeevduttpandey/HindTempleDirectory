@@ -92,9 +92,10 @@ export default function AdminLogin() {
 
               <div className="mt-6 text-center text-sm text-gray-600">
                 <p>
-                  Default password: <code className="bg-gray-100 px-2 py-1 rounded">admin123</code>
+                  {/* Removed hardcoded default password display */}
+                  Please ensure your `ADMIN_PASSWORD` environment variable is set.
                 </p>
-                <p className="text-xs mt-2">Change this in production environment</p>
+                <p className="text-xs mt-2">If not set, admin access will be disabled.</p>
               </div>
             </CardContent>
           </Card>

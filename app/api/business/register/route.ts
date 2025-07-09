@@ -36,50 +36,58 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: false, error: "You must agree to the terms and conditions" }, { status: 400 })
     }
 
-    // Create submission object
+    // Create submission object matching the database schema
     const submission = {
-      businessName: body.businessName,
+      business_name: body.businessName,
       category: body.category,
       description: body.description,
       address: body.address,
       city: body.city,
       phone: body.phone,
       email: body.email,
-      website: body.website || "",
-      ownerName: body.ownerName,
-      ownerEmail: body.ownerEmail,
-      ownerPhone: body.ownerPhone,
+      website: body.website || null, // Use null for optional empty strings
+      owner_name: body.ownerName,
+      owner_email: body.ownerEmail,
+      owner_phone: body.ownerPhone,
       services: body.services || [],
-      socialMedia: body.socialMedia || {},
-      operatingHours: body.operatingHours || "",
-      specialOffers: body.specialOffers || "",
-      images: body.images || [], // Include uploaded images
+      social_media: body.socialMedia || {},
+      operating_hours: body.operatingHours || null,
+      special_offers: body.specialOffers || null,
+      images: body.images || [],
     }
 
-    // Add to storage
-    const newSubmission = addBusinessSubmission(submission)
+    // Add to storage (now using Supabase)
+    const { data, error } = await addBusinessSubmission(submission)
 
-    console.log("New business submission:", {
-      id: newSubmission.id,
-      businessName: newSubmission.businessName,
-      category: newSubmission.category,
-      city: newSubmission.city,
-      imagesCount: newSubmission.images?.length || 0,
+    if (error) {
+      console.error("Error in API route:", error)
+      return NextResponse.json(
+        { success: false, error: error.message || "Failed to register business" },
+        { status: 500 },
+      )
+    }
+
+    console.log("New business submission saved to DB:", {
+      id: data?.id,
+      business_name: data?.business_name,
+      category: data?.category,
+      city: data?.city,
+      imagesCount: data?.images?.length || 0,
     })
 
     return NextResponse.json({
       success: true,
       message: "Business registration submitted successfully! We'll review your application within 2-3 business days.",
       data: {
-        id: newSubmission.id,
-        businessName: newSubmission.businessName,
-        submittedAt: newSubmission.submittedAt,
+        id: data?.id,
+        business_name: data?.business_name,
+        submittedAt: data?.created_at,
       },
     })
   } catch (error) {
-    console.error("Registration error:", error)
+    console.error("Unexpected error in business registration API:", error)
     return NextResponse.json(
-      { success: false, error: "Failed to process registration. Please try again." },
+      { success: false, error: (error as Error).message || "Failed to process registration. Please try again." },
       { status: 500 },
     )
   }

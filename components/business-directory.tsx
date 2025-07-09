@@ -103,12 +103,22 @@ export default function BusinessDirectory() {
   /* -- FILTER RESULTS -------------------------------------------------- */
   const filtered = businesses.filter((b) => {
     const term = searchTerm.toLowerCase()
+
+    // Safely normalise strings, defaulting to ""
+    const businessName = (b.businessName ?? "").toLowerCase()
+    const description = (b.description ?? "").toLowerCase()
+    const category = b.category ?? ""
+    const city = b.city ?? ""
+
     const matchesSearch =
-      b.businessName.toLowerCase().includes(term) ||
-      b.description.toLowerCase().includes(term) ||
-      b.specialties?.some((s) => s.toLowerCase().includes(term))
-    const matchesCategory = selectedCategory === "All Categories" || b.category === selectedCategory
-    const matchesLocation = selectedLocation === "All Locations" || b.city.includes(selectedLocation)
+      businessName.includes(term) ||
+      description.includes(term) ||
+      (b.specialties?.some((s) => s?.toLowerCase().includes(term)) ?? false)
+
+    const matchesCategory = selectedCategory === "All Categories" || category === selectedCategory
+
+    const matchesLocation = selectedLocation === "All Locations" || city.includes(selectedLocation)
+
     return matchesSearch && matchesCategory && matchesLocation
   })
 
@@ -220,6 +230,7 @@ export default function BusinessDirectory() {
                     b.images?.[0] ||
                     b.image ||
                     "/placeholder.svg?height=200&width=300&query=Business%20Image" ||
+                    "/placeholder.svg" ||
                     "/placeholder.svg"
                   }
                   alt={b.businessName}
@@ -306,7 +317,7 @@ export default function BusinessDirectory() {
                   <Button size="sm" className="flex-1 bg-orange-600">
                     Contact
                   </Button>
-                  <Button size="sm" variant="outline" className="flex-1">
+                  <Button size="sm" variant="outline" className="flex-1 bg-transparent">
                     View Details
                   </Button>
                 </div>
