@@ -1,54 +1,27 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { getCurrentDevotee } from "@/lib/auth"
-import { getDevoteeActivities, addDevoteeActivity } from "@/lib/database"
+import { getDevoteeActivities } from "@/lib/database"
+import { getSession } from "@/lib/auth"
+
+export const runtime = "nodejs"
 
 export async function GET(request: NextRequest) {
   try {
-    const devotee = await getCurrentDevotee()
-
-    if (!devotee) {
-      return NextResponse.json({ error: "Not authenticated" }, { status: 401 })
+    const session = await getSession()
+    if (!session) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
-    const activities = await getDevoteeActivities(devotee.id)
+    const { searchParams } = new URL(request.url)
+    const limit = Number.parseInt(searchParams.get("limit") || "20")
+
+    const activities = await getDevoteeActivities(session.user.id, limit)
 
     return NextResponse.json({
       success: true,
       activities,
     })
   } catch (error: any) {
-    console.error("Activity fetch error:", error)
+    console.error("Error fetching devotee activities:", error)
     return NextResponse.json({ error: "Failed to fetch activities" }, { status: 500 })
-  }
-}
-
-export async function POST(request: NextRequest) {
-  try {
-    const devotee = await getCurrentDevotee()
-
-    if (!devotee) {
-      return NextResponse.json({ error: "Not authenticated" }, { status: 401 })
-    }
-
-    const activityData = await request.json()
-
-    const newActivity = await addDevoteeActivity({
-      devotee_id: devotee.id,
-      activity_type: activityData.type,
-      activity_description: activityData.description,
-      temple_id: activityData.temple_id,
-      event_id: activityData.event_id,
-      amount: activityData.amount,
-      metadata: activityData.metadata,
-    })
-
-    return NextResponse.json({
-      success: true,
-      activity: newActivity,
-      message: "Activity added successfully",
-    })
-  } catch (error: any) {
-    console.error("Activity creation error:", error)
-    return NextResponse.json({ error: "Failed to add activity" }, { status: 500 })
   }
 }

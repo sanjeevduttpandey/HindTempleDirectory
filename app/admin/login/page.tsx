@@ -91,10 +91,7 @@ export default function AdminLogin() {
               </form>
 
               <div className="mt-6 text-center text-sm text-gray-600">
-                <p>
-                  {/* Removed hardcoded default password display */}
-                  Please ensure your `ADMIN_PASSWORD` environment variable is set.
-                </p>
+                <p>Please ensure your `ADMIN_PASSWORD` environment variable is set.</p>
                 <p className="text-xs mt-2">If not set, admin access will be disabled.</p>
               </div>
             </CardContent>

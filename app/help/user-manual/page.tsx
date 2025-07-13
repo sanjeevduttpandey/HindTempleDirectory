@@ -1,572 +1,301 @@
-"use client"
-
-import { useState } from "react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { Alert, AlertDescription } from "@/components/ui/alert"
-import { User, Lock, Mail, CheckCircle, Info, ArrowRight, Chrome, Shield, BookOpen, HelpCircle } from "lucide-react"
 import Link from "next/link"
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
+import {
+  ArrowLeft,
+  Home,
+  Users,
+  Calendar,
+  Building2,
+  Briefcase,
+  MessageSquare,
+  DollarSign,
+  Settings,
+} from "lucide-react"
 
 export default function UserManualPage() {
-  const [activeSection, setActiveSection] = useState("overview")
-
   return (
-    <div className="min-h-screen bg-gradient-to-b from-orange-50 to-white">
-      {/* Header */}
+    <div className="min-h-screen bg-gray-50">
       <header className="border-b bg-white">
         <div className="container mx-auto px-4 py-4">
-          <Link href="/" className="flex items-center space-x-2">
+          <Link href="/help" className="flex items-center space-x-2">
+            <ArrowLeft className="h-5 w-5" />
             <div className="w-10 h-10 bg-gradient-to-r from-orange-500 to-red-500 rounded-full flex items-center justify-center">
               <span className="text-white font-bold text-lg">🕉</span>
             </div>
             <div>
               <h1 className="text-xl font-bold text-gray-900">Sanatan New Zealand</h1>
-              <p className="text-sm text-gray-600">User Manual & Guide</p>
+              <p className="text-sm text-gray-600">User Manual</p>
             </div>
           </Link>
         </div>
       </header>
 
-      <div className="container mx-auto px-4 py-12">
-        <div className="max-w-6xl mx-auto">
-          {/* Page Header */}
-          <div className="text-center mb-12">
-            <h1 className="text-4xl font-bold text-gray-900 mb-4 flex items-center justify-center gap-3">
-              <BookOpen className="h-10 w-10 text-orange-600" />
-              Complete User Manual
-            </h1>
-            <p className="text-xl text-gray-600">
-              Your comprehensive guide to joining and using the Sanatan New Zealand platform
-            </p>
+      <div className="container mx-auto px-4 py-8">
+        <div className="max-w-3xl mx-auto">
+          <div className="mb-8 text-center">
+            <h2 className="text-3xl font-bold text-gray-900 mb-2">Sanatan NZ User Manual</h2>
+            <p className="text-gray-600">A comprehensive guide to using the Sanatan New Zealand platform.</p>
           </div>
 
-          <Tabs value={activeSection} onValueChange={setActiveSection}>
-            <TabsList className="grid w-full grid-cols-5 mb-8">
-              <TabsTrigger value="overview" className="flex items-center gap-2">
-                <Info className="h-4 w-4" />
-                Overview
-              </TabsTrigger>
-              <TabsTrigger value="registration" className="flex items-center gap-2">
-                <User className="h-4 w-4" />
-                Registration
-              </TabsTrigger>
-              <TabsTrigger value="login" className="flex items-center gap-2">
-                <Lock className="h-4 w-4" />
-                Login
-              </TabsTrigger>
-              <TabsTrigger value="password" className="flex items-center gap-2">
-                <Shield className="h-4 w-4" />
-                Password
-              </TabsTrigger>
-              <TabsTrigger value="troubleshooting" className="flex items-center gap-2">
-                <HelpCircle className="h-4 w-4" />
-                Help
-              </TabsTrigger>
-            </TabsList>
+          <Accordion type="multiple" className="w-full">
+            {/* Getting Started */}
+            <AccordionItem value="item-1">
+              <AccordionTrigger className="text-lg font-semibold text-gray-800 hover:no-underline">
+                <div className="flex items-center gap-2">
+                  <Home className="h-5 w-5 text-orange-600" />
+                  Getting Started
+                </div>
+              </AccordionTrigger>
+              <AccordionContent className="p-4 text-gray-700 space-y-4">
+                <p>
+                  Welcome to the Sanatan New Zealand platform! This manual will guide you through all the features and
+                  functionalities available to you.
+                </p>
+                <h4 className="font-semibold mt-4">Registration & Login:</h4>
+                <ul className="list-disc list-inside space-y-1">
+                  <li>To access personalized features, you need to register for an account.</li>
+                  <li>Click on "Join" or "Login" in the navigation bar.</li>
+                  <li>You can register as a Devotee or as a Temple/Business.</li>
+                  <li>Follow the prompts to create your profile.</li>
+                </ul>
+                <h4 className="font-semibold mt-4">Navigating the Platform:</h4>
+                <p>The main navigation bar at the top provides quick access to key sections:</p>
+                <ul className="list-disc list-inside space-y-1">
+                  <li>
+                    <strong>Home:</strong> Your personalized dashboard and quick overview.
+                  </li>
+                  <li>
+                    <strong>Mandirs:</strong> Directory of Sanatan temples across New Zealand.
+                  </li>
+                  <li>
+                    <strong>Events:</strong> Upcoming festivals, pujas, and community gatherings.
+                  </li>
+                  <li>
+                    <strong>Community:</strong> Discussion forums and groups.
+                  </li>
+                  <li>
+                    <strong>Business Directory:</strong> Listings of Sanatan-owned businesses.
+                  </li>
+                  <li>
+                    <strong>Panchang:</strong> Daily Hindu calendar and auspicious timings.
+                  </li>
+                  <li>
+                    <strong>Donate:</strong> Support temples and community initiatives.
+                  </li>
+                </ul>
+              </AccordionContent>
+            </AccordionItem>
 
-            {/* Overview Tab */}
-            <TabsContent value="overview" className="space-y-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">🕉️ Welcome to Sanatan New Zealand</CardTitle>
-                  <CardDescription>
-                    Your spiritual community platform connecting Hindu devotees across New Zealand
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                  <div className="grid md:grid-cols-2 gap-6">
-                    <div className="space-y-4">
-                      <h3 className="text-lg font-semibold text-gray-900">Platform Features</h3>
-                      <ul className="space-y-2 text-gray-700">
-                        <li className="flex items-center">
-                          <CheckCircle className="h-4 w-4 mr-2 text-green-600" />
-                          Connect with local mandirs and devotees
-                        </li>
-                        <li className="flex items-center">
-                          <CheckCircle className="h-4 w-4 mr-2 text-green-600" />
-                          Join satsangs and spiritual events
-                        </li>
-                        <li className="flex items-center">
-                          <CheckCircle className="h-4 w-4 mr-2 text-green-600" />
-                          Access daily panchang and spiritual content
-                        </li>
-                        <li className="flex items-center">
-                          <CheckCircle className="h-4 w-4 mr-2 text-green-600" />
-                          Participate in community discussions
-                        </li>
-                        <li className="flex items-center">
-                          <CheckCircle className="h-4 w-4 mr-2 text-green-600" />
-                          Make donations (daan) to temples
-                        </li>
-                      </ul>
-                    </div>
-                    <div className="space-y-4">
-                      <h3 className="text-lg font-semibold text-gray-900">Getting Started</h3>
-                      <div className="space-y-3">
-                        <div className="flex items-center p-3 bg-orange-50 rounded-lg">
-                          <span className="w-6 h-6 bg-orange-600 text-white rounded-full flex items-center justify-center text-sm font-bold mr-3">
-                            1
-                          </span>
-                          <span className="text-gray-700">Create your devotee account</span>
-                        </div>
-                        <div className="flex items-center p-3 bg-orange-50 rounded-lg">
-                          <span className="w-6 h-6 bg-orange-600 text-white rounded-full flex items-center justify-center text-sm font-bold mr-3">
-                            2
-                          </span>
-                          <span className="text-gray-700">Complete your spiritual profile</span>
-                        </div>
-                        <div className="flex items-center p-3 bg-orange-50 rounded-lg">
-                          <span className="w-6 h-6 bg-orange-600 text-white rounded-full flex items-center justify-center text-sm font-bold mr-3">
-                            3
-                          </span>
-                          <span className="text-gray-700">Explore mandirs and join events</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+            {/* Devotee Profile */}
+            <AccordionItem value="item-2">
+              <AccordionTrigger className="text-lg font-semibold text-gray-800 hover:no-underline">
+                <div className="flex items-center gap-2">
+                  <Users className="h-5 w-5 text-orange-600" />
+                  Managing Your Devotee Profile
+                </div>
+              </AccordionTrigger>
+              <AccordionContent className="p-4 text-gray-700 space-y-4">
+                <p>Your devotee profile allows you to personalize your experience and connect with others.</p>
+                <h4 className="font-semibold mt-4">Editing Your Profile:</h4>
+                <ul className="list-disc list-inside space-y-1">
+                  <li>Go to "My Profile" from the user dropdown menu.</li>
+                  <li>You can update your personal details, spiritual name, city, and bio.</li>
+                  <li>Add your spiritual practices and interests to connect with like-minded devotees.</li>
+                  <li>Upload an avatar to personalize your profile.</li>
+                </ul>
+                <h4 className="font-semibold mt-4">Activity Log:</h4>
+                <ul className="list-disc list-inside space-y-1">
+                  <li>
+                    View your recent activities on the platform, such as event registrations, temple visits, and
+                    discussion posts.
+                  </li>
+                </ul>
+              </AccordionContent>
+            </AccordionItem>
 
-                  <Alert>
-                    <Info className="h-4 w-4" />
-                    <AlertDescription>
-                      This manual covers everything you need to know about registering, logging in, and managing your
-                      account on the Sanatan New Zealand platform.
-                    </AlertDescription>
-                  </Alert>
-                </CardContent>
-              </Card>
-            </TabsContent>
+            {/* Mandir Directory */}
+            <AccordionItem value="item-3">
+              <AccordionTrigger className="text-lg font-semibold text-gray-800 hover:no-underline">
+                <div className="flex items-center gap-2">
+                  <Building2 className="h-5 w-5 text-orange-600" />
+                  Mandir Directory
+                </div>
+              </AccordionTrigger>
+              <AccordionContent className="p-4 text-gray-700 space-y-4">
+                <p>Explore a comprehensive list of Sanatan temples across New Zealand.</p>
+                <h4 className="font-semibold mt-4">Searching for Mandirs:</h4>
+                <ul className="list-disc list-inside space-y-1">
+                  <li>Use the search bar to find temples by name, deity, or city.</li>
+                  <li>Filter by city to find temples in your local area.</li>
+                </ul>
+                <h4 className="font-semibold mt-4">Mandir Details:</h4>
+                <ul className="list-disc list-inside space-y-1">
+                  <li>
+                    Click on a temple listing to view its full profile, including address, contact information,
+                    services, and facilities.
+                  </li>
+                  <li>View photos and read reviews from other devotees.</li>
+                </ul>
+                <h4 className="font-semibold mt-4">Adding a New Mandir:</h4>
+                <ul className="list-disc list-inside space-y-1">
+                  <li>If you are an authorized representative, you can submit a new temple for listing.</li>
+                  <li>Go to the "Mandirs" section and click "Add New Mandir".</li>
+                  <li>Fill in all required details; submissions will be reviewed by administrators.</li>
+                </ul>
+              </AccordionContent>
+            </AccordionItem>
 
-            {/* Registration Tab */}
-            <TabsContent value="registration" className="space-y-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <User className="h-5 w-5" />
-                    Devotee Registration Guide
-                  </CardTitle>
-                  <CardDescription>Step-by-step guide to creating your account</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-8">
-                  {/* Registration Methods */}
-                  <div className="space-y-4">
-                    <h3 className="text-lg font-semibold text-gray-900">Registration Methods</h3>
-                    <div className="grid md:grid-cols-2 gap-6">
-                      <div className="border rounded-lg p-4">
-                        <h4 className="font-medium text-gray-900 mb-3 flex items-center gap-2">
-                          <Chrome className="h-4 w-4" />
-                          Quick Social Registration
-                        </h4>
-                        <ul className="space-y-2 text-sm text-gray-600">
-                          <li>• Use existing Google, Facebook, or GitHub account</li>
-                          <li>• Instant account creation</li>
-                          <li>• Optional profile completion later</li>
-                          <li>• Best for quick access</li>
-                        </ul>
-                        <Badge variant="outline" className="mt-2">
-                          Recommended for beginners
-                        </Badge>
-                      </div>
-                      <div className="border rounded-lg p-4">
-                        <h4 className="font-medium text-gray-900 mb-3 flex items-center gap-2">
-                          <Mail className="h-4 w-4" />
-                          Detailed Email Registration
-                        </h4>
-                        <ul className="space-y-2 text-sm text-gray-600">
-                          <li>• Complete spiritual profile setup</li>
-                          <li>• Custom password creation</li>
-                          <li>• Detailed preferences and interests</li>
-                          <li>• Full community integration</li>
-                        </ul>
-                        <Badge variant="outline" className="mt-2">
-                          Recommended for active users
-                        </Badge>
-                      </div>
-                    </div>
-                  </div>
+            {/* Events */}
+            <AccordionItem value="item-4">
+              <AccordionTrigger className="text-lg font-semibold text-gray-800 hover:no-underline">
+                <div className="flex items-center gap-2">
+                  <Calendar className="h-5 w-5 text-orange-600" />
+                  Events & Festivals
+                </div>
+              </AccordionTrigger>
+              <AccordionContent className="p-4 text-gray-700 space-y-4">
+                <p>Stay updated with upcoming Sanatan events, festivals, pujas, and satsangs.</p>
+                <h4 className="font-semibold mt-4">Browsing Events:</h4>
+                <ul className="list-disc list-inside space-y-1">
+                  <li>Events are listed chronologically.</li>
+                  <li>Use filters to narrow down events by city, category, or date.</li>
+                </ul>
+                <h4 className="font-semibold mt-4">Event Details & Registration:</h4>
+                <ul className="list-disc list-inside space-y-1">
+                  <li>Click on an event to view its full description, schedule, location, and organizer details.</li>
+                  <li>For events requiring registration, follow the "Register Now" button.</li>
+                </ul>
+                <h4 className="font-semibold mt-4">Creating an Event:</h4>
+                <ul className="list-disc list-inside space-y-1">
+                  <li>If you are organizing a community event, you can submit it for listing.</li>
+                  <li>Go to the "Events" section and click "Create Event".</li>
+                  <li>Fill in all details, including date, time, location, and organizer information.</li>
+                  <li>Your event will be reviewed by administrators before publication.</li>
+                </ul>
+              </AccordionContent>
+            </AccordionItem>
 
-                  {/* Step-by-Step Process */}
-                  <div className="space-y-6">
-                    <h3 className="text-lg font-semibold text-gray-900">Email Registration Process</h3>
+            {/* Business Directory */}
+            <AccordionItem value="item-5">
+              <AccordionTrigger className="text-lg font-semibold text-gray-800 hover:no-underline">
+                <div className="flex items-center gap-2">
+                  <Briefcase className="h-5 w-5 text-orange-600" />
+                  Business Directory
+                </div>
+              </AccordionTrigger>
+              <AccordionContent className="p-4 text-gray-700 space-y-4">
+                <p>Discover and support Sanatan-owned or related businesses in New Zealand.</p>
+                <h4 className="font-semibold mt-4">Searching Businesses:</h4>
+                <ul className="list-disc list-inside space-y-1">
+                  <li>Search by business name, category, or city.</li>
+                  <li>Filter by category (e.g., catering, clothing, spiritual items).</li>
+                </ul>
+                <h4 className="font-semibold mt-4">Business Listings:</h4>
+                <ul className="list-disc list-inside space-y-1">
+                  <li>View business profiles with contact details, services, operating hours, and special offers.</li>
+                </ul>
+                <h4 className="font-semibold mt-4">Listing Your Business:</h4>
+                <ul className="list-disc list-inside space-y-1">
+                  <li>If you own a business relevant to the Sanatan community, you can submit it for listing.</li>
+                  <li>Go to the "Business Directory" section and click "Register Your Business".</li>
+                  <li>Provide comprehensive details about your business; submissions are subject to admin review.</li>
+                </ul>
+              </AccordionContent>
+            </AccordionItem>
 
-                    {/* Step 1 */}
-                    <div className="border-l-4 border-orange-500 pl-4">
-                      <h4 className="font-medium text-gray-900 mb-2">Step 1: Choose Registration Method</h4>
-                      <p className="text-gray-600 mb-3">
-                        Visit the registration page and select "Register with Email" for detailed profile setup.
-                      </p>
-                      <div className="bg-gray-50 p-3 rounded text-sm">
-                        <strong>URL:</strong> <code>https://sanatannz.com/register</code>
-                      </div>
-                    </div>
+            {/* Community Hub */}
+            <AccordionItem value="item-6">
+              <AccordionTrigger className="text-lg font-semibold text-gray-800 hover:no-underline">
+                <div className="flex items-center gap-2">
+                  <MessageSquare className="h-5 w-5 text-orange-600" />
+                  Community Hub
+                </div>
+              </AccordionTrigger>
+              <AccordionContent className="p-4 text-gray-700 space-y-4">
+                <p>Engage with the wider Sanatan community through discussions and groups.</p>
+                <h4 className="font-semibold mt-4">Discussions:</h4>
+                <ul className="list-disc list-inside space-y-1">
+                  <li>Browse various discussion topics by category.</li>
+                  <li>Start a new discussion to ask questions or share insights.</li>
+                  <li>Reply to existing posts and interact with other members.</li>
+                </ul>
+                <h4 className="font-semibold mt-4">Groups:</h4>
+                <ul className="list-disc list-inside space-y-1">
+                  <li>
+                    Discover and join groups based on shared interests (e.g., Bhagavad Gita study, local temple
+                    volunteers).
+                  </li>
+                  <li>Participate in group-specific discussions and activities.</li>
+                </ul>
+              </AccordionContent>
+            </AccordionItem>
 
-                    {/* Step 2 */}
-                    <div className="border-l-4 border-orange-500 pl-4">
-                      <h4 className="font-medium text-gray-900 mb-2">Step 2: Personal Information</h4>
-                      <p className="text-gray-600 mb-3">Fill in your basic personal details:</p>
-                      <div className="grid md:grid-cols-2 gap-4 text-sm">
-                        <div>
-                          <strong>Required Fields:</strong>
-                          <ul className="mt-1 space-y-1 text-gray-600">
-                            <li>• First Name</li>
-                            <li>• Last Name</li>
-                            <li>• Email Address</li>
-                            <li>• City (New Zealand)</li>
-                          </ul>
-                        </div>
-                        <div>
-                          <strong>Optional Fields:</strong>
-                          <ul className="mt-1 space-y-1 text-gray-600">
-                            <li>• Spiritual Name</li>
-                            <li>• Phone Number</li>
-                            <li>• Date of Birth</li>
-                            <li>• Gender</li>
-                          </ul>
-                        </div>
-                      </div>
-                    </div>
+            {/* Donations */}
+            <AccordionItem value="item-7">
+              <AccordionTrigger className="text-lg font-semibold text-gray-800 hover:no-underline">
+                <div className="flex items-center gap-2">
+                  <DollarSign className="h-5 w-5 text-orange-600" />
+                  Donations
+                </div>
+              </AccordionTrigger>
+              <AccordionContent className="p-4 text-gray-700 space-y-4">
+                <p>Support the Sanatan community by making online donations.</p>
+                <h4 className="font-semibold mt-4">How to Donate:</h4>
+                <ul className="list-disc list-inside space-y-1">
+                  <li>Go to the "Donate" section.</li>
+                  <li>Choose your donation amount and type (e.g., General Fund, Annadaan, Temple Maintenance).</li>
+                  <li>Optionally, specify a particular temple or event you wish to support.</li>
+                  <li>Select your preferred payment method and complete the transaction securely.</li>
+                </ul>
+                <p className="mt-2">All donations are processed securely and are tax-deductible where applicable.</p>
+              </AccordionContent>
+            </AccordionItem>
 
-                    {/* Step 3 */}
-                    <div className="border-l-4 border-orange-500 pl-4">
-                      <h4 className="font-medium text-gray-900 mb-2">Step 3: Password Creation</h4>
-                      <p className="text-gray-600 mb-3">Create a secure password for your account:</p>
-                      <div className="bg-yellow-50 p-4 rounded-lg">
-                        <h5 className="font-medium text-yellow-800 mb-2">Password Requirements:</h5>
-                        <ul className="space-y-1 text-sm text-yellow-700">
-                          <li>✓ At least 8 characters long</li>
-                          <li>✓ Contains uppercase letter (A-Z)</li>
-                          <li>✓ Contains lowercase letter (a-z)</li>
-                          <li>✓ Contains at least one number (0-9)</li>
-                          <li>✓ Confirm password must match</li>
-                        </ul>
-                      </div>
-                    </div>
+            {/* Admin Panel (if applicable) */}
+            <AccordionItem value="item-8">
+              <AccordionTrigger className="text-lg font-semibold text-gray-800 hover:no-underline">
+                <div className="flex items-center gap-2">
+                  <Settings className="h-5 w-5 text-orange-600" />
+                  Admin Panel (For Authorized Users)
+                </div>
+              </AccordionTrigger>
+              <AccordionContent className="p-4 text-gray-700 space-y-4">
+                <p>The Admin Panel provides tools for platform administrators to manage content and users.</p>
+                <h4 className="font-semibold mt-4">Accessing Admin Panel:</h4>
+                <ul className="list-disc list-inside space-y-1">
+                  <li>Only authorized administrators can access this section.</li>
+                  <li>Login with your admin credentials.</li>
+                </ul>
+                <h4 className="font-semibold mt-4">Key Admin Functions:</h4>
+                <ul className="list-disc list-inside space-y-1">
+                  <li>
+                    <strong>Business Submissions:</strong> Review, approve, reject, and edit business listings.
+                  </li>
+                  <li>
+                    <strong>Event Submissions:</strong> Review, approve, reject, and edit community event listings.
+                  </li>
+                  <li>
+                    <strong>User Management:</strong> Manage devotee accounts and permissions (coming soon).
+                  </li>
+                  <li>
+                    <strong>Content Management:</strong> Manage temple information, discussion categories, etc. (coming
+                    soon).
+                  </li>
+                  <li>
+                    <strong>Analytics:</strong> View platform statistics (coming soon).
+                  </li>
+                </ul>
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
 
-                    {/* Step 4 */}
-                    <div className="border-l-4 border-orange-500 pl-4">
-                      <h4 className="font-medium text-gray-900 mb-2">Step 4: Spiritual Profile</h4>
-                      <p className="text-gray-600 mb-3">Complete your spiritual and community preferences:</p>
-                      <div className="grid md:grid-cols-2 gap-4 text-sm">
-                        <div>
-                          <strong>Spiritual Information:</strong>
-                          <ul className="mt-1 space-y-1 text-gray-600">
-                            <li>• Rashi (Zodiac Sign)</li>
-                            <li>• Gotra (Family Lineage)</li>
-                            <li>• Nakshatra (Birth Star)</li>
-                            <li>• Spiritual Practices</li>
-                          </ul>
-                        </div>
-                        <div>
-                          <strong>Community Preferences:</strong>
-                          <ul className="mt-1 space-y-1 text-gray-600">
-                            <li>• Interests and Activities</li>
-                            <li>• Newsletter Subscription</li>
-                            <li>• Community Contact Permissions</li>
-                            <li>• Terms and Privacy Agreement</li>
-                          </ul>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <Alert>
-                    <CheckCircle className="h-4 w-4" />
-                    <AlertDescription>
-                      After successful registration, you'll be redirected to a welcome page with next steps to explore
-                      the platform.
-                    </AlertDescription>
-                  </Alert>
-                </CardContent>
-              </Card>
-            </TabsContent>
-
-            {/* Login Tab */}
-            <TabsContent value="login" className="space-y-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Lock className="h-5 w-5" />
-                    Login Guide
-                  </CardTitle>
-                  <CardDescription>How to access your devotee account</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                  <div className="space-y-4">
-                    <h3 className="text-lg font-semibold text-gray-900">Login Methods</h3>
-                    <div className="grid md:grid-cols-2 gap-6">
-                      <div className="border rounded-lg p-4">
-                        <h4 className="font-medium text-gray-900 mb-3">From Homepage</h4>
-                        <ul className="space-y-2 text-sm text-gray-600">
-                          <li>• Click "Sign In" in the navigation menu</li>
-                          <li>• Use the quick login card in hero section</li>
-                          <li>• Access login modal from any page</li>
-                        </ul>
-                      </div>
-                      <div className="border rounded-lg p-4">
-                        <h4 className="font-medium text-gray-900 mb-3">Direct Login Page</h4>
-                        <ul className="space-y-2 text-sm text-gray-600">
-                          <li>• Visit /login directly</li>
-                          <li>• Bookmark for quick access</li>
-                          <li>• Full-featured login experience</li>
-                        </ul>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="space-y-4">
-                    <h3 className="text-lg font-semibold text-gray-900">Login Process</h3>
-                    <div className="space-y-4">
-                      <div className="border-l-4 border-blue-500 pl-4">
-                        <h4 className="font-medium text-gray-900 mb-2">Step 1: Enter Credentials</h4>
-                        <ul className="space-y-1 text-gray-600">
-                          <li>• Email address (used during registration)</li>
-                          <li>• Password (created during registration)</li>
-                          <li>• Optional: Check "Remember me" for 30 days</li>
-                        </ul>
-                      </div>
-
-                      <div className="border-l-4 border-blue-500 pl-4">
-                        <h4 className="font-medium text-gray-900 mb-2">Step 2: Social Login (Alternative)</h4>
-                        <ul className="space-y-1 text-gray-600">
-                          <li>• Click Google, Facebook, or GitHub button</li>
-                          <li>• Authorize access to your social account</li>
-                          <li>• Automatic login and redirect</li>
-                        </ul>
-                      </div>
-
-                      <div className="border-l-4 border-blue-500 pl-4">
-                        <h4 className="font-medium text-gray-900 mb-2">Step 3: Dashboard Access</h4>
-                        <ul className="space-y-1 text-gray-600">
-                          <li>• Automatic redirect to personalized dashboard</li>
-                          <li>• Access to all platform features</li>
-                          <li>• Session valid for 7 days</li>
-                        </ul>
-                      </div>
-                    </div>
-                  </div>
-
-                  <Alert>
-                    <Info className="h-4 w-4" />
-                    <AlertDescription>
-                      If you forget your password, use the "Forgot Password" link on the login page to reset it via
-                      email.
-                    </AlertDescription>
-                  </Alert>
-                </CardContent>
-              </Card>
-            </TabsContent>
-
-            {/* Password Management Tab */}
-            <TabsContent value="password" className="space-y-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Shield className="h-5 w-5" />
-                    Password Management
-                  </CardTitle>
-                  <CardDescription>Creating, updating, and securing your password</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-8">
-                  {/* Password Creation */}
-                  <div className="space-y-4">
-                    <h3 className="text-lg font-semibold text-gray-900">Password Creation (During Registration)</h3>
-                    <div className="bg-blue-50 p-4 rounded-lg">
-                      <h4 className="font-medium text-blue-800 mb-2">Security Requirements</h4>
-                      <div className="grid md:grid-cols-2 gap-4 text-sm">
-                        <div>
-                          <strong>Minimum Requirements:</strong>
-                          <ul className="mt-1 space-y-1 text-blue-700">
-                            <li>✓ 8+ characters length</li>
-                            <li>✓ Uppercase letter (A-Z)</li>
-                            <li>✓ Lowercase letter (a-z)</li>
-                            <li>✓ Number (0-9)</li>
-                          </ul>
-                        </div>
-                        <div>
-                          <strong>Best Practices:</strong>
-                          <ul className="mt-1 space-y-1 text-blue-700">
-                            <li>• Use unique password</li>
-                            <li>• Include special characters</li>
-                            <li>• Avoid personal information</li>
-                            <li>• Use password manager</li>
-                          </ul>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Password Update */}
-                  <div className="space-y-4">
-                    <h3 className="text-lg font-semibold text-gray-900">Password Update (Self-Service)</h3>
-                    <div className="space-y-4">
-                      <div className="border-l-4 border-green-500 pl-4">
-                        <h4 className="font-medium text-gray-900 mb-2">Via Profile Page</h4>
-                        <ol className="space-y-2 text-gray-600">
-                          <li>1. Login to your account</li>
-                          <li>2. Go to Profile → Settings tab</li>
-                          <li>3. Click "Change Password" button</li>
-                          <li>4. Enter current password</li>
-                          <li>5. Enter new password (twice)</li>
-                          <li>6. Click "Update Password"</li>
-                        </ol>
-                      </div>
-
-                      <div className="border-l-4 border-green-500 pl-4">
-                        <h4 className="font-medium text-gray-900 mb-2">Forgot Password Reset</h4>
-                        <ol className="space-y-2 text-gray-600">
-                          <li>1. Go to login page</li>
-                          <li>2. Click "Forgot Password?" link</li>
-                          <li>3. Enter your email address</li>
-                          <li>4. Check email for reset link</li>
-                          <li>5. Click link and create new password</li>
-                          <li>6. Login with new password</li>
-                        </ol>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Security Tips */}
-                  <div className="space-y-4">
-                    <h3 className="text-lg font-semibold text-gray-900">Security Tips</h3>
-                    <div className="grid md:grid-cols-2 gap-6">
-                      <div className="bg-green-50 p-4 rounded-lg">
-                        <h4 className="font-medium text-green-800 mb-2">✓ Do This</h4>
-                        <ul className="space-y-1 text-sm text-green-700">
-                          <li>• Use unique passwords for each account</li>
-                          <li>• Enable two-factor authentication</li>
-                          <li>• Update password regularly</li>
-                          <li>• Use password manager</li>
-                          <li>• Log out from shared devices</li>
-                        </ul>
-                      </div>
-                      <div className="bg-red-50 p-4 rounded-lg">
-                        <h4 className="font-medium text-red-800 mb-2">✗ Avoid This</h4>
-                        <ul className="space-y-1 text-sm text-red-700">
-                          <li>• Don't share passwords</li>
-                          <li>• Don't use personal information</li>
-                          <li>• Don't save on public computers</li>
-                          <li>• Don't use simple patterns</li>
-                          <li>• Don't ignore security warnings</li>
-                        </ul>
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </TabsContent>
-
-            {/* Troubleshooting Tab */}
-            <TabsContent value="troubleshooting" className="space-y-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <HelpCircle className="h-5 w-5" />
-                    Troubleshooting & FAQ
-                  </CardTitle>
-                  <CardDescription>Common issues and solutions</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                  <div className="space-y-6">
-                    <div className="border rounded-lg p-4">
-                      <h4 className="font-medium text-gray-900 mb-2">❓ Can't receive registration email?</h4>
-                      <ul className="space-y-1 text-sm text-gray-600">
-                        <li>• Check spam/junk folder</li>
-                        <li>• Verify email address spelling</li>
-                        <li>• Wait 5-10 minutes for delivery</li>
-                        <li>• Try different email provider</li>
-                        <li>• Contact support if issue persists</li>
-                      </ul>
-                    </div>
-
-                    <div className="border rounded-lg p-4">
-                      <h4 className="font-medium text-gray-900 mb-2">❓ Forgot password?</h4>
-                      <ul className="space-y-1 text-sm text-gray-600">
-                        <li>• Use "Forgot Password" on login page</li>
-                        <li>• Check email for reset link</li>
-                        <li>• Link expires in 1 hour</li>
-                        <li>• Create strong new password</li>
-                        <li>• Contact support if no email received</li>
-                      </ul>
-                    </div>
-
-                    <div className="border rounded-lg p-4">
-                      <h4 className="font-medium text-gray-900 mb-2">❓ Account locked or suspended?</h4>
-                      <ul className="space-y-1 text-sm text-gray-600">
-                        <li>• Multiple failed login attempts</li>
-                        <li>• Wait 15 minutes before retry</li>
-                        <li>• Use password reset if needed</li>
-                        <li>• Contact support for account issues</li>
-                        <li>• Verify email address is confirmed</li>
-                      </ul>
-                    </div>
-
-                    <div className="border rounded-lg p-4">
-                      <h4 className="font-medium text-gray-900 mb-2">❓ Social login not working?</h4>
-                      <ul className="space-y-1 text-sm text-gray-600">
-                        <li>• Clear browser cache and cookies</li>
-                        <li>• Disable ad blockers temporarily</li>
-                        <li>• Try different browser</li>
-                        <li>• Check social account permissions</li>
-                        <li>• Use email login as alternative</li>
-                      </ul>
-                    </div>
-
-                    <div className="border rounded-lg p-4">
-                      <h4 className="font-medium text-gray-900 mb-2">❓ Profile information not saving?</h4>
-                      <ul className="space-y-1 text-sm text-gray-600">
-                        <li>• Check internet connection</li>
-                        <li>• Fill all required fields</li>
-                        <li>• Refresh page and try again</li>
-                        <li>• Clear browser cache</li>
-                        <li>• Contact support if issue continues</li>
-                      </ul>
-                    </div>
-                  </div>
-
-                  <div className="bg-orange-50 p-6 rounded-lg">
-                    <h3 className="font-semibold text-orange-800 mb-3">Need More Help?</h3>
-                    <div className="grid md:grid-cols-2 gap-4">
-                      <div>
-                        <h4 className="font-medium text-orange-700 mb-2">Contact Support</h4>
-                        <ul className="space-y-1 text-sm text-orange-600">
-                          <li>📧 Email: support@sanatannz.com</li>
-                          <li>📞 Phone: +64 9 123 4567</li>
-                          <li>💬 Live Chat: Available 9 AM - 6 PM</li>
-                        </ul>
-                      </div>
-                      <div>
-                        <h4 className="font-medium text-orange-700 mb-2">Community Help</h4>
-                        <ul className="space-y-1 text-sm text-orange-600">
-                          <li>🗣️ Community Forum</li>
-                          <li>📚 Knowledge Base</li>
-                          <li>🎥 Video Tutorials</li>
-                        </ul>
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </TabsContent>
-          </Tabs>
-
-          {/* Quick Action Buttons */}
-          <div className="mt-12 text-center space-y-4">
-            <h3 className="text-lg font-semibold text-gray-900">Ready to Get Started?</h3>
-            <div className="flex flex-wrap justify-center gap-4">
-              <Button asChild className="bg-orange-600 hover:bg-orange-700">
-                <Link href="/register">
-                  Create Account
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Link>
-              </Button>
-              <Button variant="outline" asChild>
-                <Link href="/login">Sign In</Link>
-              </Button>
-              <Button variant="outline" asChild>
-                <Link href="/help">Contact Support</Link>
-              </Button>
-            </div>
+          <div className="text-center mt-8">
+            <p className="text-gray-600">
+              Still have questions?{" "}
+              <Link href="/help" className="text-orange-600 hover:underline">
+                Visit our main Help Center
+              </Link>
+            </p>
           </div>
         </div>
       </div>

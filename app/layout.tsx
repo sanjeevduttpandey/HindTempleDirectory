@@ -4,6 +4,9 @@ import { Inter } from "next/font/google"
 import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
 import { Toaster } from "@/components/ui/toaster"
+import Link from "next/link" // Import Link for the footer
+import { Heart } from "react-feather" // Import Heart for the footer
+import { QueryProvider } from "@/components/query-provider"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -90,9 +93,20 @@ export default function RootLayout({
       </head>
       <body className={inter.className}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
-          {children}
-          <Toaster />
+          <QueryProvider>
+            {children}
+            <Toaster />
+          </QueryProvider>
         </ThemeProvider>
+        <footer className="bg-gray-100 text-gray-600 text-center p-4 text-sm mt-auto">
+          <div className="container mx-auto">
+            &copy; {new Date().getFullYear()} Sanatan New Zealand. Made with{" "}
+            <Heart className="inline h-4 w-4 text-red-500" /> for the Sanatan community. 🕉️ |{" "}
+            <Link href="/disclaimer" className="text-orange-600 hover:underline">
+              Disclaimer
+            </Link>
+          </div>
+        </footer>
       </body>
     </html>
   )

@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { MapPin, Phone, Clock, Star, Globe, Users, Calendar } from "lucide-react"
+import { MapPin, Phone, Clock, Star, Globe, Users, Calendar, Facebook, Twitter } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
 
@@ -24,6 +24,8 @@ const wellingtonTemples = [
     established: 1950,
     featured: true,
     specialties: ["Cultural Events", "Dance Classes", "Festival Celebrations", "Community Support"],
+    facebook: null,
+    twitter: null,
   },
   {
     id: 2,
@@ -41,6 +43,8 @@ const wellingtonTemples = [
     established: 1995,
     featured: true,
     specialties: ["Thaipusam Celebrations", "Murugan Bhajan", "Kavadi Ceremonies", "Tamil Programs"],
+    facebook: null,
+    twitter: null,
   },
   {
     id: 6,
@@ -58,22 +62,8 @@ const wellingtonTemples = [
     established: 2008,
     featured: true,
     specialties: ["Swaminarayan Worship", "Youth Programs", "Cultural Activities", "Spiritual Discourses"],
-  },
-  {
-    id: 4,
-    name: "Shri Vishwa Vinayak Mandir",
-    address: "23 Hanson Street, Newtown, Wellington 6021",
-    phone: "+64 4 389 4397",
-    website: "https://www.svwt.org.nz/",
-    rating: 4.6,
-    reviews: 112,
-    image: "/images/vishwa-vinayak-temple.jpg",
-    description:
-      "A peaceful sanctuary dedicated to Lord Ganesha, hosting regular pujas and cultural events in Wellington.",
-    timings: "6:30 AM - 8:00 PM",
-    deity: "Ganesha",
-    established: 1998,
-    specialties: ["Ganesh Chaturthi", "Daily Ganesha Aarti", "Wedding Ceremonies", "Community Kitchen"],
+    facebook: null,
+    twitter: null,
   },
   {
     id: 5,
@@ -91,6 +81,27 @@ const wellingtonTemples = [
     established: 1975,
     featured: true,
     specialties: ["Krishna Bhajan", "Bhagavad Gita Classes", "Prasadam Distribution", "Spiritual Festivals"],
+    facebook: null,
+    twitter: null,
+  },
+  {
+    id: 7, // New ID for the new temple
+    name: "Sri Venkateswara Swamy Temple",
+    address: "25 Waiu Street, Wainuiomata, Lower Hutt 5014, New Zealand",
+    phone: null, // No phone provided
+    website: "https://www.svwt.org.nz/",
+    rating: 4.9, // Assuming a high rating for a new, important temple
+    reviews: 0, // New temple, no reviews yet
+    image: "/images/sri-venkateswara-swamy-temple-deity.jpg", // Using the provided image
+    description:
+      "A sacred temple dedicated to Lord Venkateswara Swamy, serving the Sanatan community in Wellington with daily pujas and special festivals.",
+    timings: "Mon - Fri | 07:00 PM to 08:30 PM\nSat - Sun | 09:30 AM - 11:30 AM & 07:00 PM to 08:30 PM",
+    deity: "Venkateswara Swamy",
+    established: 2023, // Assuming a recent establishment year
+    featured: true,
+    specialties: ["Venkateswara Puja", "Bhajan", "Cultural Programs", "Community Gatherings"],
+    facebook: "https://www.facebook.com/srivenkateshwara.templenz.9/",
+    twitter: "https://x.com/sdpstnz",
   },
 ]
 
@@ -192,13 +203,18 @@ export default function WellingtonTemplesPage() {
                       <MapPin className="h-4 w-4 text-gray-400 mr-2" />
                       <span>{temple.address}</span>
                     </div>
-                    <div className="flex items-center">
-                      <Phone className="h-4 w-4 text-gray-400 mr-2" />
-                      <span>{temple.phone}</span>
-                    </div>
-                    <div className="flex items-center">
-                      <Clock className="h-4 w-4 text-gray-400 mr-2" />
-                      <span>{temple.timings}</span>
+                    {temple.phone && (
+                      <div className="flex items-center">
+                        <Phone className="h-4 w-4 text-gray-400 mr-2" />
+                        <span>{temple.phone}</span>
+                      </div>
+                    )}
+                    <div className="flex items-start">
+                      {" "}
+                      {/* Use items-start for multiline timings */}
+                      <Clock className="h-4 w-4 text-gray-400 mr-2 mt-1" /> {/* Adjust margin-top for icon alignment */}
+                      <span className="whitespace-pre-line">{temple.timings}</span>{" "}
+                      {/* Use whitespace-pre-line for newlines */}
                     </div>
                     {temple.website && (
                       <div className="flex items-center">
@@ -210,6 +226,32 @@ export default function WellingtonTemplesPage() {
                           className="text-orange-600 hover:underline"
                         >
                           Visit Website
+                        </a>
+                      </div>
+                    )}
+                    {temple.facebook && (
+                      <div className="flex items-center">
+                        <Facebook className="h-4 w-4 text-gray-400 mr-2" />
+                        <a
+                          href={temple.facebook}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-orange-600 hover:underline"
+                        >
+                          Facebook
+                        </a>
+                      </div>
+                    )}
+                    {temple.twitter && (
+                      <div className="flex items-center">
+                        <Twitter className="h-4 w-4 text-gray-400 mr-2" />
+                        <a
+                          href={temple.twitter}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-orange-600 hover:underline"
+                        >
+                          Twitter
                         </a>
                       </div>
                     )}

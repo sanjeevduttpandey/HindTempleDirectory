@@ -3,226 +3,338 @@
 import type React from "react"
 
 import { useState, useEffect } from "react"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
-import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
-import { Switch } from "@/components/ui/switch"
-
-interface BusinessSubmission {
-  id: string
-  businessName: string
-  category: string
-  description: string
-  address: string
-  city: string
-  phone: string
-  email: string
-  website?: string | null
-  ownerName: string
-  ownerEmail: string
-  ownerPhone: string
-  services: string[]
-  socialMedia: {
-    facebook?: string | null
-    instagram?: string | null
-    twitter?: string | null
-  }
-  operatingHours?: string | null
-  specialOffers?: string | null
-  status: "pending" | "approved" | "rejected"
-  submittedAt: string
-  reviewedAt?: string | null
-  reviewNotes?: string | null
-  rating?: number | null
-  isActive?: boolean | null
-  images?: string[] | null
-}
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Checkbox } from "@/components/ui/checkbox"
+import type { BusinessSubmission } from "@/lib/types" // Ensure this type is comprehensive
+import { Alert, AlertDescription } from "@/components/ui/alert"
+import { AlertCircle, Loader2, X } from "lucide-react"
+import Image from "next/image"
 
 interface EditDialogProps {
   business: BusinessSubmission
-  setBusiness: (business: BusinessSubmission | null) => void
-  onSave: (id: string, updates: Partial<BusinessSubmission>) => void
-  close: () => void
+  onClose: () => void
+  onSave: (businessId: number, updatedData: Partial<BusinessSubmission>) => Promise<void>
 }
 
-export function EditDialog({ business, onSave, close }: EditDialogProps) {
-  const [draft, setDraft] = useState<BusinessSubmission>(business)
+export function EditDialog({ business, onClose, onSave }: EditDialogProps) {
+  const [draft, setDraft] = useState<Partial<BusinessSubmission>>(business)
+  const [isSaving, setIsSaving] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [imageFile, setImageFile] = useState<File | null>(null)
+  const [imagePreview, setImagePreview] = useState<string | null>(business.image_url || null)
 
-  // Update draft if the 'business' prop changes (e.g., after a save and re-fetch)
   useEffect(() => {
     setDraft(business)
+    setImagePreview(business.image_url || null)
   }, [business])
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    const { id, value } = e.target
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { id, value, type, checked } = e.target as HTMLInputElement
+    if (type === "checkbox") {
+      setDraft((prev) => ({ ...prev, [id]: checked }))
+    } else {
+      setDraft((prev) => ({ ...prev, [id]: value }))
+    }
+  }
+
+  const handleSelectChange = (id: string, value: string) => {
     setDraft((prev) => ({ ...prev, [id]: value }))
   }
 
-  const handleSocialMediaChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { id, value } = e.target
+  const handleArrayChange = (id: string, value: string) => {
     setDraft((prev) => ({
       ...prev,
-      socialMedia: {
-        ...prev.socialMedia,
-        [id]: value,
+      [id]: value
+        .split(",")
+        .map((s) => s.trim())
+        .filter(Boolean),
+    }))
+  }
+
+  const handleSocialMediaChange = (platform: string, value: string) => {
+    setDraft((prev) => ({
+      ...prev,
+      social_media: {
+        ...(prev.social_media as Record<string, string>),
+        [platform]: value,
       },
     }))
   }
 
-  const handleServicesChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setDraft((prev) => ({
-      ...prev,
-      services: e.target.value.split(",").map((s) => s.trim()),
-    }))
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (file) {
+      setImageFile(file)
+      const reader = new FileReader()
+      reader.onloadend = () => {
+        setImagePreview(reader.result as string)
+      }
+      reader.readAsDataURL(file)
+    } else {
+      setImageFile(null)
+      setImagePreview(null)
+    }
   }
 
-  const handleImagesChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setDraft((prev) => ({
-      ...prev,
-      images: e.target.value
-        .split(",")
-        .map((s) => s.trim())
-        .filter(Boolean), // Filter out empty strings
-    }))
+  const removeImage = () => {
+    setImageFile(null)
+    setImagePreview(null)
+    setDraft((prev) => ({ ...prev, image_url: null }))
   }
 
-  const handleIsActiveChange = (checked: boolean) => {
-    setDraft((prev) => ({ ...prev, isActive: checked }))
+  const handleSave = async () => {
+    setIsSaving(true)
+    setError(null)
+    try {
+      const dataToSave: Partial<BusinessSubmission> = { ...draft }
+
+      // Handle image upload if a new file is selected
+      if (imageFile) {
+        const imageFormData = new FormData()
+        imageFormData.append("file", imageFile)
+        const uploadResponse = await fetch("/api/upload", {
+          method: "POST",
+          body: imageFormData,
+        })
+        if (!uploadResponse.ok) {
+          const errorData = await uploadResponse.json()
+          throw new Error(errorData.error || "Failed to upload image.")
+        }
+        const uploadResult = await uploadResponse.json()
+        dataToSave.image_url = uploadResult.url
+      } else if (imagePreview === null && business.image_url !== null) {
+        // If image was removed
+        dataToSave.image_url = null
+      }
+
+      // Ensure array fields are sent as arrays (or stringified JSON if DB expects that)
+      // For this setup, the API expects stringified JSON for arrays and objects
+      if (Array.isArray(dataToSave.services)) {
+        dataToSave.services = JSON.stringify(dataToSave.services)
+      }
+      if (Array.isArray(dataToSave.operating_hours)) {
+        dataToSave.operating_hours = JSON.stringify(dataToSave.operating_hours)
+      }
+      if (typeof dataToSave.social_media === "object" && dataToSave.social_media !== null) {
+        dataToSave.social_media = JSON.stringify(dataToSave.social_media)
+      }
+
+      await onSave(business.id, dataToSave)
+      onClose()
+    } catch (err: any) {
+      setError(err.message || "Failed to save changes.")
+    } finally {
+      setIsSaving(false)
+    }
   }
 
-  const handleSave = () => {
-    // Ensure services and images are arrays, even if input was empty
-    const servicesArray = Array.isArray(draft.services) ? draft.services : []
-    const imagesArray = Array.isArray(draft.images) ? draft.images : []
+  const categories = [
+    "Grocery Store",
+    "Restaurant",
+    "Catering",
+    "Health & Wellness",
+    "Astrology & Spiritual Services",
+    "Clothing & Fashion",
+    "Jewelry",
+    "Education",
+    "Event Management",
+    "Travel & Tourism",
+    "Real Estate",
+    "Financial Services",
+    "Legal Services",
+    "IT & Consulting",
+    "Arts & Culture",
+    "Home Services",
+    "Automotive",
+    "Other",
+  ]
 
-    onSave(draft.id, {
-      businessName: draft.businessName,
-      category: draft.category,
-      description: draft.description,
-      address: draft.address,
-      city: draft.city,
-      phone: draft.phone,
-      email: draft.email,
-      website: draft.website,
-      ownerName: draft.ownerName,
-      ownerEmail: draft.ownerEmail,
-      ownerPhone: draft.ownerPhone,
-      services: servicesArray,
-      socialMedia: draft.socialMedia,
-      operatingHours: draft.operatingHours,
-      specialOffers: draft.specialOffers,
-      rating: draft.rating,
-      isActive: draft.isActive,
-      images: imagesArray,
-    })
-  }
+  const cities = [
+    "Auckland",
+    "Wellington",
+    "Christchurch",
+    "Hamilton",
+    "Tauranga",
+    "Dunedin",
+    "Palmerston North",
+    "Napier",
+    "Rotorua",
+    "New Plymouth",
+    "Invercargill",
+    "Nelson",
+    "Whangarei",
+    "Other",
+  ]
 
   return (
-    <Dialog open onOpenChange={close}>
+    <Dialog open={true} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[800px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Edit Business: {business.businessName}</DialogTitle>
+          <DialogTitle>Edit Business: {business.name}</DialogTitle>
+          <DialogDescription>Make changes to the business details here. Click save when you're done.</DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4">
+          {error && (
+            <Alert variant="destructive">
+              <AlertCircle className="h-4 w-4" />
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>
+          )}
+
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="businessName" className="text-right">
-              Business Name
+            <Label htmlFor="name" className="text-right">
+              Name
             </Label>
-            <Input id="businessName" value={draft.businessName} onChange={handleChange} className="col-span-3" />
+            <Input id="name" value={draft.name || ""} onChange={handleChange} className="col-span-3" />
           </div>
+
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="category" className="text-right">
               Category
             </Label>
-            <Input id="category" value={draft.category} onChange={handleChange} className="col-span-3" />
+            <Select value={draft.category || ""} onValueChange={(value) => handleSelectChange("category", value)}>
+              <SelectTrigger className="col-span-3">
+                <SelectValue placeholder="Select category" />
+              </SelectTrigger>
+              <SelectContent>
+                {categories.map((cat) => (
+                  <SelectItem key={cat} value={cat}>
+                    {cat}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
+
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="description" className="text-right">
               Description
             </Label>
-            <Textarea id="description" value={draft.description} onChange={handleChange} className="col-span-3" />
+            <Textarea
+              id="description"
+              value={draft.description || ""}
+              onChange={handleChange}
+              className="col-span-3"
+              rows={4}
+            />
           </div>
+
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="address" className="text-right">
               Address
             </Label>
-            <Input id="address" value={draft.address} onChange={handleChange} className="col-span-3" />
+            <Input id="address" value={draft.address || ""} onChange={handleChange} className="col-span-3" />
           </div>
+
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="city" className="text-right">
               City
             </Label>
-            <Input id="city" value={draft.city} onChange={handleChange} className="col-span-3" />
+            <Select value={draft.city || ""} onValueChange={(value) => handleSelectChange("city", value)}>
+              <SelectTrigger className="col-span-3">
+                <SelectValue placeholder="Select city" />
+              </SelectTrigger>
+              <SelectContent>
+                {cities.map((city) => (
+                  <SelectItem key={city} value={city}>
+                    {city}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
+
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor="pincode" className="text-right">
+              Pincode
+            </Label>
+            <Input id="pincode" value={draft.pincode || ""} onChange={handleChange} className="col-span-3" />
+          </div>
+
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="phone" className="text-right">
               Phone
             </Label>
-            <Input id="phone" value={draft.phone} onChange={handleChange} className="col-span-3" />
+            <Input id="phone" value={draft.phone || ""} onChange={handleChange} className="col-span-3" />
           </div>
+
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="email" className="text-right">
               Email
             </Label>
-            <Input id="email" value={draft.email} onChange={handleChange} className="col-span-3" />
+            <Input id="email" type="email" value={draft.email || ""} onChange={handleChange} className="col-span-3" />
           </div>
+
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="website" className="text-right">
               Website
             </Label>
-            <Input id="website" value={draft.website || ""} onChange={handleChange} className="col-span-3" />
+            <Input id="website" type="url" value={draft.website || ""} onChange={handleChange} className="col-span-3" />
           </div>
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="ownerName" className="text-right">
-              Owner Name
-            </Label>
-            <Input id="ownerName" value={draft.ownerName} onChange={handleChange} className="col-span-3" />
-          </div>
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="ownerEmail" className="text-right">
-              Owner Email
-            </Label>
-            <Input id="ownerEmail" value={draft.ownerEmail} onChange={handleChange} className="col-span-3" />
-          </div>
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="ownerPhone" className="text-right">
-              Owner Phone
-            </Label>
-            <Input id="ownerPhone" value={draft.ownerPhone} onChange={handleChange} className="col-span-3" />
-          </div>
+
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="services" className="text-right">
               Services (comma-separated)
             </Label>
-            <Textarea
+            <Input
               id="services"
-              value={draft.services?.join(", ") || ""}
-              onChange={handleServicesChange}
+              value={Array.isArray(draft.services) ? draft.services.join(", ") : draft.services || ""}
+              onChange={(e) => handleArrayChange("services", e.target.value)}
               className="col-span-3"
             />
           </div>
+
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="images" className="text-right">
-              Image URLs (comma-separated)
+            <Label htmlFor="operating_hours" className="text-right">
+              Operating Hours (JSON array)
             </Label>
             <Textarea
-              id="images"
-              value={draft.images?.join(", ") || ""}
-              onChange={handleImagesChange}
+              id="operating_hours"
+              value={
+                Array.isArray(draft.operating_hours)
+                  ? JSON.stringify(draft.operating_hours, null, 2)
+                  : draft.operating_hours || ""
+              }
+              onChange={handleChange}
               className="col-span-3"
-              placeholder="e.g., https://example.com/img1.jpg, https://example.com/img2.png"
+              rows={4}
+              placeholder='[{"day": "Mon", "open": "09:00", "close": "17:00"}]'
             />
           </div>
+
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor="special_offers" className="text-right">
+              Special Offers
+            </Label>
+            <Textarea
+              id="special_offers"
+              value={draft.special_offers || ""}
+              onChange={handleChange}
+              className="col-span-3"
+              rows={2}
+            />
+          </div>
+
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="facebook" className="text-right">
               Facebook URL
             </Label>
             <Input
               id="facebook"
-              value={draft.socialMedia?.facebook || ""}
-              onChange={handleSocialMediaChange}
+              value={(draft.social_media as any)?.facebook || ""}
+              onChange={(e) => handleSocialMediaChange("facebook", e.target.value)}
               className="col-span-3"
             />
           </div>
@@ -232,8 +344,8 @@ export function EditDialog({ business, onSave, close }: EditDialogProps) {
             </Label>
             <Input
               id="instagram"
-              value={draft.socialMedia?.instagram || ""}
-              onChange={handleSocialMediaChange}
+              value={(draft.social_media as any)?.instagram || ""}
+              onChange={(e) => handleSocialMediaChange("instagram", e.target.value)}
               className="col-span-3"
             />
           </div>
@@ -243,63 +355,61 @@ export function EditDialog({ business, onSave, close }: EditDialogProps) {
             </Label>
             <Input
               id="twitter"
-              value={draft.socialMedia?.twitter || ""}
-              onChange={handleSocialMediaChange}
+              value={(draft.social_media as any)?.twitter || ""}
+              onChange={(e) => handleSocialMediaChange("twitter", e.target.value)}
               className="col-span-3"
             />
           </div>
+
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="operatingHours" className="text-right">
-              Operating Hours
+            <Label htmlFor="is_featured" className="text-right">
+              Featured
             </Label>
-            <Input
-              id="operatingHours"
-              value={draft.operatingHours || ""}
-              onChange={handleChange}
+            <Checkbox
+              id="is_featured"
+              checked={draft.is_featured || false}
+              onCheckedChange={(checked) => setDraft((prev) => ({ ...prev, is_featured: checked as boolean }))}
               className="col-span-3"
             />
           </div>
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="specialOffers" className="text-right">
-              Special Offers
+
+          <div className="grid grid-cols-4 items-start gap-4">
+            <Label htmlFor="image_url" className="text-right">
+              Image
             </Label>
-            <Textarea
-              id="specialOffers"
-              value={draft.specialOffers || ""}
-              onChange={handleChange}
-              className="col-span-3"
-            />
-          </div>
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="rating" className="text-right">
-              Rating
-            </Label>
-            <Input
-              id="rating"
-              type="number"
-              step="0.1"
-              value={draft.rating || ""}
-              onChange={handleChange}
-              className="col-span-3"
-            />
-          </div>
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="isActive" className="text-right">
-              Is Active
-            </Label>
-            <Switch
-              id="isActive"
-              checked={draft.isActive ?? true} // Default to true if null/undefined
-              onCheckedChange={handleIsActiveChange}
-              className="col-span-3"
-            />
+            <div className="col-span-3 space-y-2">
+              {imagePreview && (
+                <div className="relative w-48 h-32 rounded-md overflow-hidden">
+                  <Image src={imagePreview || "/placeholder.svg"} alt="Business Image" fill className="object-cover" />
+                  <Button
+                    type="button"
+                    variant="destructive"
+                    size="icon"
+                    className="absolute -top-2 -right-2 h-6 w-6 rounded-full"
+                    onClick={removeImage}
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                </div>
+              )}
+              <Input id="image_url" type="file" accept="image/*" onChange={handleImageChange} />
+              <p className="text-sm text-gray-500">Upload a new image or clear the existing one.</p>
+            </div>
           </div>
         </div>
         <DialogFooter>
-          <Button variant="outline" onClick={close}>
+          <Button variant="outline" onClick={onClose} disabled={isSaving}>
             Cancel
           </Button>
-          <Button onClick={handleSave}>Save Changes</Button>
+          <Button onClick={handleSave} disabled={isSaving}>
+            {isSaving ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Saving...
+              </>
+            ) : (
+              "Save changes"
+            )}
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

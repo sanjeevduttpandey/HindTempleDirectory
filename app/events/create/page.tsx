@@ -14,12 +14,15 @@ import { Progress } from "@/components/ui/progress"
 import { Calendar, CheckCircle, Upload, X, AlertCircle, Save, Eye } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
+import { useRouter } from "next/navigation"
 
 interface FormData {
   title: string
   description: string
+  fullDescription: string // Added for detailed description
   category: string
   date: string
+  endDate: string // Added for multi-day events
   startTime: string
   endTime: string
   venue: string
@@ -43,11 +46,14 @@ interface FormErrors {
 }
 
 export default function CreateEventPage() {
+  const router = useRouter()
   const [formData, setFormData] = useState<FormData>({
     title: "",
     description: "",
+    fullDescription: "",
     category: "",
     date: "",
+    endDate: "",
     startTime: "",
     endTime: "",
     venue: "",
@@ -92,8 +98,12 @@ export default function CreateEventPage() {
   // Save draft to localStorage
   const saveDraft = () => {
     const draftData = { ...formData }
-    delete draftData.images // Don't save files to localStorage
-    localStorage.setItem("eventDraft", JSON.stringify(draftData))
+    // Filter out File objects from images before saving to localStorage
+    const serializableDraft = {
+      ...draftData,
+      images: [], // Clear images as File objects cannot be serialized
+    }
+    localStorage.setItem("eventDraft", JSON.stringify(serializableDraft))
     setIsDraftSaved(true)
     setTimeout(() => setIsDraftSaved(false), 2000)
   }
@@ -165,10 +175,18 @@ export default function CreateEventPage() {
 
       case 2: // Date & Time
         if (!formData.date) newErrors.date = "Event date is required"
+        if (formData.endDate && formData.date > formData.endDate) {
+          newErrors.endDate = "End date cannot be before start date"
+        }
         if (!formData.startTime) newErrors.startTime = "Start time is required"
         if (!formData.endTime) newErrors.endTime = "End time is required"
-        if (formData.startTime && formData.endTime && formData.startTime >= formData.endTime) {
-          newErrors.endTime = "End time must be after start time"
+        if (
+          formData.startTime &&
+          formData.endTime &&
+          formData.startTime >= formData.endTime &&
+          formData.date === formData.endDate
+        ) {
+          newErrors.endTime = "End time must be after start time on the same day"
         }
         // Validate date is not in the past (using local time for comparison)
         if (formData.date) {
@@ -270,29 +288,56 @@ export default function CreateEventPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
-    if (!validateStep(currentStep)) return
+    if (!validateStep(currentStep)) {
+      setSubmitError("Please correct the errors in the form before submitting.")
+      return
+    }
 
     setIsSubmitting(true)
     setSubmitError("")
 
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 2000))
+      const data = new FormData()
+      Object.entries(formData).forEach(([key, value]) => {
+        if (key === "images") {
+          value.forEach((file: File) => {
+            data.append("images", file)
+          })
+        } else if (Array.isArray(value)) {
+          value.forEach((item) => data.append(`${key}[]`, item))
+        } else if (typeof value === "boolean") {
+          data.append(key, value.toString())
+        } else {
+          data.append(key, value)
+        }
+      })
+
+      const response = await fetch("/api/events/create", {
+        method: "POST",
+        body: data,
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.error || "Failed to create event.")
+      }
 
       // Clear draft from localStorage on successful submission
       localStorage.removeItem("eventDraft")
 
       setIsSubmitted(true)
-    } catch (error) {
-      setSubmitError("Failed to create event. Please try again.")
+    } catch (error: any) {
+      setSubmitError(error.message || "Failed to create event. Please try again.")
     } finally {
       setIsSubmitting(false)
     }
   }
 
   const previewEvent = () => {
-    // This would open a preview modal or navigate to a preview page
-    console.log("Preview event:", formData)
+    // This would ideally navigate to a preview page or open a modal
+    // For now, just log the data
+    console.log("Preview event data:", formData)
+    alert("Preview functionality is not fully implemented yet. Check console for data.")
   }
 
   if (isSubmitted) {
@@ -362,17 +407,30 @@ export default function CreateEventPage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="description">Event Description *</Label>
+              <Label htmlFor="description">Short Event Description *</Label>
               <Textarea
                 id="description"
-                placeholder="Describe your event, what participants can expect, and any special highlights..."
+                placeholder="A brief summary of your event (max 500 characters)..."
                 value={formData.description}
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                rows={4}
+                rows={3}
+                maxLength={500}
                 className={errors.description ? "border-red-500" : ""}
               />
               <p className="text-sm text-gray-500">{formData.description.length}/500 characters (minimum 50)</p>
               {errors.description && <p className="text-sm text-red-500">{errors.description}</p>}
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="fullDescription">Full Event Description (Optional)</Label>
+              <Textarea
+                id="fullDescription"
+                placeholder="Provide a detailed description, including agenda, special guests, what to expect, etc."
+                value={formData.fullDescription}
+                onChange={(e) => setFormData({ ...formData, fullDescription: e.target.value })}
+                rows={6}
+              />
+              <p className="text-sm text-gray-500">{formData.fullDescription.length}/2000 characters</p>
             </div>
           </div>
         )
@@ -382,17 +440,31 @@ export default function CreateEventPage() {
           <div className="space-y-6">
             <h3 className="text-lg font-semibold text-gray-900 border-b pb-2">Date & Time</h3>
 
-            <div className="space-y-2">
-              <Label htmlFor="date">Event Date *</Label>
-              <Input
-                id="date"
-                type="date"
-                value={formData.date}
-                onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-                className={errors.date ? "border-red-500" : ""}
-                min={new Date().toISOString().split("T")[0]} // Ensures date picker starts from today in local time
-              />
-              {errors.date && <p className="text-sm text-red-500">{errors.date}</p>}
+            <div className="grid md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="date">Start Date *</Label>
+                <Input
+                  id="date"
+                  type="date"
+                  value={formData.date}
+                  onChange={(e) => setFormData({ ...formData, date: e.target.value })}
+                  className={errors.date ? "border-red-500" : ""}
+                  min={new Date().toISOString().split("T")[0]} // Ensures date picker starts from today in local time
+                />
+                {errors.date && <p className="text-sm text-red-500">{errors.date}</p>}
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="endDate">End Date (Optional)</Label>
+                <Input
+                  id="endDate"
+                  type="date"
+                  value={formData.endDate}
+                  onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
+                  className={errors.endDate ? "border-red-500" : ""}
+                  min={formData.date || new Date().toISOString().split("T")[0]}
+                />
+                {errors.endDate && <p className="text-sm text-red-500">{errors.endDate}</p>}
+              </div>
             </div>
 
             <div className="grid md:grid-cols-2 gap-4">
@@ -476,7 +548,7 @@ export default function CreateEventPage() {
             <h3 className="text-lg font-semibold text-gray-900 border-b pb-2">Registration & Pricing</h3>
 
             <div className="space-y-2">
-              <Label htmlFor="maxAttendees">Maximum Attendees</Label>
+              <Label htmlFor="maxAttendees">Maximum Attendees (Optional)</Label>
               <Input
                 id="maxAttendees"
                 type="number"
@@ -518,7 +590,7 @@ export default function CreateEventPage() {
             </div>
 
             <div className="space-y-3">
-              <Label>Event Features</Label>
+              <Label>Event Features (Optional)</Label>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                 {featureOptions.map((feature) => (
                   <div key={feature} className="flex items-center space-x-2">
@@ -595,10 +667,10 @@ export default function CreateEventPage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="requirements">Requirements/What to Bring</Label>
+              <Label htmlFor="requirements">Requirements/What to Know (Optional)</Label>
               <Textarea
                 id="requirements"
-                placeholder="Any special requirements, dress code, items to bring, etc."
+                placeholder="Any special requirements, dress code, items to bring, etc. (e.g., 'Modest dress code requested. Bring your own yoga mat.')"
                 value={formData.requirements}
                 onChange={(e) => setFormData({ ...formData, requirements: e.target.value })}
                 rows={3}
@@ -672,6 +744,7 @@ export default function CreateEventPage() {
                   </p>
                   <p>
                     <strong>Date:</strong> {formData.date}
+                    {formData.endDate && formData.date !== formData.endDate && ` - ${formData.endDate}`}
                   </p>
                   <p>
                     <strong>Time:</strong> {formData.startTime} - {formData.endTime}
@@ -705,6 +778,32 @@ export default function CreateEventPage() {
                   <p>
                     <strong>Features:</strong> {formData.features.join(", ")}
                   </p>
+                </div>
+              )}
+              {formData.requirements && (
+                <div>
+                  <p>
+                    <strong>Requirements:</strong> {formData.requirements}
+                  </p>
+                </div>
+              )}
+              {imagePreviews.length > 0 && (
+                <div>
+                  <p>
+                    <strong>Images:</strong> {imagePreviews.length} uploaded
+                  </p>
+                  <div className="flex gap-2 mt-2">
+                    {imagePreviews.map((preview, index) => (
+                      <Image
+                        key={index}
+                        src={preview || "/placeholder.svg"}
+                        alt={`Preview ${index + 1}`}
+                        width={80}
+                        height={60}
+                        className="rounded-md object-cover"
+                      />
+                    ))}
+                  </div>
                 </div>
               )}
             </div>

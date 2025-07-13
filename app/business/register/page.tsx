@@ -3,63 +3,81 @@
 import type React from "react"
 
 import { useState } from "react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Label } from "@/components/ui/label"
 import { Checkbox } from "@/components/ui/checkbox"
-import { Badge } from "@/components/ui/badge"
-import { Upload, X, CheckCircle, AlertCircle, Loader2, Camera } from "lucide-react"
+import { useToast } from "@/components/ui/use-toast"
+import { Loader2, CheckCircle, XCircle, Info } from "lucide-react"
+import Link from "next/link"
 import StaticHeader from "@/components/static-header"
-import { Alert, AlertDescription } from "@/components/ui/alert"
 
-const businessCategories = [
+// Define BusinessCategory type and options
+type BusinessCategory =
+  | "Arts & Culture"
+  | "Cleaning Services"
+  | "Restaurants & Food"
+  | "Grocery & Spices"
+  | "Clothing & Jewelry"
+  | "Health & Wellness"
+  | "Education & Tutoring"
+  | "Professional Services"
+  | "Beauty & Salon"
+  | "Travel & Tourism"
+  | "Religious Items"
+  | "Event Services"
+  | "IT"
+  | "Other"
+
+const businessCategories: BusinessCategory[] = [
   "Arts & Culture",
-  "Cleaning Services",
-  "Restaurants & Food",
-  "Grocery & Spices",
-  "Clothing & Jewelry",
-  "Health & Wellness",
-  "Education & Tutoring",
-  "Professional Services",
   "Beauty & Salon",
-  "Travel & Tourism",
-  "Religious Items",
+  "Cleaning Services",
+  "Clothing & Jewelry",
+  "Education & Tutoring",
   "Event Services",
+  "Grocery & Spices",
+  "Health & Wellness",
   "IT",
+  "Professional Services",
+  "Religious Items",
+  "Restaurants & Food",
+  "Travel & Tourism",
   "Other",
 ]
 
-const cities = [
-  "Auckland",
-  "Wellington",
-  "Christchurch",
-  "Hamilton",
-  "Tauranga",
-  "Dunedin",
-  "Palmerston North",
-  "Nelson",
-  "Rotorua",
-  "New Plymouth",
-  "Other",
-]
+const cities = ["Auckland", "Wellington", "Christchurch", "Hamilton", "Tauranga", "Dunedin", "Other"]
 
-interface UploadedImage {
-  url: string
-  filename: string
-  originalName: string
+interface FormData {
+  business_name: string
+  category: BusinessCategory | ""
+  description: string
+  address: string
+  city: string
+  phone: string
+  email: string
+  website: string
+  owner_name: string
+  owner_email: string
+  owner_phone: string
+  services: string // Comma-separated string
+  operating_hours: string // Free text
+  special_offers: string // Free text
+  social_media_facebook: string
+  social_media_instagram: string
+  social_media_x: string
+  images: File[]
+  agreeToDisclaimer: boolean
 }
 
-export default function RegisterBusiness() {
-  const [currentStep, setCurrentStep] = useState(1)
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [submitStatus, setSubmitStatus] = useState<"idle" | "success" | "error">("idle")
-  const [submitMessage, setSubmitMessage] = useState("")
-
-  const [formData, setFormData] = useState({
-    businessName: "",
+export default function RegisterBusinessPage() {
+  const { toast } = useToast()
+  const [step, setStep] = useState(1)
+  const [formData, setFormData] = useState<FormData>({
+    business_name: "",
     category: "",
     description: "",
     address: "",
@@ -67,738 +85,602 @@ export default function RegisterBusiness() {
     phone: "",
     email: "",
     website: "",
-    ownerName: "",
-    ownerEmail: "",
-    ownerPhone: "",
-    services: [] as string[],
-    socialMedia: {
-      facebook: "",
-      instagram: "",
-      twitter: "",
-    },
-    operatingHours: "",
-    specialOffers: "",
-    certifications: [] as string[],
-    agreeToTerms: false,
-    agreeToMarketing: false,
+    owner_name: "",
+    owner_email: "",
+    owner_phone: "",
+    services: "",
+    operating_hours: "",
+    special_offers: "",
+    social_media_facebook: "",
+    social_media_instagram: "",
+    social_media_x: "",
+    images: [],
+    agreeToDisclaimer: false,
   })
+  const [loading, setLoading] = useState(false)
+  const [submissionStatus, setSubmissionStatus] = useState<"idle" | "success" | "error">("idle")
+  const [submissionMessage, setSubmissionMessage] = useState("")
 
-  const [uploadedImages, setUploadedImages] = useState<UploadedImage[]>([])
-  const [uploading, setUploading] = useState(false)
-  const [uploadError, setUploadError] = useState("")
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { id, value } = e.target
+    setFormData((prev) => ({ ...prev, [id]: value }))
+  }
 
-  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const files = event.target.files
-    if (!files || files.length === 0) return
+  const handleSelectChange = (id: keyof FormData, value: string) => {
+    setFormData((prev) => ({ ...prev, [id]: value }))
+  }
 
-    setUploading(true)
-    setUploadError("")
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      setFormData((prev) => ({ ...prev, images: Array.from(e.target.files!) }))
+    }
+  }
 
-    try {
-      const uploadPromises = Array.from(files).map(async (file) => {
-        // Validate file before upload
-        const allowedTypes = ["image/jpeg", "image/jpg", "image/png", "image/webp"]
-        if (!allowedTypes.includes(file.type)) {
-          throw new Error(`Invalid file type: ${file.name}. Only JPEG, PNG, and WebP are allowed.`)
-        }
+  const handleCheckboxChange = (checked: boolean) => {
+    setFormData((prev) => ({ ...prev, agreeToDisclaimer: checked }))
+  }
 
-        const maxSize = 5 * 1024 * 1024 // 5MB
-        if (file.size > maxSize) {
-          throw new Error(`File too large: ${file.name}. Maximum 5MB allowed.`)
-        }
-
-        const formData = new FormData()
-        formData.append("file", file)
-
-        const response = await fetch("/api/upload", {
-          method: "POST",
-          body: formData,
-        })
-
-        if (!response.ok) {
-          const errorText = await response.text()
-          console.error("Upload response error:", errorText)
-          throw new Error(`Upload failed for ${file.name}: ${response.status} ${response.statusText}`)
-        }
-
-        const result = await response.json()
-
-        if (!result.success) {
-          throw new Error(result.error || `Upload failed for ${file.name}`)
-        }
-
-        return {
-          url: result.data.url,
-          filename: result.data.filename,
-          originalName: result.data.originalName,
-        }
+  const validateStep1 = () => {
+    const { business_name, category, description, address, city, phone, email, website } = formData
+    if (!business_name || !category || !description || !address || !city || !phone || !email) {
+      toast({
+        title: "Missing Information",
+        description: "Please fill in all required fields for Business Details.",
+        variant: "destructive",
       })
-
-      const newImages = await Promise.all(uploadPromises)
-      setUploadedImages((prev) => [...prev, ...newImages])
-
-      // Clear the input so the same files can be selected again if needed
-      event.target.value = ""
-    } catch (error) {
-      console.error("Upload error:", error)
-      setUploadError(error instanceof Error ? error.message : "Failed to upload images")
-    } finally {
-      setUploading(false)
+      return false
     }
-  }
-
-  const removeImage = (filename: string) => {
-    setUploadedImages((prev) => prev.filter((img) => img.filename !== filename))
-  }
-
-  const [newService, setNewService] = useState("")
-
-  const handleInputChange = (field: string, value: any) => {
-    setFormData((prev) => ({
-      ...prev,
-      [field]: value,
-    }))
-  }
-
-  const handleSocialMediaChange = (platform: string, value: string) => {
-    setFormData((prev) => ({
-      ...prev,
-      socialMedia: {
-        ...prev.socialMedia,
-        [platform]: value,
-      },
-    }))
-  }
-
-  const addService = (service: string) => {
-    if (service && !formData.services.includes(service)) {
-      setFormData((prev) => ({
-        ...prev,
-        services: [...prev.services, service],
-      }))
-      setNewService("")
+    if (email && !/\S+@\S+\.\S+/.test(email)) {
+      toast({
+        title: "Invalid Email",
+        description: "Please enter a valid business email address.",
+        variant: "destructive",
+      })
+      return false
     }
+    if (website && !/^https?:\/\/\S+/.test(website)) {
+      toast({
+        title: "Invalid Website URL",
+        description: "Please enter a valid website URL (e.g., https://example.com).",
+        variant: "destructive",
+      })
+      return false
+    }
+    return true
   }
 
-  const removeService = (service: string) => {
-    setFormData((prev) => ({
-      ...prev,
-      services: prev.services.filter((s) => s !== service),
-    }))
+  const validateStep2 = () => {
+    const { owner_name, owner_email, owner_phone } = formData
+    if (!owner_name || !owner_email || !owner_phone) {
+      toast({
+        title: "Missing Information",
+        description: "Please fill in all required fields for Owner/Contact Details.",
+        variant: "destructive",
+      })
+      return false
+    }
+    if (owner_email && !/\S+@\S+\.\S+/.test(owner_email)) {
+      toast({
+        title: "Invalid Email",
+        description: "Please enter a valid owner email address.",
+        variant: "destructive",
+      })
+      return false
+    }
+    return true
+  }
+
+  const handleNext = () => {
+    if (step === 1 && !validateStep1()) return
+    if (step === 2 && !validateStep2()) return
+    setStep((prev) => prev + 1)
+  }
+
+  const handleBack = () => {
+    setStep((prev) => prev - 1)
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setIsSubmitting(true)
-    setSubmitStatus("idle")
+    if (!formData.agreeToDisclaimer) {
+      toast({
+        title: "Disclaimer Required",
+        description: "You must agree to the disclaimer before submitting your business.",
+        variant: "destructive",
+      })
+      return
+    }
+
+    setLoading(true)
+    setSubmissionStatus("idle")
+    setSubmissionMessage("")
 
     try {
+      const imageUrls: string[] = []
+      // Handle image uploads first
+      if (formData.images.length > 0) {
+        for (const file of formData.images) {
+          const uploadFormData = new FormData()
+          uploadFormData.append("file", file)
+
+          const uploadResponse = await fetch("/api/upload", {
+            method: "POST",
+            body: uploadFormData,
+          })
+
+          if (!uploadResponse.ok) {
+            const errorData = await uploadResponse.json()
+            throw new Error(errorData.message || "Failed to upload image.")
+          }
+          const uploadResult = await uploadResponse.json()
+          imageUrls.push(uploadResult.url)
+        }
+      }
+
+      const submissionData = {
+        business_name: formData.business_name,
+        category: formData.category,
+        description: formData.description,
+        address: formData.address,
+        city: formData.city,
+        phone: formData.phone,
+        email: formData.email,
+        website: formData.website || null,
+        owner_name: formData.owner_name,
+        owner_email: formData.owner_email,
+        owner_phone: formData.owner_phone,
+        services: formData.services
+          .split(",")
+          .map((s) => s.trim())
+          .filter(Boolean), // Convert to array
+        operating_hours: formData.operating_hours || null,
+        special_offers: formData.special_offers || null,
+        social_media: {
+          facebook: formData.social_media_facebook || null,
+          instagram: formData.social_media_instagram || null,
+          x: formData.social_media_x || null,
+        },
+        images: imageUrls,
+      }
+
       const response = await fetch("/api/business/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          ...formData,
-          images: uploadedImages.map((img) => img.url), // Send image URLs
-        }),
+        body: JSON.stringify(submissionData),
       })
 
       if (!response.ok) {
-        const errorText = await response.text()
-        console.error("Registration response error:", errorText)
-        throw new Error(`Registration failed: ${response.status} ${response.statusText}`)
+        const errorData = await response.json()
+        throw new Error(errorData.message || "Failed to submit business registration.")
       }
 
-      const result = await response.json()
-
-      if (result.success) {
-        setSubmitStatus("success")
-        setSubmitMessage(result.message)
-        // Reset form or redirect
-        setTimeout(() => {
-          window.location.href = "/business/directory"
-        }, 3000)
-      } else {
-        throw new Error(result.error || "Registration failed")
-      }
-    } catch (error) {
-      console.error("Registration error:", error)
-      setSubmitStatus("error")
-      setSubmitMessage(error instanceof Error ? error.message : "Network error. Please try again.")
+      setSubmissionStatus("success")
+      setSubmissionMessage(
+        "Your business has been submitted for review successfully! We will notify you once it is approved.",
+      )
+      toast({
+        title: "Submission Successful",
+        description: "Your business is awaiting review.",
+        variant: "default",
+      })
+      // Optionally reset form
+      setFormData({
+        business_name: "",
+        category: "",
+        description: "",
+        address: "",
+        city: "",
+        phone: "",
+        email: "",
+        website: "",
+        owner_name: "",
+        owner_email: "",
+        owner_phone: "",
+        services: "",
+        operating_hours: "",
+        special_media_facebook: "",
+        social_media_instagram: "",
+        social_media_x: "",
+        special_offers: "",
+        images: [],
+        agreeToDisclaimer: false,
+      })
+      setStep(1) // Go back to first step or a success page
+    } catch (error: any) {
+      console.error("Submission error:", error)
+      setSubmissionStatus("error")
+      setSubmissionMessage(`Submission failed: ${error.message || "An unexpected error occurred."}`)
+      toast({
+        title: "Submission Failed",
+        description: error.message || "Please try again.",
+        variant: "destructive",
+      })
     } finally {
-      setIsSubmitting(false)
+      setLoading(false)
     }
   }
 
-  const nextStep = () => {
-    if (currentStep < 4) {
-      setCurrentStep(currentStep + 1)
-    }
-  }
-
-  const prevStep = () => {
-    if (currentStep > 1) {
-      setCurrentStep(currentStep - 1)
-    }
-  }
-
-  const isStepValid = () => {
-    switch (currentStep) {
+  const renderStep = () => {
+    switch (step) {
       case 1:
-        return formData.businessName && formData.category && formData.description && formData.address && formData.city
-      case 2:
-        return formData.phone && formData.email && formData.ownerName && formData.ownerEmail && formData.ownerPhone
-      case 3:
-        return true // Optional fields
-      case 4:
-        return formData.agreeToTerms
-      default:
-        return false
-    }
-  }
-
-  if (submitStatus === "success") {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-orange-50 to-red-50">
-        <StaticHeader />
-        <div className="container mx-auto px-4 py-16">
-          <Card className="max-w-2xl mx-auto text-center">
-            <CardContent className="p-8">
-              <CheckCircle className="h-16 w-16 text-green-500 mx-auto mb-4" />
-              <h1 className="text-3xl font-bold text-gray-900 mb-4">Registration Successful!</h1>
-              <p className="text-lg text-gray-600 mb-6">{submitMessage}</p>
-              <div className="bg-green-50 p-4 rounded-lg mb-6">
-                <h3 className="font-semibold text-green-800 mb-2">What happens next?</h3>
-                <ul className="text-sm text-green-700 space-y-1 text-left">
-                  <li>• Your business will be reviewed within 2-3 business days</li>
-                  <li>• You'll receive an email confirmation once approved</li>
-                  <li>• Your business will appear in our directory</li>
-                  <li>• You can update your listing anytime by contacting us</li>
-                </ul>
+        return (
+          <div className="space-y-6">
+            <h2 className="text-2xl font-bold text-gray-900">1. Business Details</h2>
+            <p className="text-gray-600">Tell us about your business.</p>
+            <div className="grid gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="business_name">
+                  Business Name <span className="text-red-500">*</span>
+                </Label>
+                <Input id="business_name" value={formData.business_name} onChange={handleInputChange} required />
               </div>
-              <p className="text-sm text-gray-500">Redirecting to directory in 3 seconds...</p>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-    )
+              <div className="space-y-2">
+                <Label htmlFor="category">
+                  Category <span className="text-red-500">*</span>
+                </Label>
+                <Select
+                  value={formData.category}
+                  onValueChange={(value: BusinessCategory) => handleSelectChange("category", value)}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a category" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {businessCategories.map((cat) => (
+                      <SelectItem key={cat} value={cat}>
+                        {cat}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="description">
+                  Description <span className="text-red-500">*</span>
+                </Label>
+                <Textarea
+                  id="description"
+                  value={formData.description}
+                  onChange={handleInputChange}
+                  required
+                  rows={4}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="address">
+                  Address <span className="text-red-500">*</span>
+                </Label>
+                <Input id="address" value={formData.address} onChange={handleInputChange} required />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="city">
+                  City <span className="text-red-500">*</span>
+                </Label>
+                <Select value={formData.city} onValueChange={(value: string) => handleSelectChange("city", value)}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select city" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {cities.map((city) => (
+                      <SelectItem key={city} value={city}>
+                        {city}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="phone">
+                  Phone <span className="text-red-500">*</span>
+                </Label>
+                <Input id="phone" value={formData.phone} onChange={handleInputChange} type="tel" required />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="email">
+                  Email <span className="text-red-500">*</span>
+                </Label>
+                <Input id="email" value={formData.email} onChange={handleInputChange} type="email" required />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="website">Website (Optional)</Label>
+                <Input
+                  id="website"
+                  value={formData.website}
+                  onChange={handleInputChange}
+                  type="url"
+                  placeholder="https://www.example.com"
+                />
+              </div>
+            </div>
+            <Button onClick={handleNext} className="w-full bg-orange-600 hover:bg-orange-700">
+              Next
+            </Button>
+          </div>
+        )
+      case 2:
+        return (
+          <div className="space-y-6">
+            <h2 className="text-2xl font-bold text-gray-900">2. Owner & Additional Details</h2>
+            <p className="text-gray-600">Provide contact information and other relevant details.</p>
+            <div className="grid gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="owner_name">
+                  Your Name (Owner/Contact Person) <span className="text-red-500">*</span>
+                </Label>
+                <Input id="owner_name" value={formData.owner_name} onChange={handleInputChange} required />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="owner_email">
+                  Your Email <span className="text-red-500">*</span>
+                </Label>
+                <Input
+                  id="owner_email"
+                  value={formData.owner_email}
+                  onChange={handleInputChange}
+                  type="email"
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="owner_phone">
+                  Your Phone <span className="text-red-500">*</span>
+                </Label>
+                <Input id="owner_phone" value={formData.owner_phone} onChange={handleInputChange} type="tel" required />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="services">Services Offered (Comma-separated, e.g., Catering, Event Planning)</Label>
+                <Input
+                  id="services"
+                  value={formData.services}
+                  onChange={handleInputChange}
+                  placeholder="e.g., Catering, Event Planning, Photography"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="operating_hours">Operating Hours (e.g., Mon-Fri: 9 AM - 5 PM, Sat: 10 AM - 2 PM)</Label>
+                <Input id="operating_hours" value={formData.operating_hours} onChange={handleInputChange} />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="special_offers">Special Offers/Promotions (Optional)</Label>
+                <Textarea id="special_offers" value={formData.special_offers} onChange={handleInputChange} rows={3} />
+              </div>
+              <div className="space-y-2">
+                <Label>Social Media Links (Optional)</Label>
+                <Input
+                  id="social_media_facebook"
+                  value={formData.social_media_facebook}
+                  onChange={handleInputChange}
+                  placeholder="Facebook URL"
+                />
+                <Input
+                  id="social_media_instagram"
+                  value={formData.social_media_instagram}
+                  onChange={handleInputChange}
+                  placeholder="Instagram URL"
+                />
+                <Input
+                  id="social_media_x"
+                  value={formData.social_media_x}
+                  onChange={handleInputChange}
+                  placeholder="X (Twitter) URL"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="images">Upload Images (Optional, Max 5)</Label>
+                <Input id="images" type="file" multiple accept="image/*" onChange={handleFileChange} />
+                {formData.images.length > 0 && (
+                  <p className="text-sm text-gray-500">{formData.images.length} file(s) selected.</p>
+                )}
+              </div>
+            </div>
+            <div className="flex gap-4">
+              <Button onClick={handleBack} variant="outline" className="flex-1 bg-transparent">
+                Back
+              </Button>
+              <Button onClick={handleNext} className="flex-1 bg-orange-600 hover:bg-orange-700">
+                Next
+              </Button>
+            </div>
+          </div>
+        )
+      case 3:
+        return (
+          <div className="space-y-6">
+            <h2 className="text-2xl font-bold text-gray-900">3. Review & Submit</h2>
+            <p className="text-gray-600">Please review your submission before finalizing.</p>
+            <Card className="bg-gray-50 p-4 space-y-4">
+              <h3 className="text-lg font-semibold text-gray-800">Business Details</h3>
+              <p>
+                <strong>Name:</strong> {formData.business_name}
+              </p>
+              <p>
+                <strong>Category:</strong> {formData.category}
+              </p>
+              <p>
+                <strong>Description:</strong> {formData.description}
+              </p>
+              <p>
+                <strong>Address:</strong> {formData.address}, {formData.city}
+              </p>
+              <p>
+                <strong>Contact:</strong> {formData.phone}, {formData.email}
+              </p>
+              {formData.website && (
+                <p>
+                  <strong>Website:</strong>{" "}
+                  <a
+                    href={formData.website}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-orange-600 hover:underline"
+                  >
+                    {formData.website}
+                  </a>
+                </p>
+              )}
+
+              <h3 className="text-lg font-semibold text-gray-800 mt-6">Owner/Contact Details</h3>
+              <p>
+                <strong>Owner Name:</strong> {formData.owner_name}
+              </p>
+              <p>
+                <strong>Owner Email:</strong> {formData.owner_email}
+              </p>
+              <p>
+                <strong>Owner Phone:</strong> {formData.owner_phone}
+              </p>
+
+              {formData.services && (
+                <p>
+                  <strong>Services:</strong> {formData.services}
+                </p>
+              )}
+              {formData.operating_hours && (
+                <p>
+                  <strong>Operating Hours:</strong> {formData.operating_hours}
+                </p>
+              )}
+              {formData.special_offers && (
+                <p>
+                  <strong>Special Offers:</strong> {formData.special_offers}
+                </p>
+              )}
+              {(formData.social_media_facebook || formData.social_media_instagram || formData.social_media_x) && (
+                <p>
+                  <strong>Social Media:</strong>
+                  {formData.social_media_facebook && (
+                    <span className="ml-2">
+                      <a
+                        href={formData.social_media_facebook}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-orange-600 hover:underline"
+                      >
+                        Facebook
+                      </a>
+                    </span>
+                  )}
+                  {formData.social_media_instagram && (
+                    <span className="ml-2">
+                      <a
+                        href={formData.social_media_instagram}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-orange-600 hover:underline"
+                      >
+                        Instagram
+                      </a>
+                    </span>
+                  )}
+                  {formData.social_media_x && (
+                    <span className="ml-2">
+                      <a
+                        href={formData.social_media_x}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-orange-600 hover:underline"
+                      >
+                        X
+                      </a>
+                    </span>
+                  )}
+                </p>
+              )}
+              {formData.images.length > 0 && (
+                <p>
+                  <strong>Images:</strong> {formData.images.length} selected
+                </p>
+              )}
+            </Card>
+
+            <div className="flex items-start space-x-2 p-4 bg-yellow-50 border border-yellow-200 rounded-md">
+              <Info className="h-5 w-5 text-yellow-600 mt-1" />
+              <p className="text-sm text-yellow-800">
+                Your submission will be reviewed by our team. We will notify you via email once it has been approved and
+                published in the directory.
+              </p>
+            </div>
+
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id="agreeToDisclaimer"
+                checked={formData.agreeToDisclaimer}
+                onCheckedChange={handleCheckboxChange}
+                required
+              />
+              <Label
+                htmlFor="agreeToDisclaimer"
+                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+              >
+                I have read and agree to the{" "}
+                <Link href="/disclaimer" className="text-orange-600 hover:underline" target="_blank">
+                  disclaimer and terms
+                </Link>{" "}
+                regarding business listings.
+              </Label>
+            </div>
+
+            <div className="flex gap-4">
+              <Button onClick={handleBack} variant="outline" className="flex-1 bg-transparent">
+                Back
+              </Button>
+              <Button
+                onClick={handleSubmit}
+                className="flex-1 bg-orange-600 hover:bg-orange-700"
+                disabled={loading || !formData.agreeToDisclaimer}
+              >
+                {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                Submit Business
+              </Button>
+            </div>
+
+            {submissionStatus === "success" && (
+              <div className="flex items-center space-x-2 text-green-600 mt-4">
+                <CheckCircle className="h-5 w-5" />
+                <span>{submissionMessage}</span>
+              </div>
+            )}
+            {submissionStatus === "error" && (
+              <div className="flex items-center space-x-2 text-red-600 mt-4">
+                <XCircle className="h-5 w-5" />
+                <span>{submissionMessage}</span>
+              </div>
+            )}
+          </div>
+        )
+      default:
+        return null
+    }
   }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 to-red-50">
       <StaticHeader />
-
-      <div className="container mx-auto px-4 py-8">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">Register Your Business</h1>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Join the Hindu Business Directory and connect with our community across New Zealand
-          </p>
-        </div>
-
-        {/* Progress Indicator */}
-        <div className="flex justify-center mb-8">
-          <div className="flex items-center space-x-4">
-            {[1, 2, 3, 4].map((step) => (
-              <div key={step} className="flex items-center">
-                <div
-                  className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
-                    step <= currentStep ? "bg-orange-600 text-white" : "bg-gray-200 text-gray-600"
-                  }`}
-                >
-                  {step < currentStep ? <CheckCircle className="h-4 w-4" /> : step}
-                </div>
-                {step < 4 && (
-                  <div className={`w-16 h-1 mx-2 ${step < currentStep ? "bg-orange-600" : "bg-gray-200"}`} />
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Error/Success Messages */}
-        {submitStatus === "error" && (
-          <Alert className="max-w-4xl mx-auto mb-6" variant="destructive">
-            <AlertCircle className="h-4 w-4" />
-            <AlertDescription>{submitMessage}</AlertDescription>
-          </Alert>
-        )}
-
-        <form onSubmit={handleSubmit} className="max-w-4xl mx-auto">
-          {/* Step 1: Basic Information */}
-          {currentStep === 1 && (
-            <Card>
-              <CardHeader>
-                <CardTitle>Basic Business Information</CardTitle>
-                <CardDescription>Tell us about your business and what you offer</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <Label htmlFor="businessName">Business Name *</Label>
-                    <Input
-                      id="businessName"
-                      value={formData.businessName}
-                      onChange={(e) => handleInputChange("businessName", e.target.value)}
-                      placeholder="Enter your business name"
-                      required
-                    />
+      <main className="container mx-auto px-4 py-8 md:py-12">
+        <Card className="max-w-2xl mx-auto shadow-lg">
+          <CardHeader className="text-center">
+            <CardTitle className="text-3xl font-bold text-gray-900">Register Your Business</CardTitle>
+            <CardDescription className="text-gray-600">
+              List your Sanatan-owned business in our directory to connect with the community.
+            </CardDescription>
+            <div className="flex justify-center mt-4">
+              {[1, 2, 3].map((s) => (
+                <div key={s} className={`flex items-center ${s <= step ? "text-orange-600" : "text-gray-400"}`}>
+                  <div
+                    className={`w-8 h-8 rounded-full flex items-center justify-center font-bold ${s === step ? "bg-orange-600 text-white" : "bg-gray-200"}`}
+                  >
+                    {s}
                   </div>
-
-                  <div>
-                    <Label htmlFor="category">Category *</Label>
-                    <Select value={formData.category} onValueChange={(value) => handleInputChange("category", value)}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select category" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {businessCategories.map((category) => (
-                          <SelectItem key={category} value={category}>
-                            {category}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
+                  {s < 3 && <div className={`flex-1 h-1 mx-2 ${s < step ? "bg-orange-600" : "bg-gray-200"}`} />}
                 </div>
-
-                <div>
-                  <Label htmlFor="description">Business Description *</Label>
-                  <Textarea
-                    id="description"
-                    value={formData.description}
-                    onChange={(e) => handleInputChange("description", e.target.value)}
-                    placeholder="Describe your business, products, and services"
-                    rows={4}
-                    required
-                  />
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <Label htmlFor="address">Address *</Label>
-                    <Input
-                      id="address"
-                      value={formData.address}
-                      onChange={(e) => handleInputChange("address", e.target.value)}
-                      placeholder="Street address"
-                      required
-                    />
-                  </div>
-
-                  <div>
-                    <Label htmlFor="city">City *</Label>
-                    <Select value={formData.city} onValueChange={(value) => handleInputChange("city", value)}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select city" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {cities.map((city) => (
-                          <SelectItem key={city} value={city}>
-                            {city}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          )}
-
-          {/* Step 2: Contact Information */}
-          {currentStep === 2 && (
-            <Card>
-              <CardHeader>
-                <CardTitle>Contact Information</CardTitle>
-                <CardDescription>How can customers reach your business?</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <Label htmlFor="phone">Business Phone *</Label>
-                    <Input
-                      id="phone"
-                      value={formData.phone}
-                      onChange={(e) => handleInputChange("phone", e.target.value)}
-                      placeholder="+64 9 123 4567"
-                      required
-                    />
-                  </div>
-
-                  <div>
-                    <Label htmlFor="email">Business Email *</Label>
-                    <Input
-                      id="email"
-                      type="email"
-                      value={formData.email}
-                      onChange={(e) => handleInputChange("email", e.target.value)}
-                      placeholder="business@example.com"
-                      required
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <Label htmlFor="website">Website</Label>
-                  <Input
-                    id="website"
-                    value={formData.website}
-                    onChange={(e) => handleInputChange("website", e.target.value)}
-                    placeholder="www.yourbusiness.co.nz"
-                  />
-                </div>
-
-                <div className="space-y-4">
-                  <Label>Social Media (Optional)</Label>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div>
-                      <Label htmlFor="facebook" className="text-sm">
-                        Facebook
-                      </Label>
-                      <Input
-                        id="facebook"
-                        value={formData.socialMedia.facebook}
-                        onChange={(e) => handleSocialMediaChange("facebook", e.target.value)}
-                        placeholder="Facebook page URL"
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="instagram" className="text-sm">
-                        Instagram
-                      </Label>
-                      <Input
-                        id="instagram"
-                        value={formData.socialMedia.instagram}
-                        onChange={(e) => handleSocialMediaChange("instagram", e.target.value)}
-                        placeholder="Instagram handle"
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="twitter" className="text-sm">
-                        Twitter
-                      </Label>
-                      <Input
-                        id="twitter"
-                        value={formData.socialMedia.twitter}
-                        onChange={(e) => handleSocialMediaChange("twitter", e.target.value)}
-                        placeholder="Twitter handle"
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                <div className="space-y-4">
-                  <Label>Owner Information</Label>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div>
-                      <Label htmlFor="ownerName" className="text-sm">
-                        Owner Name *
-                      </Label>
-                      <Input
-                        id="ownerName"
-                        value={formData.ownerName}
-                        onChange={(e) => handleInputChange("ownerName", e.target.value)}
-                        placeholder="Full name"
-                        required
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="ownerEmail" className="text-sm">
-                        Owner Email *
-                      </Label>
-                      <Input
-                        id="ownerEmail"
-                        type="email"
-                        value={formData.ownerEmail}
-                        onChange={(e) => handleInputChange("ownerEmail", e.target.value)}
-                        placeholder="owner@example.com"
-                        required
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="ownerPhone" className="text-sm">
-                        Owner Phone *
-                      </Label>
-                      <Input
-                        id="ownerPhone"
-                        value={formData.ownerPhone}
-                        onChange={(e) => handleInputChange("ownerPhone", e.target.value)}
-                        placeholder="+64 21 123 4567"
-                        required
-                      />
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          )}
-
-          {/* Step 3: Business Details */}
-          {currentStep === 3 && (
-            <Card>
-              <CardHeader>
-                <CardTitle>Business Details</CardTitle>
-                <CardDescription>Additional information about your business</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div>
-                  <Label htmlFor="operatingHours">Operating Hours</Label>
-                  <Textarea
-                    id="operatingHours"
-                    value={formData.operatingHours}
-                    onChange={(e) => handleInputChange("operatingHours", e.target.value)}
-                    placeholder="e.g., Mon-Fri: 9AM-6PM, Sat: 10AM-4PM, Sun: Closed"
-                    rows={3}
-                  />
-                </div>
-
-                <div>
-                  <Label htmlFor="specialOffers">Special Offers or Services</Label>
-                  <Textarea
-                    id="specialOffers"
-                    value={formData.specialOffers}
-                    onChange={(e) => handleInputChange("specialOffers", e.target.value)}
-                    placeholder="Any special offers, discounts, or unique services you provide"
-                    rows={3}
-                  />
-                </div>
-
-                <div>
-                  <Label>Services/Products (Add tags)</Label>
-                  <div className="flex flex-wrap gap-2 mb-2">
-                    {formData.services.map((service) => (
-                      <Badge key={service} variant="secondary" className="flex items-center gap-1">
-                        {service}
-                        <X className="h-3 w-3 cursor-pointer" onClick={() => removeService(service)} />
-                      </Badge>
-                    ))}
-                  </div>
-                  <div className="flex gap-2">
-                    <Input
-                      placeholder="Add a service or product"
-                      value={newService}
-                      onChange={(e) => setNewService(e.target.value)}
-                      onKeyPress={(e) => {
-                        if (e.key === "Enter") {
-                          e.preventDefault()
-                          addService(newService)
-                        }
-                      }}
-                    />
-                    <Button type="button" variant="outline" onClick={() => addService(newService)}>
-                      Add
-                    </Button>
-                  </div>
-                </div>
-
-                <div>
-                  <Label>Business Images (Optional)</Label>
-                  <div className="space-y-4">
-                    <div className="border-2 border-dashed border-orange-300 rounded-lg p-8 text-center hover:border-orange-400 transition-colors bg-orange-50/30">
-                      <div className="flex flex-col items-center">
-                        <div className="bg-orange-100 p-4 rounded-full mb-4">
-                          <Camera className="h-8 w-8 text-orange-600" />
-                        </div>
-                        <h3 className="text-lg font-semibold text-gray-900 mb-2">Upload Business Images</h3>
-                        <p className="text-sm text-gray-600 mb-2">
-                          Show your business, products, or services to potential customers
-                        </p>
-                        <p className="text-xs text-gray-500 mb-4">
-                          Supported formats: JPEG, PNG, WebP • Maximum 5MB per image
-                        </p>
-                        <input
-                          type="file"
-                          accept="image/jpeg,image/jpg,image/png,image/webp"
-                          multiple
-                          onChange={handleImageUpload}
-                          className="hidden"
-                          id="image-upload"
-                          disabled={uploading}
-                        />
-                        <Button
-                          type="button"
-                          variant="outline"
-                          size="lg"
-                          asChild
-                          disabled={uploading}
-                          className="bg-white hover:bg-orange-50 border-orange-300 text-orange-700"
-                        >
-                          <label htmlFor="image-upload" className="cursor-pointer">
-                            {uploading ? (
-                              <>
-                                <Loader2 className="h-5 w-5 mr-2 animate-spin" />
-                                Uploading...
-                              </>
-                            ) : (
-                              <>
-                                <Upload className="h-5 w-5 mr-2" />
-                                Choose Images
-                              </>
-                            )}
-                          </label>
-                        </Button>
-                      </div>
-                    </div>
-
-                    {uploadError && (
-                      <Alert variant="destructive">
-                        <AlertCircle className="h-4 w-4" />
-                        <AlertDescription>{uploadError}</AlertDescription>
-                      </Alert>
-                    )}
-
-                    {uploadedImages.length > 0 && (
-                      <div>
-                        <Label className="text-sm font-medium">Uploaded Images ({uploadedImages.length})</Label>
-                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-3">
-                          {uploadedImages.map((image, index) => (
-                            <div key={image.filename} className="relative group">
-                              <div className="aspect-square relative overflow-hidden rounded-lg border-2 border-gray-200 group-hover:border-orange-300 transition-colors">
-                                <img
-                                  src={image.url || "/placeholder.svg"}
-                                  alt={`Business image ${index + 1}`}
-                                  className="w-full h-full object-cover"
-                                  onError={(e) => {
-                                    const target = e.target as HTMLImageElement
-                                    target.src = "/placeholder.svg?height=128&width=128&text=Error"
-                                  }}
-                                />
-                              </div>
-                              <button
-                                type="button"
-                                onClick={() => removeImage(image.filename)}
-                                className="absolute -top-2 -right-2 bg-red-500 hover:bg-red-600 text-white rounded-full p-1.5 opacity-0 group-hover:opacity-100 transition-opacity shadow-lg"
-                                title={`Remove ${image.originalName}`}
-                              >
-                                <X className="h-3 w-3" />
-                              </button>
-                              <div className="absolute bottom-0 left-0 right-0 bg-black/50 text-white text-xs p-1 truncate opacity-0 group-hover:opacity-100 transition-opacity">
-                                {image.originalName}
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          )}
-
-          {/* Step 4: Review & Submit */}
-          {currentStep === 4 && (
-            <Card>
-              <CardHeader>
-                <CardTitle>Review & Submit</CardTitle>
-                <CardDescription>Please review your information and agree to our terms</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="bg-gray-50 p-4 rounded-lg">
-                  <h3 className="font-semibold mb-2">Business Summary</h3>
-                  <div className="space-y-1 text-sm">
-                    <p>
-                      <strong>Name:</strong> {formData.businessName}
-                    </p>
-                    <p>
-                      <strong>Category:</strong> {formData.category}
-                    </p>
-                    <p>
-                      <strong>Location:</strong> {formData.address}, {formData.city}
-                    </p>
-                    <p>
-                      <strong>Contact:</strong> {formData.phone} | {formData.email}
-                    </p>
-                    <p>
-                      <strong>Owner:</strong> {formData.ownerName}
-                    </p>
-                    {formData.services.length > 0 && (
-                      <p>
-                        <strong>Services:</strong> {formData.services.join(", ")}
-                      </p>
-                    )}
-                    {uploadedImages.length > 0 && (
-                      <p>
-                        <strong>Images:</strong> {uploadedImages.length} uploaded
-                      </p>
-                    )}
-                  </div>
-                </div>
-
-                <div className="space-y-4">
-                  <div className="flex items-center space-x-2">
-                    <Checkbox
-                      id="terms"
-                      checked={formData.agreeToTerms}
-                      onCheckedChange={(checked) => handleInputChange("agreeToTerms", checked)}
-                    />
-                    <Label htmlFor="terms" className="text-sm">
-                      I agree to the Terms of Service and Privacy Policy *
-                    </Label>
-                  </div>
-
-                  <div className="flex items-center space-x-2">
-                    <Checkbox
-                      id="marketing"
-                      checked={formData.agreeToMarketing}
-                      onCheckedChange={(checked) => handleInputChange("agreeToMarketing", checked)}
-                    />
-                    <Label htmlFor="marketing" className="text-sm">
-                      I agree to receive marketing communications and updates
-                    </Label>
-                  </div>
-                </div>
-
-                <div className="bg-blue-50 p-4 rounded-lg">
-                  <h4 className="font-semibold text-blue-900 mb-2">What happens next?</h4>
-                  <ul className="text-sm text-blue-800 space-y-1">
-                    <li>• Your business will be reviewed within 2-3 business days</li>
-                    <li>• You'll receive an email confirmation once approved</li>
-                    <li>• Your business will appear in our directory</li>
-                    <li>• You can update your listing anytime by contacting us</li>
-                  </ul>
-                </div>
-              </CardContent>
-            </Card>
-          )}
-
-          {/* Navigation Buttons */}
-          <div className="flex justify-between mt-8">
-            <Button type="button" variant="outline" onClick={prevStep} disabled={currentStep === 1}>
-              Previous
-            </Button>
-
-            {currentStep < 4 ? (
-              <Button
-                type="button"
-                onClick={nextStep}
-                className="bg-orange-600 hover:bg-orange-700"
-                disabled={!isStepValid()}
-              >
-                Next
-              </Button>
-            ) : (
-              <Button
-                type="submit"
-                className="bg-orange-600 hover:bg-orange-700"
-                disabled={!formData.agreeToTerms || isSubmitting}
-              >
-                {isSubmitting ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Submitting...
-                  </>
-                ) : (
-                  "Submit Registration"
-                )}
-              </Button>
-            )}
-          </div>
-        </form>
-      </div>
+              ))}
+            </div>
+          </CardHeader>
+          <CardContent className="p-6">{renderStep()}</CardContent>
+        </Card>
+      </main>
     </div>
   )
 }

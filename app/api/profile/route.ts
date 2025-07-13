@@ -1,62 +1,64 @@
 import { type NextRequest, NextResponse } from "next/server"
+import { getDevoteeById, updateDevoteeProfile } from "@/lib/database"
+import { getSession } from "@/lib/auth"
 
-export async function GET() {
+export const runtime = "nodejs"
+
+export async function GET(request: NextRequest) {
   try {
-    // Import auth functions only when needed
-    const { getCurrentDevotee } = await import("@/lib/auth")
-    const { getDevoteeById } = await import("@/lib/database")
-
-    const currentUser = await getCurrentDevotee()
-    if (!currentUser) {
-      return NextResponse.json({ error: "Authentication required" }, { status: 401 })
+    const session = await getSession()
+    if (!session) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
-    const profile = await getDevoteeById(currentUser.id)
-    if (!profile) {
-      return NextResponse.json({ error: "Profile not found" }, { status: 404 })
+    const devotee = await getDevoteeById(session.user.id)
+    if (!devotee) {
+      return NextResponse.json({ error: "Devotee not found" }, { status: 404 })
     }
 
-    // Parse JSON fields
-    const profileData = {
-      ...profile,
-      spiritual_practices: profile.spiritual_practices ? JSON.parse(profile.spiritual_practices) : [],
-      interests: profile.interests ? JSON.parse(profile.interests) : [],
-    }
+    // Exclude sensitive data like password_hash
+    const { password_hash, ...safeDevotee } = devotee
 
-    return NextResponse.json({ profile: profileData })
+    return NextResponse.json({
+      success: true,
+      devotee: safeDevotee,
+    })
   } catch (error: any) {
-    console.error("Profile fetch error:", error)
+    console.error("Error fetching devotee profile:", error)
     return NextResponse.json({ error: "Failed to fetch profile" }, { status: 500 })
   }
 }
 
 export async function PUT(request: NextRequest) {
   try {
-    // Import auth functions only when needed
-    const { getCurrentDevotee } = await import("@/lib/auth")
-    const { updateDevoteeProfile } = await import("@/lib/database")
-
-    const currentUser = await getCurrentDevotee()
-    if (!currentUser) {
-      return NextResponse.json({ error: "Authentication required" }, { status: 401 })
+    const session = await getSession()
+    if (!session) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
-    const body = await request.json()
-    const { updates } = body
+    const updates = await request.json()
 
-    if (!updates || Object.keys(updates).length === 0) {
-      return NextResponse.json({ error: "No updates provided" }, { status: 400 })
+    // Prevent updating sensitive fields directly via this route
+    delete updates.email
+    delete updates.password_hash
+    delete updates.is_verified
+    delete updates.is_active
+    delete updates.created_at
+    delete updates.updated_at
+
+    if (Object.keys(updates).length === 0) {
+      return NextResponse.json({ error: "No valid fields to update" }, { status: 400 })
     }
 
-    const updatedProfile = await updateDevoteeProfile(currentUser.id, updates)
+    const updatedDevotee = await updateDevoteeProfile(session.user.id, updates)
 
     return NextResponse.json({
       success: true,
       message: "Profile updated successfully",
-      profile: updatedProfile,
+      devotee: updatedDevotee,
     })
   } catch (error: any) {
-    console.error("Profile update error:", error)
+    console.error("Error updating devotee profile:", error)
     return NextResponse.json({ error: "Failed to update profile" }, { status: 500 })
   }
 }

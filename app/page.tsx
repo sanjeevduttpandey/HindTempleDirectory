@@ -42,11 +42,11 @@ export default function HomePage() {
       image: "/images/auckland-sri-ganesh-temple.jpg",
       rating: 4.8,
       reviews: 203,
-      description: "Traditional temple serving the Hindu community since 1979",
+      description: "Traditional temple serving the Sanatan community since 1979",
     },
     {
       id: 3,
-      name: "Wellington Hindu Temple",
+      name: "Wellington Sanatan Temple",
       deity: "Multiple Deities",
       city: "Wellington",
       image: "/images/baps-wellington-interior.jpg",
@@ -152,7 +152,7 @@ export default function HomePage() {
           </h1>
 
           <p className="text-xl text-gray-700 mb-10 max-w-4xl mx-auto leading-relaxed">
-            Your spiritual home in Aotearoa. Connect with temples, join festivals, explore Hindu traditions, and build
+            Your spiritual home in Aotearoa. Connect with temples, join festivals, explore Sanatan traditions, and build
             meaningful relationships with fellow devotees across New Zealand.
           </p>
 
@@ -170,7 +170,7 @@ export default function HomePage() {
             <Button
               size="lg"
               variant="outline"
-              className="border-2 border-orange-300 hover:bg-orange-50 text-lg px-8 py-4"
+              className="border-2 border-orange-300 hover:bg-orange-50 text-lg px-8 py-4 bg-transparent"
               asChild
             >
               <Link href="/events">
@@ -201,7 +201,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Hindu Panchang Section */}
+      {/* Sanatan Panchang Section */}
       <section className="py-20 px-4 bg-gradient-to-r from-amber-50 to-orange-50">
         <div className="container mx-auto">
           <div className="text-center mb-12">
@@ -221,7 +221,12 @@ export default function HomePage() {
           </div>
 
           <div className="text-center">
-            <Button variant="outline" size="lg" className="border-2 border-amber-300 hover:bg-amber-50" asChild>
+            <Button
+              variant="outline"
+              size="lg"
+              className="border-2 border-amber-300 hover:bg-amber-50 bg-transparent"
+              asChild
+            >
               <Link href="/panchang">
                 <BookOpen className="mr-2 h-5 w-5" />
                 View Full Panchang
@@ -293,7 +298,7 @@ export default function HomePage() {
             <Button
               size="lg"
               variant="outline"
-              className="border-2 border-orange-300 hover:bg-orange-50 text-lg px-8 py-4"
+              className="border-2 border-orange-300 hover:bg-orange-50 text-lg px-8 py-4 bg-transparent"
               asChild
             >
               <Link href="/temples">
@@ -370,7 +375,7 @@ export default function HomePage() {
             <Button
               size="lg"
               variant="outline"
-              className="border-2 border-orange-300 hover:bg-orange-50 text-lg px-8 py-4"
+              className="border-2 border-orange-300 hover:bg-orange-50 text-lg px-8 py-4 bg-transparent"
               asChild
             >
               <Link href="/events">
@@ -392,7 +397,7 @@ export default function HomePage() {
             </div>
             <h2 className="text-4xl font-bold text-gray-900 mb-4">Everything You Need</h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              A comprehensive platform designed to keep you connected with the Hindu community in New Zealand.
+              A comprehensive platform designed to keep you connected with the Sanatan community in New Zealand.
             </p>
           </div>
 
@@ -471,7 +476,7 @@ export default function HomePage() {
             <Button
               size="lg"
               variant="outline"
-              className="border-2 border-white text-white hover:bg-white hover:text-orange-600 text-lg px-8 py-4"
+              className="border-2 border-white text-white hover:bg-white hover:text-orange-600 text-lg px-8 py-4 bg-transparent"
               asChild
             >
               <Link href="/temples">
@@ -524,7 +529,7 @@ export default function HomePage() {
                 {[
                   { href: "/panchang", label: "Panchang" },
                   { href: "/festivals", label: "Festival Calendar" },
-                  { href: "/datetime", label: "Hindu Time" },
+                  { href: "/datetime", label: "Sanatan Time" },
                   { href: "/about", label: "About Us" },
                 ].map((link) => (
                   <li key={link.href}>
@@ -557,8 +562,8 @@ export default function HomePage() {
 
           <div className="border-t border-gray-800 pt-8 text-center">
             <p className="text-gray-400">
-              &copy; 2024 Sanatan New Zealand. Made with <Heart className="inline h-4 w-4 text-red-500" /> for the Hindu
-              community. 🕉️
+              &copy; 2024 Sanatan New Zealand. Made with <Heart className="inline h-4 w-4 text-red-500" /> for the
+              Sanatan community. 🕉️
             </p>
           </div>
         </div>

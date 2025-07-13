@@ -245,22 +245,6 @@ const temples = [
     featured: true,
   },
   {
-    id: 4,
-    name: "Shri Vishwa Vinayak Mandir",
-    city: "Wellington",
-    address: "23 Hanson Street, Newtown, Wellington 6021",
-    phone: "+64 4 389 4397",
-    rating: 4.6,
-    reviews: 112,
-    image: "/images/vishwa-vinayak-temple.jpg",
-    description:
-      "A peaceful sanctuary dedicated to Lord Ganesha, hosting regular pujas and cultural events in Wellington.",
-    timings: "6:30 AM - 8:00 PM",
-    deity: "Ganesha",
-    established: 1998,
-    website: "https://www.svwt.org.nz/",
-  },
-  {
     id: 5,
     name: "ISKCON Wellington",
     city: "Wellington",

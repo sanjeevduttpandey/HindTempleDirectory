@@ -34,6 +34,22 @@ export default function AdminDashboard() {
             </CardContent>
           </Card>
 
+          {/* Event Submissions */}
+          <Card className="hover:shadow-lg transition-shadow">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Calendar className="h-5 w-5 text-green-600" />
+                Event Submissions
+              </CardTitle>
+              <CardDescription>Review and manage community event submissions</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Link href="/admin/event-submissions">
+                <Button className="w-full">View Submissions</Button>
+              </Link>
+            </CardContent>
+          </Card>
+
           {/* User Management */}
           <Card className="hover:shadow-lg transition-shadow opacity-60">
             <CardHeader>
@@ -42,22 +58,6 @@ export default function AdminDashboard() {
                 User Management
               </CardTitle>
               <CardDescription>Manage community members and permissions</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Button className="w-full" disabled>
-                Coming Soon
-              </Button>
-            </CardContent>
-          </Card>
-
-          {/* Event Management */}
-          <Card className="hover:shadow-lg transition-shadow opacity-60">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Calendar className="h-5 w-5 text-green-600" />
-                Event Management
-              </CardTitle>
-              <CardDescription>Manage temple events and community gatherings</CardDescription>
             </CardHeader>
             <CardContent>
               <Button className="w-full" disabled>
@@ -120,19 +120,25 @@ export default function AdminDashboard() {
           <h2 className="text-xl font-semibold text-gray-900 mb-4">Quick Actions</h2>
           <div className="flex flex-wrap gap-4">
             <Link href="/admin/business-submissions">
-              <Button variant="outline" className="flex items-center gap-2">
+              <Button variant="outline" className="flex items-center gap-2 bg-transparent">
                 <Building2 className="h-4 w-4" />
                 Review Business Submissions
               </Button>
             </Link>
+            <Link href="/admin/event-submissions">
+              <Button variant="outline" className="flex items-center gap-2 bg-transparent">
+                <Calendar className="h-4 w-4" />
+                Review Event Submissions
+              </Button>
+            </Link>
             <Link href="/business/directory">
-              <Button variant="outline" className="flex items-center gap-2">
+              <Button variant="outline" className="flex items-center gap-2 bg-transparent">
                 <Building2 className="h-4 w-4" />
                 View Business Directory
               </Button>
             </Link>
             <Link href="/temples">
-              <Button variant="outline" className="flex items-center gap-2">
+              <Button variant="outline" className="flex items-center gap-2 bg-transparent">
                 <Building2 className="h-4 w-4" />
                 Manage Temples
               </Button>
@@ -148,11 +154,15 @@ export default function AdminDashboard() {
               • <strong>Business Submissions:</strong> Review and approve business registration requests
             </p>
             <p>
+              • <strong>Event Submissions:</strong> Review and approve community event submissions
+            </p>
+            <p>
               • <strong>Direct Access:</strong> Use the "Admin" link in the top navigation
             </p>
             <p>
               • <strong>Quick Access:</strong> Bookmark{" "}
-              <code className="bg-orange-100 px-2 py-1 rounded">/admin/business-submissions</code> for direct access
+              <code className="bg-orange-100 px-2 py-1 rounded">/admin/business-submissions</code> or{" "}
+              <code className="bg-orange-100 px-2 py-1 rounded">/admin/event-submissions</code> for direct access
             </p>
           </div>
         </div>

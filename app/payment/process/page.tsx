@@ -1,8 +1,8 @@
 "use client"
 
 import type React from "react"
-
-import { useState } from "react"
+import { useEffect, useState } from "react"
+import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -13,6 +13,7 @@ import Link from "next/link"
 import { useSearchParams } from "next/navigation"
 
 export default function PaymentProcessPage() {
+  const router = useRouter()
   const searchParams = useSearchParams()
   const [paymentData, setPaymentData] = useState({
     cardNumber: "",
@@ -28,6 +29,8 @@ export default function PaymentProcessPage() {
   const [isProcessing, setIsProcessing] = useState(false)
   const [paymentComplete, setPaymentComplete] = useState(false)
   const [paymentError, setPaymentError] = useState("")
+  const [progress, setProgress] = useState(0)
+  const [message, setMessage] = useState("Initiating payment...")
 
   // Extract payment details from URL params
   const paymentType = searchParams.get("type") // "donation" or "event"
@@ -93,6 +96,37 @@ export default function PaymentProcessPage() {
     }
   }
 
+  useEffect(() => {
+    const simulatePayment = async () => {
+      // Simulate network delay and processing
+      await new Promise((resolve) => setTimeout(resolve, 1000))
+      setProgress(30)
+      setMessage("Verifying details...")
+
+      await new Promise((resolve) => setTimeout(resolve, 1000))
+      setProgress(60)
+      setMessage("Completing transaction...")
+
+      await new Promise((resolve) => setTimeout(resolve, 1000))
+      setProgress(90)
+      setMessage("Finalizing...")
+
+      await new Promise((resolve) => setTimeout(resolve, 500))
+      setProgress(100)
+      setMessage("Payment complete!")
+
+      // Simulate success or failure
+      const isSuccess = Math.random() > 0.2 // 80% success rate
+      if (isSuccess) {
+        router.push("/payment/success")
+      } else {
+        router.push("/payment/failed")
+      }
+    }
+
+    simulatePayment()
+  }, [router])
+
   if (paymentComplete) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-green-50 to-white flex items-center justify-center px-4">
@@ -109,7 +143,7 @@ export default function PaymentProcessPage() {
             </p>
             <div className="space-y-3">
               <Button className="w-full bg-green-600 hover:bg-green-700">Download Receipt</Button>
-              <Button variant="outline" className="w-full" asChild>
+              <Button variant="outline" className="w-full bg-transparent" asChild>
                 <Link href={paymentType === "donation" ? "/donate" : "/events"}>
                   {paymentType === "donation" ? "Make Another Donation" : "Browse More Events"}
                 </Link>

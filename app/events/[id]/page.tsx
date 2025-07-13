@@ -3,154 +3,117 @@
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Calendar, MapPin, Clock, Users, Heart, Share2, ArrowLeft, Phone, Mail, Globe } from "lucide-react"
+import {
+  Calendar,
+  MapPin,
+  Clock,
+  Users,
+  Heart,
+  Share2,
+  ArrowLeft,
+  Phone,
+  Mail,
+  Globe,
+  Loader2,
+  CheckCircle,
+} from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
 import { useParams } from "next/navigation"
+import { useEffect, useState } from "react"
 
-// Mock event data - in a real app, this would come from an API
-// Dates are assumed to be in NZ local time for simplicity of this mock.
-const eventData = {
-  1: {
-    id: 1,
-    title: "Diwali Celebration 2024",
-    date: "2024-11-12",
-    time: "6:00 PM - 10:00 PM",
-    location: "Auckland Town Hall",
-    address: "301-305 Queen Street, Auckland Central, Auckland 1010",
-    city: "Auckland",
-    organizer: "Auckland Sanatan Society",
-    organizerPhone: "+64 9 123 4567",
-    organizerEmail: "events@aucklandsanatan.org.nz",
-    organizerWebsite: "https://www.aucklandsanatan.org.nz",
-    attendees: 450,
-    maxAttendees: 500,
-    price: "Free",
-    category: "Festival",
-    description:
-      "Join us for the grandest Diwali celebration in Auckland with cultural performances, traditional food, and fireworks. This year's celebration promises to be bigger and better than ever, featuring renowned artists, authentic Indian cuisine, and spectacular fireworks display.",
-    image: "/placeholder.svg?height=400&width=800",
-    featured: true,
-    fullDescription: `
-      Celebrate the Festival of Lights with the Auckland Sanatan community in this grand Diwali celebration. This year's event will feature:
-      
-      • Traditional Diwali prayers and ceremonies
-      • Cultural performances including classical dance and music
-      • Authentic Indian food stalls and sweets
-      • Children's activities and games
-      • Spectacular fireworks display
-      • Community market with traditional items
-      
-      The event is family-friendly and welcomes people of all backgrounds to experience the joy and warmth of Diwali. Come dressed in your finest traditional attire and join us in celebrating the victory of light over darkness.
-    `,
-    schedule: [
-      { time: "6:00 PM", activity: "Registration and Welcome" },
-      { time: "6:30 PM", activity: "Traditional Diwali Prayers" },
-      { time: "7:00 PM", activity: "Cultural Performances Begin" },
-      { time: "8:00 PM", activity: "Dinner Service" },
-      { time: "9:00 PM", activity: "Community Activities" },
-      { time: "9:45 PM", activity: "Fireworks Display" },
-    ],
-    requirements: [
-      "No registration required - open to all",
-      "Family-friendly event",
-      "Traditional attire encouraged",
-      "Parking available nearby",
-      "Food will be provided",
-    ],
-  },
-  2: {
-    id: 2,
-    title: "Hanuman Jayanti Celebration",
-    date: "2024-11-15",
-    time: "7:00 AM - 12:00 PM",
-    location: "Wellington Sanatan Mandir",
-    address: "23 Hanson Street, Newtown, Wellington 6021",
-    city: "Wellington",
-    organizer: "Wellington Sanatan Mandir",
-    organizerPhone: "+64 4 389 4397",
-    organizerEmail: "info@wellingtonsanatan.org.nz",
-    attendees: 120,
-    maxAttendees: 200,
-    price: "Free",
-    category: "Religious",
-    description:
-      "Special puja and bhajan session to celebrate the birth of Lord Hanuman with traditional ceremonies and community gathering.",
-    image: "/placeholder.svg?height=400&width=800",
-    fullDescription: `
-      Join us for a sacred celebration of Hanuman Jayanti, commemorating the birth of Lord Hanuman. This spiritual gathering will include:
-      
-      • Special Hanuman Chalisa recitation
-      • Traditional puja ceremonies
-      • Devotional bhajan singing
-      • Prasadam distribution
-      • Community prayers and blessings
-      
-      Lord Hanuman is revered for his strength, devotion, and protection. This celebration is an opportunity for the community to come together in prayer and devotion.
-    `,
-    schedule: [
-      { time: "7:00 AM", activity: "Morning Prayers" },
-      { time: "8:00 AM", activity: "Hanuman Chalisa Recitation" },
-      { time: "9:00 AM", activity: "Special Puja Ceremony" },
-      { time: "10:30 AM", activity: "Bhajan Session" },
-      { time: "11:30 AM", activity: "Prasadam Distribution" },
-      { time: "12:00 PM", activity: "Closing Prayers" },
-    ],
-    requirements: [
-      "Open to all devotees",
-      "Please arrive on time for prayers",
-      "Modest dress code requested",
-      "Prasadam will be provided",
-    ],
-  },
-  3: {
-    id: 3,
-    title: "Bhagavad Gita Study Circle",
-    date: "2024-11-18",
-    time: "2:00 PM - 4:00 PM",
-    location: "Christchurch Community Center",
-    address: "20 Ombersley Terrace, Opawa, Christchurch 8023",
-    city: "Christchurch",
-    organizer: "Christchurch Sanatan Mandir Society",
-    organizerPhone: "+64 3 332 1952",
-    organizerEmail: "study@christchurchsanatan.org.nz",
-    attendees: 25,
-    maxAttendees: 40,
-    price: "Free",
-    category: "Educational",
-    description: "Weekly study session exploring the teachings of the Bhagavad Gita with discussion and Q&A.",
-    image: "/placeholder.svg?height=400&width=800",
-    fullDescription: `
-      Join our weekly Bhagavad Gita study circle where we explore the timeless wisdom of this sacred text. Each session includes:
-      
-      • Verse-by-verse study and commentary
-      • Group discussions and interpretations
-      • Practical applications in daily life
-      • Q&A sessions with experienced teachers
-      • Take-home study materials
-      
-      This study circle is suitable for beginners and advanced students alike. All are welcome regardless of background or experience with Sanatan scriptures.
-    `,
-    schedule: [
-      { time: "2:00 PM", activity: "Welcome and Opening Prayer" },
-      { time: "2:15 PM", activity: "Verse Study and Commentary" },
-      { time: "3:00 PM", activity: "Group Discussion" },
-      { time: "3:30 PM", activity: "Q&A Session" },
-      { time: "3:50 PM", activity: "Closing and Next Week Preview" },
-    ],
-    requirements: [
-      "No prior knowledge required",
-      "Bring a notebook for taking notes",
-      "Study materials provided",
-      "Regular attendance encouraged",
-    ],
-  },
+interface EventDetail {
+  id: number
+  title: string
+  description: string
+  full_description?: string
+  event_type: string
+  start_date: string
+  end_date?: string
+  start_time?: string
+  end_time?: string
+  location: string
+  address?: string
+  city: string
+  organizer_name?: string
+  organizer_email?: string
+  organizer_phone?: string
+  organizer_website?: string
+  max_participants?: number
+  current_participants?: number
+  registration_fee?: number
+  is_free: boolean
+  image_url?: string
+  image_urls?: string[]
+  requirements?: string
+  features?: string[]
+  is_featured?: boolean
+  temple_name?: string // From join
 }
 
 export default function EventDetailPage() {
   const params = useParams()
   const eventId = Number.parseInt(params.id as string)
-  const event = eventData[eventId as keyof typeof eventData]
+  const [event, setEvent] = useState<EventDetail | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    const fetchEvent = async () => {
+      setLoading(true)
+      setError(null)
+      try {
+        const response = await fetch(`/api/events/${eventId}`)
+        if (!response.ok) {
+          if (response.status === 404) {
+            setError("Event not found or not yet approved.")
+          } else {
+            throw new Error(`HTTP error! status: ${response.status}`)
+          }
+        }
+        const data = await response.json()
+        if (data.success) {
+          setEvent(data.event)
+        } else {
+          setError(data.error || "Failed to fetch event details.")
+        }
+      } catch (e: any) {
+        console.error("Error fetching event:", e)
+        setError("Failed to load event details. Please try again later.")
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    if (eventId) {
+      fetchEvent()
+    }
+  }, [eventId])
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-orange-600" />
+        <p className="ml-2 text-gray-600">Loading event details...</p>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <Card className="w-full max-w-md text-center">
+          <CardContent className="pt-6">
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">Error</h2>
+            <p className="text-gray-600 mb-6">{error}</p>
+            <Button asChild className="bg-orange-600 hover:bg-orange-700">
+              <Link href="/events">Browse Events</Link>
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    )
+  }
 
   if (!event) {
     return (
@@ -179,6 +142,11 @@ export default function EventDetailPage() {
     })
   }
 
+  const displayPrice = event.is_free ? "Free" : `NZD $${event.registration_fee?.toFixed(2)}`
+  const displayAttendees = event.max_participants
+    ? `${event.current_participants || 0}/${event.max_participants} attending`
+    : `${event.current_participants || 0} attending`
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
@@ -204,10 +172,29 @@ export default function EventDetailPage() {
             {/* Event Image */}
             <div className="space-y-4">
               <div className="relative h-80 rounded-lg overflow-hidden">
-                <Image src={event.image || "/placeholder.svg"} alt={event.title} fill className="object-cover" />
-                {event.featured && <Badge className="absolute top-4 left-4 bg-orange-600">Featured Event</Badge>}
-                <Badge className="absolute top-4 right-4 bg-white/90 text-gray-900">{event.category}</Badge>
+                <Image
+                  src={event.image_url || event.image_urls?.[0] || "/placeholder.svg?height=400&width=800&query=event"}
+                  alt={event.title}
+                  fill
+                  className="object-cover"
+                />
+                {event.is_featured && <Badge className="absolute top-4 left-4 bg-orange-600">Featured Event</Badge>}
+                <Badge className="absolute top-4 right-4 bg-white/90 text-gray-900">{event.event_type}</Badge>
               </div>
+              {event.image_urls && event.image_urls.length > 1 && (
+                <div className="flex gap-2 overflow-x-auto">
+                  {event.image_urls.map((url, index) => (
+                    <div key={index} className="relative w-24 h-16 flex-shrink-0 rounded-md overflow-hidden">
+                      <Image
+                        src={url || "/placeholder.svg"}
+                        alt={`${event.title} image ${index + 1}`}
+                        fill
+                        className="object-cover"
+                      />
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
 
             {/* Event Info */}
@@ -232,11 +219,16 @@ export default function EventDetailPage() {
                 <CardContent className="p-4 space-y-3">
                   <div className="flex items-center">
                     <Calendar className="h-5 w-5 text-gray-400 mr-3" />
-                    <span className="text-sm">{formatDate(event.date)}</span>
+                    <span className="text-sm">
+                      {formatDate(event.start_date)}
+                      {event.end_date && event.start_date !== event.end_date && ` - ${formatDate(event.end_date)}`}
+                    </span>
                   </div>
                   <div className="flex items-center">
                     <Clock className="h-5 w-5 text-gray-400 mr-3" />
-                    <span className="text-sm">{event.time}</span>
+                    <span className="text-sm">
+                      {event.start_time} {event.end_time ? `- ${event.end_time}` : ""}
+                    </span>
                   </div>
                   <div className="flex items-center">
                     <MapPin className="h-5 w-5 text-gray-400 mr-3" />
@@ -246,9 +238,7 @@ export default function EventDetailPage() {
                   </div>
                   <div className="flex items-center">
                     <Users className="h-5 w-5 text-gray-400 mr-3" />
-                    <span className="text-sm">
-                      {event.attendees}/{event.maxAttendees} attending
-                    </span>
+                    <span className="text-sm">{displayAttendees}</span>
                   </div>
                 </CardContent>
               </Card>
@@ -262,19 +252,21 @@ export default function EventDetailPage() {
                       <p className="text-sm text-gray-600">Secure your spot at this event</p>
                     </div>
                     <div className="text-right">
-                      <div className="text-2xl font-bold text-orange-600">{event.price}</div>
-                      <div className="text-sm text-gray-500">per person</div>
+                      <div className="text-2xl font-bold text-orange-600">{displayPrice}</div>
+                      {!event.is_free && <div className="text-sm text-gray-500">per person</div>}
                     </div>
                   </div>
                   <div className="grid grid-cols-2 gap-3">
                     <Button className="bg-orange-600 hover:bg-orange-700" asChild>
                       <Link href={`/events/${event.id}/register`}>Register Now</Link>
                     </Button>
-                    <Button variant="outline" asChild>
-                      <Link href={`https://maps.google.com/?q=${encodeURIComponent(event.address)}`} target="_blank">
-                        Get Directions
-                      </Link>
-                    </Button>
+                    {event.address && (
+                      <Button variant="outline" asChild>
+                        <Link href={`https://maps.google.com/?q=${encodeURIComponent(event.address)}`} target="_blank">
+                          Get Directions
+                        </Link>
+                      </Button>
+                    )}
                   </div>
                 </CardContent>
               </Card>
@@ -286,23 +278,25 @@ export default function EventDetailPage() {
             {/* Main Content */}
             <div className="lg:col-span-2 space-y-8">
               {/* About Event */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>About This Event</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="prose prose-gray max-w-none">
-                    {event.fullDescription?.split("\n").map((paragraph, index) => (
-                      <p key={index} className="text-gray-600 leading-relaxed mb-4">
-                        {paragraph}
-                      </p>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
+              {event.full_description && (
+                <Card>
+                  <CardHeader>
+                    <CardTitle>About This Event</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="prose prose-gray max-w-none">
+                      {event.full_description.split("\n").map((paragraph, index) => (
+                        <p key={index} className="text-gray-600 leading-relaxed mb-4">
+                          {paragraph}
+                        </p>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
 
-              {/* Schedule */}
-              {event.schedule && (
+              {/* Schedule (Placeholder - assuming schedule data would be part of full_description or a separate field) */}
+              {/* {event.schedule && (
                 <Card>
                   <CardHeader>
                     <CardTitle>Event Schedule</CardTitle>
@@ -318,7 +312,7 @@ export default function EventDetailPage() {
                     </div>
                   </CardContent>
                 </Card>
-              )}
+              )} */}
 
               {/* Requirements */}
               {event.requirements && (
@@ -328,7 +322,7 @@ export default function EventDetailPage() {
                   </CardHeader>
                   <CardContent>
                     <ul className="space-y-2">
-                      {event.requirements.map((requirement, index) => (
+                      {event.requirements.split("\n").map((requirement, index) => (
                         <li key={index} className="flex items-start space-x-2">
                           <div className="w-2 h-2 bg-orange-600 rounded-full mt-2" />
                           <span className="text-sm text-gray-600">{requirement}</span>
@@ -338,50 +332,80 @@ export default function EventDetailPage() {
                   </CardContent>
                 </Card>
               )}
+
+              {/* Features */}
+              {event.features && event.features.length > 0 && (
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Event Features</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid grid-cols-2 gap-4">
+                      {event.features.map((feature, index) => (
+                        <div key={index} className="flex items-center space-x-2">
+                          <CheckCircle className="h-4 w-4 text-green-500" />
+                          <span className="text-sm text-gray-700">{feature}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
             </div>
 
             {/* Sidebar */}
             <div className="space-y-6">
               {/* Organizer Info */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>Event Organizer</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div>
-                    <h4 className="font-medium text-gray-900">{event.organizer}</h4>
-                    <p className="text-sm text-gray-600">Community Organization</p>
-                  </div>
-
-                  <div className="space-y-3">
-                    <div className="flex items-center space-x-2">
-                      <Phone className="h-4 w-4 text-gray-400" />
-                      <a href={`tel:${event.organizerPhone}`} className="text-sm text-orange-600 hover:underline">
-                        {event.organizerPhone}
-                      </a>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <Mail className="h-4 w-4 text-gray-400" />
-                      <a href={`mailto:${event.organizerEmail}`} className="text-sm text-orange-600 hover:underline">
-                        {event.organizerEmail}
-                      </a>
-                    </div>
-                    {event.organizerWebsite && (
-                      <div className="flex items-center space-x-2">
-                        <Globe className="h-4 w-4 text-gray-400" />
-                        <a
-                          href={event.organizerWebsite}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-sm text-orange-600 hover:underline"
-                        >
-                          Visit Website
-                        </a>
+              {(event.organizer_name || event.organizer_email || event.organizer_phone || event.organizer_website) && (
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Event Organizer</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    {event.organizer_name && (
+                      <div>
+                        <h4 className="font-medium text-gray-900">{event.organizer_name}</h4>
+                        <p className="text-sm text-gray-600">Community Organization</p>
                       </div>
                     )}
-                  </div>
-                </CardContent>
-              </Card>
+
+                    <div className="space-y-3">
+                      {event.organizer_phone && (
+                        <div className="flex items-center space-x-2">
+                          <Phone className="h-4 w-4 text-gray-400" />
+                          <a href={`tel:${event.organizer_phone}`} className="text-sm text-orange-600 hover:underline">
+                            {event.organizer_phone}
+                          </a>
+                        </div>
+                      )}
+                      {event.organizer_email && (
+                        <div className="flex items-center space-x-2">
+                          <Mail className="h-4 w-4 text-gray-400" />
+                          <a
+                            href={`mailto:${event.organizer_email}`}
+                            className="text-sm text-orange-600 hover:underline"
+                          >
+                            {event.organizer_email}
+                          </a>
+                        </div>
+                      )}
+                      {event.organizer_website && (
+                        <div className="flex items-center space-x-2">
+                          <Globe className="h-4 w-4 text-gray-400" />
+                          <a
+                            href={event.organizer_website}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-sm text-orange-600 hover:underline"
+                          >
+                            Visit Website
+                          </a>
+                        </div>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
 
               {/* Location */}
               <Card>
@@ -391,14 +415,16 @@ export default function EventDetailPage() {
                 <CardContent className="space-y-4">
                   <div>
                     <h4 className="font-medium text-gray-900">{event.location}</h4>
-                    <p className="text-sm text-gray-600">{event.address}</p>
+                    {event.address && <p className="text-sm text-gray-600">{event.address}</p>}
                   </div>
-                  <Button variant="outline" className="w-full bg-transparent" asChild>
-                    <Link href={`https://maps.google.com/?q=${encodeURIComponent(event.address)}`} target="_blank">
-                      <MapPin className="mr-2 h-4 w-4" />
-                      View on Map
-                    </Link>
-                  </Button>
+                  {event.address && (
+                    <Button variant="outline" className="w-full bg-transparent" asChild>
+                      <Link href={`https://maps.google.com/?q=${encodeURIComponent(event.address)}`} target="_blank">
+                        <MapPin className="mr-2 h-4 w-4" />
+                        View on Map
+                      </Link>
+                    </Button>
+                  )}
                 </CardContent>
               </Card>
 

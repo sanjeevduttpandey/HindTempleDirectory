@@ -1,149 +1,71 @@
 "use client"
 
-import { useState } from "react"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Card, CardContent, CardDescription, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Calendar, MapPin, Clock, Users, Search, Filter, Plus } from "lucide-react"
+import { Calendar, MapPin, Clock, Loader2, PlusCircle } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
+import { useEffect, useState } from "react"
 
-const events = [
-  {
-    id: 1,
-    title: "Diwali Celebration 2024",
-    date: "2024-11-12",
-    time: "6:00 PM - 10:00 PM",
-    location: "Auckland Town Hall",
-    city: "Auckland",
-    organizer: "Auckland Sanatan Society",
-    attendees: 450,
-    maxAttendees: 500,
-    price: "Free",
-    category: "Festival",
-    description:
-      "Join us for the grandest Diwali celebration in Auckland with cultural performances, traditional food, and fireworks.",
-    image: "/placeholder.svg?height=200&width=400",
-    featured: true,
-  },
-  {
-    id: 2,
-    title: "Hanuman Jayanti Celebration",
-    date: "2024-11-15",
-    time: "7:00 AM - 12:00 PM",
-    location: "Wellington Sanatan Mandir",
-    city: "Wellington",
-    organizer: "Wellington Sanatan Mandir",
-    attendees: 120,
-    maxAttendees: 200,
-    price: "Free",
-    category: "Religious",
-    description: "Special puja and bhajan session to celebrate the birth of Lord Hanuman.",
-    image: "/placeholder.svg?height=200&width=400",
-  },
-  {
-    id: 3,
-    title: "Bhagavad Gita Study Circle",
-    date: "2024-11-18",
-    time: "2:00 PM - 4:00 PM",
-    location: "Christchurch Community Center",
-    city: "Christchurch",
-    organizer: "Christchurch Sanatan Mandir Society",
-    attendees: 25,
-    maxAttendees: 40,
-    price: "Free",
-    category: "Educational",
-    description: "Weekly study session exploring the teachings of the Bhagavad Gita with discussion and Q&A.",
-    image: "/placeholder.svg?height=200&width=400",
-  },
-  {
-    id: 4,
-    title: "Classical Indian Dance Workshop",
-    date: "2024-11-20",
-    time: "10:00 AM - 3:00 PM",
-    location: "Hamilton Arts Centre",
-    city: "Hamilton",
-    organizer: "Natya Kala Academy",
-    attendees: 15,
-    maxAttendees: 30,
-    price: "$25",
-    category: "Cultural",
-    description: "Learn the basics of Bharatanatyam dance with professional instructor Priya Nair.",
-    image: "/placeholder.svg?height=200&width=400",
-  },
-  {
-    id: 5,
-    title: "Yoga and Meditation Retreat",
-    date: "2024-11-25",
-    time: "9:00 AM - 5:00 PM",
-    location: "Tauranga Wellness Center",
-    city: "Tauranga",
-    organizer: "Yoga Dharma NZ",
-    attendees: 35,
-    maxAttendees: 50,
-    price: "$75",
-    category: "Wellness",
-    description: "Day-long retreat focusing on traditional yoga practices and meditation techniques.",
-    image: "/placeholder.svg?height=200&width=400",
-  },
-  {
-    id: 6,
-    title: "Karthik Purnima Celebration",
-    date: "2024-11-27",
-    time: "6:30 PM - 9:00 PM",
-    location: "Dunedin Sanatan Mandir",
-    city: "Dunedin",
-    organizer: "Dunedin Sanatan Mandir",
-    attendees: 80,
-    maxAttendees: 120,
-    price: "Free",
-    category: "Religious",
-    description: "Special evening prayers and cultural program to celebrate Karthik Purnima.",
-    image: "/placeholder.svg?height=200&width=400",
-  },
-]
+interface Event {
+  id: number
+  title: string
+  description: string
+  event_type: string
+  start_date: string
+  end_date?: string
+  start_time?: string
+  end_time?: string
+  location: string
+  city: string
+  image_url?: string
+  image_urls?: string[]
+  is_featured?: boolean
+  registration_fee?: number
+  is_free: boolean
+  current_participants?: number
+  max_participants?: number
+  temple_name?: string
+  features?: string[] // Added features field
+}
 
 export default function EventsPage() {
-  const [searchTerm, setSearchTerm] = useState("")
-  const [selectedCity, setSelectedCity] = useState("all")
-  const [selectedCategory, setSelectedCategory] = useState("all")
-  const [sortBy, setSortBy] = useState("date")
+  const [events, setEvents] = useState<Event[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
-  const cities = ["all", ...Array.from(new Set(events.map((event) => event.city)))]
-  const categories = ["all", ...Array.from(new Set(events.map((event) => event.category)))]
-
-  const filteredEvents = events
-    .filter((event) => {
-      const matchesSearch =
-        event.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        event.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        event.organizer.toLowerCase().includes(searchTerm.toLowerCase())
-      const matchesCity = selectedCity === "all" || event.city === selectedCity
-      const matchesCategory = selectedCategory === "all" || event.category === selectedCategory
-      return matchesSearch && matchesCity && matchesCategory
-    })
-    .sort((a, b) => {
-      switch (sortBy) {
-        case "date":
-          return new Date(a.date).getTime() - new Date(b.date).getTime()
-        case "popularity":
-          return b.attendees - a.attendees
-        case "city":
-          return a.city.localeCompare(b.city)
-        default:
-          return a.title.localeCompare(b.title)
+  useEffect(() => {
+    const fetchEvents = async () => {
+      setLoading(true)
+      setError(null)
+      try {
+        const response = await fetch("/api/events")
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`)
+        }
+        const data = await response.json()
+        if (data.success) {
+          setEvents(data.events)
+        } else {
+          setError(data.error || "Failed to fetch events.")
+        }
+      } catch (e: any) {
+        console.error("Error fetching events:", e)
+        setError("Failed to load events. Please try again later.")
+      } finally {
+        setLoading(false)
       }
-    })
+    }
 
-  // Formats date to New Zealand locale
+    fetchEvents()
+  }, [])
+
   const formatDate = (dateString: string) => {
     const date = new Date(dateString)
     return date.toLocaleDateString("en-NZ", {
-      weekday: "long",
       year: "numeric",
-      month: "long",
+      month: "short",
       day: "numeric",
     })
   }
@@ -151,219 +73,135 @@ export default function EventsPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <header className="border-b bg-white sticky top-0 z-50">
+      <header className="border-b bg-white">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
-            <Link href="/" className="flex items-center space-x-2">
+            <div className="flex items-center space-x-2">
               <div className="w-10 h-10 bg-gradient-to-r from-orange-500 to-red-500 rounded-full flex items-center justify-center">
                 <span className="text-white font-bold text-lg">🕉</span>
               </div>
-              <div>
-                <h1 className="text-xl font-bold text-gray-900">Sanatan New Zealand</h1>
-                <p className="text-sm text-gray-600">Community Events</p>
-              </div>
-            </Link>
-            <nav className="hidden md:flex items-center space-x-6">
-              <Link href="/" className="text-gray-700 hover:text-orange-600 font-medium">
-                Home
+              {/* Link to homepage */}
+              <Link href="/" className="text-gray-900 hover:text-orange-600 transition-colors">
+                <div>
+                  <h1 className="text-xl font-bold">Sanatan New Zealand</h1>
+                  <p className="text-sm text-gray-600">Community Events</p>
+                </div>
               </Link>
-              <Link href="/temples" className="text-orange-600 font-medium">
-                Mandirs
+            </div>
+            <Button asChild className="bg-orange-600 hover:bg-orange-700">
+              <Link href="/events/create">
+                <PlusCircle className="mr-2 h-4 w-4" />
+                Create Event
               </Link>
-              <Link href="/events" className="text-gray-700 hover:text-orange-600 font-medium">
-                Events
-              </Link>
-              <Link href="/community" className="text-gray-700 hover:text-orange-600 font-medium">
-                Community
-              </Link>
-            </nav>
+            </Button>
           </div>
         </div>
       </header>
 
-      {/* Hero Section */}
-      <section className="py-12 px-4 bg-gradient-to-r from-orange-600 to-red-600 text-white">
-        <div className="container mx-auto text-center">
-          <h2 className="text-4xl font-bold mb-4">Community Events</h2>
-          <p className="text-xl mb-8 opacity-90">
-            Discover and join Sanatan cultural events, festivals, and gatherings across New Zealand
-          </p>
-          <div className="max-w-2xl mx-auto">
-            <div className="flex flex-col sm:flex-row gap-4">
-              <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
-                <Input
-                  placeholder="Search events..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10 bg-white text-gray-900"
-                />
-              </div>
-              <Button className="bg-white text-orange-600 hover:bg-gray-100" asChild>
-                <Link href="/events/create">
-                  <Plus className="mr-2 h-5 w-5" />
-                  Create Event
-                </Link>
-              </Button>
-            </div>
-          </div>
+      <div className="container mx-auto px-4 py-8">
+        <div className="mb-8">
+          <h2 className="text-3xl font-bold text-gray-900 mb-2">Upcoming Events</h2>
+          <p className="text-gray-600">Discover and participate in Sanatan community gatherings across New Zealand.</p>
         </div>
-      </section>
 
-      {/* Filters and Results */}
-      <section className="py-8 px-4">
-        <div className="container mx-auto">
-          <div className="flex flex-col lg:flex-row gap-4 mb-8">
-            <div className="flex flex-col sm:flex-row gap-4 flex-1">
-              <Select value={selectedCity} onValueChange={setSelectedCity}>
-                <SelectTrigger className="w-full sm:w-48">
-                  <SelectValue placeholder="Select City" />
-                </SelectTrigger>
-                <SelectContent>
-                  {cities.map((city) => (
-                    <SelectItem key={city} value={city}>
-                      {city === "all" ? "All Cities" : city}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-
-              <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-                <SelectTrigger className="w-full sm:w-48">
-                  <SelectValue placeholder="Category" />
-                </SelectTrigger>
-                <SelectContent>
-                  {categories.map((category) => (
-                    <SelectItem key={category} value={category}>
-                      {category === "all" ? "All Categories" : category}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="flex items-center gap-2">
-              <Filter className="h-5 w-5 text-gray-500" />
-              <Select value={sortBy} onValueChange={setSortBy}>
-                <SelectTrigger className="w-48">
-                  <SelectValue placeholder="Sort by" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="date">Date</SelectItem>
-                  <SelectItem value="popularity">Most Popular</SelectItem>
-                  <SelectItem value="city">City</SelectItem>
-                  <SelectItem value="title">Name</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+        {loading && (
+          <div className="flex justify-center items-center h-64">
+            <Loader2 className="h-8 w-8 animate-spin text-orange-600" />
+            <p className="ml-2 text-gray-600">Loading events...</p>
           </div>
+        )}
 
-          <div className="mb-6">
-            <h3 className="text-2xl font-bold text-gray-900">
-              {filteredEvents.length} Event{filteredEvents.length !== 1 ? "s" : ""} Found
-            </h3>
-            <p className="text-gray-600">
-              {selectedCity !== "all" ? `in ${selectedCity}` : "across New Zealand"}
-              {selectedCategory !== "all" ? ` • ${selectedCategory}` : ""}
-            </p>
+        {error && (
+          <div className="text-center text-red-600 py-8">
+            <p>{error}</p>
+            <Button onClick={() => window.location.reload()} className="mt-4">
+              Retry
+            </Button>
           </div>
+        )}
 
-          {/* Events Grid */}
-          <div className="grid lg:grid-cols-2 gap-8">
-            {filteredEvents.map((event) => (
+        {!loading && !error && events.length === 0 && (
+          <div className="text-center py-12">
+            <h3 className="text-xl font-semibold text-gray-700 mb-2">No Upcoming Events</h3>
+            <p className="text-gray-500 mb-6">Check back soon or create your own event!</p>
+            <Button asChild className="bg-orange-600 hover:bg-orange-700">
+              <Link href="/events/create">
+                <PlusCircle className="mr-2 h-4 w-4" />
+                Create First Event
+              </Link>
+            </Button>
+          </div>
+        )}
+
+        {!loading && !error && events.length > 0 && (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {events.map((event) => (
               <Card key={event.id} className="overflow-hidden hover:shadow-lg transition-shadow">
-                <div className="relative h-48">
-                  <Image src={event.image || "/placeholder.svg"} alt={event.title} fill className="object-cover" />
-                  {event.featured && <Badge className="absolute top-4 left-4 bg-orange-600">Featured</Badge>}
-                  <Badge className="absolute top-4 right-4 bg-white/90 text-gray-900">{event.category}</Badge>
-                </div>
-                <CardHeader>
-                  <CardTitle className="text-lg">{event.title}</CardTitle>
-                  <CardDescription className="flex items-center">
-                    <Calendar className="h-4 w-4 mr-1" />
-                    {formatDate(event.date)}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <p className="text-sm text-gray-600">{event.description}</p>
-
-                  <div className="space-y-2 text-sm">
-                    <div className="flex items-center">
-                      <Clock className="h-4 w-4 text-gray-400 mr-2" />
-                      <span>{event.time}</span>
+                <Link href={`/events/${event.id}`}>
+                  <div className="relative h-48 w-full">
+                    <Image
+                      src={
+                        event.image_url || event.image_urls?.[0] || "/placeholder.svg?height=200&width=400&query=event"
+                      }
+                      alt={event.title}
+                      fill
+                      className="object-cover"
+                    />
+                    {event.is_featured && <Badge className="absolute top-3 left-3 bg-orange-600">Featured</Badge>}
+                    <Badge className="absolute top-3 right-3 bg-white/90 text-gray-900">{event.event_type}</Badge>
+                  </div>
+                  <CardContent className="p-4 space-y-3">
+                    <CardTitle className="text-lg font-semibold text-gray-900 line-clamp-2">{event.title}</CardTitle>
+                    <CardDescription className="text-sm text-gray-600 line-clamp-3">
+                      {event.description}
+                    </CardDescription>
+                    <div className="space-y-2 text-sm text-gray-700">
+                      <div className="flex items-center">
+                        <Calendar className="h-4 w-4 mr-2 text-gray-400" />
+                        <span>
+                          {formatDate(event.start_date)}
+                          {event.end_date && event.start_date !== event.end_date && ` - ${formatDate(event.end_date)}`}
+                        </span>
+                      </div>
+                      <div className="flex items-center">
+                        <Clock className="h-4 w-4 mr-2 text-gray-400" />
+                        <span>
+                          {event.start_time} {event.end_time ? `- ${event.end_time}` : ""}
+                        </span>
+                      </div>
+                      <div className="flex items-center">
+                        <MapPin className="h-4 w-4 mr-2 text-gray-400" />
+                        <span>
+                          {event.location}, {event.city}
+                        </span>
+                      </div>
+                      {event.features && event.features.length > 0 && (
+                        <div className="flex flex-wrap gap-1 mt-2">
+                          {event.features.map((feature, index) => (
+                            <Badge key={index} variant="secondary" className="bg-orange-100 text-orange-800">
+                              {feature}
+                            </Badge>
+                          ))}
+                        </div>
+                      )}
                     </div>
-                    <div className="flex items-center">
-                      <MapPin className="h-4 w-4 text-gray-400 mr-2" />
-                      <span>
-                        {event.location}, {event.city}
+                    <div className="flex justify-between items-center pt-2 border-t mt-3">
+                      <span className="text-base font-bold text-orange-600">
+                        {event.is_free ? "Free" : `NZD $${event.registration_fee?.toFixed(2)}`}
                       </span>
+                      {event.max_participants && (
+                        <span className="text-sm text-gray-500">
+                          {event.current_participants || 0}/{event.max_participants} attending
+                        </span>
+                      )}
                     </div>
-                    <div className="flex items-center">
-                      <Users className="h-4 w-4 text-gray-400 mr-2" />
-                      <span>
-                        {event.attendees}/{event.maxAttendees} attending
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center justify-between pt-2">
-                    <div className="flex items-center space-x-2">
-                      <span className="text-sm text-gray-500">by {event.organizer}</span>
-                    </div>
-                    <div className="text-lg font-semibold text-orange-600">{event.price}</div>
-                  </div>
-
-                  <div className="flex gap-2 pt-2">
-                    <Button size="sm" className="flex-1 bg-orange-600 hover:bg-orange-700" asChild>
-                      <Link href={`/events/${event.id}/register`}>Register</Link>
-                    </Button>
-                    <Button size="sm" variant="outline" className="flex-1 bg-transparent" asChild>
-                      <Link href={`/events/${event.id}`}>Learn More</Link>
-                    </Button>
-                  </div>
-                </CardContent>
+                  </CardContent>
+                </Link>
               </Card>
             ))}
           </div>
-
-          {filteredEvents.length === 0 && (
-            <div className="text-center py-12">
-              <div className="text-gray-400 mb-4">
-                <Calendar className="h-16 w-16 mx-auto" />
-              </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">No events found</h3>
-              <p className="text-gray-600 mb-4">Try adjusting your search criteria or browse all events.</p>
-              <Button
-                onClick={() => {
-                  setSearchTerm("")
-                  setSelectedCity("all")
-                  setSelectedCategory("all")
-                }}
-                className="bg-orange-600 hover:bg-orange-700"
-              >
-                Clear Filters
-              </Button>
-            </div>
-          )}
-        </div>
-      </section>
-
-      {/* Create Event CTA */}
-      <section className="py-12 px-4 bg-orange-50">
-        <div className="container mx-auto text-center">
-          <h3 className="text-2xl font-bold text-gray-900 mb-4">Organizing an event?</h3>
-          <p className="text-gray-600 mb-6 max-w-2xl mx-auto">
-            Share your Sanatan cultural events, festivals, or community gatherings with the wider community. Help bring
-            people together through shared celebrations and learning.
-          </p>
-          <Button className="bg-orange-600 hover:bg-orange-700" asChild>
-            <Link href="/events/create">
-              <Plus className="mr-2 h-5 w-5" />
-              Create Event
-            </Link>
-          </Button>
-        </div>
-      </section>
+        )}
+      </div>
     </div>
   )
 }

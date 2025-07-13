@@ -1,40 +1,53 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { getCurrentDevotee } from "@/lib/auth"
-import { updateDevoteeProfile, getDevoteeById } from "@/lib/database"
+import { getDevoteeById, updateDevoteeProfile } from "@/lib/database"
+import { getSession } from "@/lib/auth"
 
-export async function POST(request: NextRequest) {
+export const runtime = "nodejs"
+
+export async function GET(request: NextRequest) {
   try {
-    const devotee = await getCurrentDevotee()
+    const session = await getSession()
+    if (!session) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+    }
 
+    const devotee = await getDevoteeById(session.user.id)
     if (!devotee) {
-      return NextResponse.json({ error: "Not authenticated" }, { status: 401 })
-    }
-
-    const { practice } = await request.json()
-
-    if (!practice || typeof practice !== "string") {
-      return NextResponse.json({ error: "Valid practice is required" }, { status: 400 })
-    }
-
-    // Get current profile to update practices
-    const currentProfile = await getDevoteeById(devotee.id)
-    const currentPractices = currentProfile?.spiritual_practices || []
-
-    // Add new practice if not already present
-    if (!currentPractices.includes(practice)) {
-      const updatedPractices = [...currentPractices, practice]
-
-      await updateDevoteeProfile(devotee.id, {
-        spiritual_practices: updatedPractices,
-      })
+      return NextResponse.json({ error: "Devotee not found" }, { status: 404 })
     }
 
     return NextResponse.json({
       success: true,
-      message: "Spiritual practice added successfully",
+      spiritual_practices: devotee.spiritual_practices || [],
     })
   } catch (error: any) {
-    console.error("Practice addition error:", error)
-    return NextResponse.json({ error: "Failed to add practice" }, { status: 500 })
+    console.error("Error fetching devotee spiritual practices:", error)
+    return NextResponse.json({ error: "Failed to fetch spiritual practices" }, { status: 500 })
+  }
+}
+
+export async function PUT(request: NextRequest) {
+  try {
+    const session = await getSession()
+    if (!session) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+    }
+
+    const { spiritual_practices } = await request.json()
+
+    if (!Array.isArray(spiritual_practices)) {
+      return NextResponse.json({ error: "Spiritual practices must be an array" }, { status: 400 })
+    }
+
+    const updatedDevotee = await updateDevoteeProfile(session.user.id, { spiritual_practices })
+
+    return NextResponse.json({
+      success: true,
+      message: "Spiritual practices updated successfully",
+      devotee: updatedDevotee,
+    })
+  } catch (error: any) {
+    console.error("Error updating devotee spiritual practices:", error)
+    return NextResponse.json({ error: "Failed to update spiritual practices" }, { status: 500 })
   }
 }

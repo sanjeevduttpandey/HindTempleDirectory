@@ -1,5 +1,5 @@
 -- Seed sample data for Sanatan New Zealand platform
--- This script populates the database with sample devotees, temples, and events
+-- This script populates the database with sample devotees, temples, and discussions
 
 -- Insert sample devotees
 INSERT INTO devotees (email, password_hash, first_name, last_name, spiritual_name, phone, date_of_birth, gender, city, bio, favorite_deity, gotra, rashi, nakshatra) VALUES
@@ -49,22 +49,6 @@ INSERT INTO temple_facilities (temple_id, facility_name) VALUES
 (4, 'Parking Available'), (4, 'Meditation Hall'), (4, 'Library'), (4, 'Garden/Outdoor Space'), (4, 'Restrooms'),
 (5, 'Parking Available'), (5, 'Community Hall'), (5, 'Kitchen Facilities'), (5, 'Children\'s Area'), (5, 'Audio/Visual Equipment');
 
--- Insert sample events/satsangs
-INSERT INTO events (title, description, event_type, temple_id, organizer_devotee_id, start_date, end_date, start_time, end_time, location, city, max_participants, registration_fee) VALUES
-('Janmashtami Celebration 2024', 'Grand celebration of Lord Krishna birthday with special pujas, bhajans, and cultural programs.', 'Festival', 2, 1, '2024-08-26', '2024-08-26', '18:00', '22:00', 'ISKCON Auckland', 'Auckland', 500, 0.00),
-('Ganesha Chaturthi Puja', 'Special puja and celebration for Lord Ganesha with traditional rituals and prasadam.', 'Puja', 1, 3, '2024-09-07', '2024-09-07', '10:00', '13:00', 'Sanatan Dharm Mandir', 'Auckland', 200, 5.00),
-('Bhagavad Gita Study Circle', 'Weekly study group discussing the teachings of Bhagavad Gita with spiritual insights.', 'Satsang', 4, 4, '2024-08-20', '2024-08-20', '19:00', '21:00', 'Shiva Vishnu Temple', 'Hamilton', 50, 0.00),
-('Navratri Festival 2024', 'Nine-day celebration honoring Divine Mother with daily pujas, aarti, and cultural programs.', 'Festival', 1, 2, '2024-10-03', '2024-10-11', '18:30', '21:30', 'Sanatan Dharm Mandir', 'Auckland', 300, 10.00),
-('Diwali Celebration', 'Festival of lights celebration with special pujas, cultural programs, and community feast.', 'Festival', 3, 5, '2024-11-01', '2024-11-01', '17:00', '22:00', 'Wellington Indian Association', 'Wellington', 400, 15.00);
-
--- Insert sample event registrations
-INSERT INTO event_registrations (event_id, devotee_id, attendance_status, payment_status) VALUES
-(1, 1, 'registered', 'paid'), (1, 2, 'registered', 'paid'), (1, 3, 'registered', 'paid'),
-(2, 1, 'attended', 'paid'), (2, 4, 'registered', 'paid'),
-(3, 4, 'attended', 'paid'), (3, 2, 'registered', 'paid'),
-(4, 1, 'registered', 'paid'), (4, 3, 'registered', 'paid'), (4, 5, 'registered', 'paid'),
-(5, 2, 'registered', 'paid'), (5, 5, 'registered', 'paid');
-
 -- Insert sample discussions
 INSERT INTO discussions (title, content, category, author_devotee_id, views_count, replies_count) VALUES
 ('Best places for sattvic food in Auckland?', 'Looking for recommendations for pure vegetarian restaurants that serve sattvic food in Auckland. Any suggestions?', 'General', 1, 45, 12),
@@ -87,10 +71,8 @@ INSERT INTO discussion_replies (discussion_id, author_devotee_id, content) VALUE
 -- Insert sample donations
 INSERT INTO donations (devotee_id, temple_id, event_id, amount, donation_type, purpose, payment_method, payment_status) VALUES
 (1, 1, NULL, 100.00, 'Annadaan', 'For daily prasadam distribution', 'Credit Card', 'completed'),
-(2, 2, 1, 50.00, 'Festival', 'Janmashtami celebration expenses', 'Bank Transfer', 'completed'),
 (3, 1, NULL, 75.00, 'Temple Maintenance', 'General temple upkeep', 'Credit Card', 'completed'),
 (4, 4, NULL, 25.00, 'General', 'Monthly contribution', 'Online', 'completed'),
-(5, 3, 5, 40.00, 'Festival', 'Diwali celebration support', 'Credit Card', 'completed'),
 (1, 2, NULL, 200.00, 'Charity', 'Supporting underprivileged families', 'Bank Transfer', 'completed');
 
 -- Insert sample temple reviews
@@ -104,11 +86,8 @@ INSERT INTO temple_reviews (temple_id, devotee_id, rating, review_text, visit_da
 -- Insert sample devotee activities
 INSERT INTO devotee_activities (devotee_id, activity_type, activity_description, related_temple_id, related_event_id) VALUES
 (1, 'temple_visit', 'Visited for morning darshan and puja', 1, NULL),
-(1, 'event_attendance', 'Attended Janmashtami celebration', 2, 1),
-(1, 'donation', 'Donated for Annadaan program', 1, NULL),
 (2, 'discussion_post', 'Started Sanskrit learning group discussion', NULL, NULL),
-(3, 'event_attendance', 'Participated in Ganesha Chaturthi puja', 1, 2),
-(4, 'puja_performed', 'Led Bhagavad Gita study session', 4, 3),
+(4, 'puja_performed', 'Led Bhagavad Gita study session', 4, NULL),
 (5, 'temple_visit', 'Attended evening aarti', 3, NULL);
 
 -- Insert sample Panchang data
@@ -118,3 +97,11 @@ INSERT INTO panchang_data (date, tithi, nakshatra, yoga, karana, sunrise, sunset
 ('2024-10-03', 'Pratipada (1st day)', 'Ashwini', 'Vishkumbha', 'Bava', '06:45', '19:00', '18:45', '06:15', ARRAY['Navratri Begins']),
 ('2024-11-01', 'Amavasya (New Moon)', 'Swati', 'Parigha', 'Shakuni', '06:30', '19:15', '06:00', '19:30', ARRAY['Diwali', 'Lakshmi Puja']),
 ('2024-12-25', 'Dashami (10th day)', 'Uttara Ashadha', 'Brahma', 'Vanija', '06:15', '20:30', '15:45', '02:30', ARRAY['Christmas']);
+
+-- Insert sample businesses
+INSERT INTO businesses (name, category, description, address, city, phone, email, website, image_url, services, operating_hours, special_offers, social_media, submitted_by_devotee_id, status, is_featured) VALUES
+('Indian Groceries & Spices', 'Grocery Store', 'Authentic Indian groceries, fresh vegetables, and a wide range of spices.', '123 Spice Lane, Sandringham', 'Auckland', '+64 9 111 2222', 'info@indiangroceries.co.nz', 'https://www.indiangroceries.co.nz', '/placeholder.svg?height=200&width=300', '["Groceries", "Spices", "Fresh Produce", "Snacks"]', '[{"day": "Mon", "open": "09:00", "close": "19:00"}, {"day": "Tue", "open": "09:00", "close": "19:00"}, {"day": "Wed", "open": "09:00", "close": "19:00"}, {"day": "Thu", "open": "09:00", "close": "20:00"}, {"day": "Fri", "open": "09:00", "close": "20:00"}, {"day": "Sat", "open": "10:00", "close": "18:00"}, {"day": "Sun", "open": "10:00", "close": "17:00"}]', '10% off on bulk spice purchases!', '{"facebook": "https://facebook.com/indiangroceriesnz", "instagram": "https://instagram.com/indiangroceriesnz"}', 1, 'approved', TRUE),
+('Divine Catering Services', 'Catering', 'Specializing in authentic vegetarian Indian cuisine for all occasions, from small gatherings to large events.', '45 Feast Street, Mount Roskill', 'Auckland', '+64 9 333 4444', 'catering@divine.co.nz', 'https://www.divinecatering.co.nz', '/placeholder.svg?height=200&width=300', '["Wedding Catering", "Event Catering", "Sattvic Food", "Party Packs"]', '[{"day": "Mon", "open": "09:00", "close": "17:00"}, {"day": "Tue", "open": "09:00", "close": "17:00"}, {"day": "Wed", "open": "09:00", "close": "17:00"}, {"day": "Thu", "open": "09:00", "close": "17:00"}, {"day": "Fri", "open": "09:00", "close": "17:00"}]', 'Book your event catering 3 months in advance and get a free dessert platter!', '{"facebook": "https://facebook.com/divinecateringnz"}', 3, 'approved', FALSE),
+('Yoga & Meditation Studio', 'Health & Wellness', 'Offers various yoga classes, meditation sessions, and wellness workshops for all levels.', '78 Serenity Lane, Cuba Street', 'Wellington', '+64 4 555 6666', 'info@yogawellness.co.nz', 'https://www.yogawellness.co.nz', '/placeholder.svg?height=200&width=300', '["Hatha Yoga", "Vinyasa Yoga", "Meditation", "Pranayama", "Wellness Workshops"]', '[{"day": "Mon", "open": "06:00", "close": "20:00"}, {"day": "Tue", "open": "06:00", "close": "20:00"}, {"day": "Wed", "open": "06:00", "close": "20:00"}, {"day": "Thu", "open": "06:00", "close": "20:00"}, {"day": "Fri", "open": "06:00", "close": "18:00"}, {"day": "Sat", "open": "08:00", "close": "14:00"}]', 'First trial class free for new members!', '{"instagram": "https://instagram.com/yogawellnessnz"}', 2, 'approved', TRUE),
+('Vedic Astrology Consultations', 'Astrology & Spiritual Services', 'Personalized Vedic astrology readings, horoscope analysis, and spiritual guidance.', '90 Cosmic Road, Riccarton', 'Christchurch', '+64 3 777 8888', 'consult@vedicastrology.co.nz', 'https://www.vedicastrology.co.nz', '/placeholder.svg?height=200&width=300', '["Horoscope Reading", "Matchmaking", "Gemstone Recommendation", "Spiritual Guidance"]', '[{"day": "Mon", "open": "10:00", "close": "18:00"}, {"day": "Wed", "open": "10:00", "close": "18:00"}, {"day": "Fri", "open": "10:00", "close": "18:00"}, {"day": "Sat", "open": "10:00", "close": "14:00"}]', '20% off on your first full horoscope reading!', '{}', 4, 'approved', FALSE),
+('Traditional Indian Attire', 'Clothing & Fashion', 'Wide selection of traditional Indian clothing for men, women, and children, including sarees, lehengas, and kurtas.', '56 Fashion Ave, Frankton', 'Hamilton', '+64 7 999 0000', 'sales@indianattire.co.nz', 'https://www.indianattire.co.nz', '/placeholder.svg?height=200&width=300', '["Sarees", "Lehengas", "Kurtas", "Sherwanis", "Custom Tailoring"]', '[{"day": "Tue", "open": "10:00", "close": "17:00"}, {"day": "Wed", "open": "10:00", "close": "17:00"}, {"day": "Thu", "open": "10:00", "close": "19:00"}, {"day": "Fri", "open": "10:00", "close": "19:00"}, {"day": "Sat", "open": "10:00", "close": "16:00"}]', 'Buy 2 sarees, get 10% off the total!', '{"facebook": "https://facebook.com/indianattirenz", "instagram": "https://instagram.com/indianattirenz"}', 5, 'approved', TRUE);

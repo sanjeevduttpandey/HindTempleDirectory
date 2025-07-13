@@ -1,8 +1,4 @@
--- Create database for Sanatan New Zealand platform
--- This script creates all necessary tables for devotees, temples, events, and community features
-
--- Users/Devotees table
-CREATE TABLE devotees (
+CREATE TABLE IF NOT EXISTS devotees (
     id SERIAL PRIMARY KEY,
     email VARCHAR(255) UNIQUE NOT NULL,
     password_hash VARCHAR(255) NOT NULL,
@@ -11,41 +7,36 @@ CREATE TABLE devotees (
     spiritual_name VARCHAR(100),
     phone VARCHAR(20),
     date_of_birth DATE,
-    gender VARCHAR(20),
+    gender VARCHAR(10),
     city VARCHAR(100),
+    address TEXT,
     bio TEXT,
-    avatar_url VARCHAR(500),
-    favorite_deity VARCHAR(100),
-    gotra VARCHAR(100),
+    avatar_url TEXT,
+    gotra VARCHAR(50),
     rashi VARCHAR(50),
     nakshatra VARCHAR(50),
+    spiritual_practices JSONB DEFAULT '[]'::jsonb,
+    interests JSONB DEFAULT '[]'::jsonb,
+    subscribe_newsletter BOOLEAN DEFAULT FALSE,
+    allow_community_contact BOOLEAN DEFAULT TRUE,
     is_verified BOOLEAN DEFAULT FALSE,
     is_active BOOLEAN DEFAULT TRUE,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
--- Spiritual practices junction table
-CREATE TABLE devotee_spiritual_practices (
+CREATE TABLE IF NOT EXISTS user_sessions (
     id SERIAL PRIMARY KEY,
-    devotee_id INTEGER REFERENCES devotees(id) ON DELETE CASCADE,
-    practice_name VARCHAR(100) NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    devotee_id INTEGER NOT NULL REFERENCES devotees(id) ON DELETE CASCADE,
+    session_token VARCHAR(255) UNIQUE NOT NULL,
+    expires_at TIMESTAMP WITH TIME ZONE NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
--- Interests junction table
-CREATE TABLE devotee_interests (
-    id SERIAL PRIMARY KEY,
-    devotee_id INTEGER REFERENCES devotees(id) ON DELETE CASCADE,
-    interest_name VARCHAR(100) NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
--- Temples table
-CREATE TABLE temples (
+CREATE TABLE IF NOT EXISTS temples (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
-    registration_number VARCHAR(100),
+    registration_number VARCHAR(100) UNIQUE,
     established_year INTEGER,
     main_deity VARCHAR(100),
     description TEXT,
@@ -54,141 +45,119 @@ CREATE TABLE temples (
     pincode VARCHAR(20),
     phone VARCHAR(20),
     email VARCHAR(255),
-    website VARCHAR(500),
-    image_url VARCHAR(500),
-    admin_devotee_id INTEGER REFERENCES devotees(id),
-    admin_name VARCHAR(255) NOT NULL,
-    admin_email VARCHAR(255) NOT NULL,
-    admin_phone VARCHAR(20) NOT NULL,
-    admin_role VARCHAR(100) NOT NULL,
+    website VARCHAR(255),
+    image_url TEXT, -- Main image for the temple
+    admin_name VARCHAR(255),
+    admin_email VARCHAR(255),
+    admin_phone VARCHAR(20),
+    admin_role VARCHAR(100),
     is_verified BOOLEAN DEFAULT FALSE,
     is_active BOOLEAN DEFAULT TRUE,
-    rating DECIMAL(3,2) DEFAULT 0.0,
+    rating NUMERIC(2,1) DEFAULT 0.0,
     total_reviews INTEGER DEFAULT 0,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
--- Temple services junction table
-CREATE TABLE temple_services (
+CREATE TABLE IF NOT EXISTS temple_services (
     id SERIAL PRIMARY KEY,
-    temple_id INTEGER REFERENCES temples(id) ON DELETE CASCADE,
-    service_name VARCHAR(100) NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    temple_id INTEGER NOT NULL REFERENCES temples(id) ON DELETE CASCADE,
+    service_name VARCHAR(255) NOT NULL,
+    description TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
--- Temple facilities junction table
-CREATE TABLE temple_facilities (
+CREATE TABLE IF NOT EXISTS temple_facilities (
     id SERIAL PRIMARY KEY,
-    temple_id INTEGER REFERENCES temples(id) ON DELETE CASCADE,
-    facility_name VARCHAR(100) NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    temple_id INTEGER NOT NULL REFERENCES temples(id) ON DELETE CASCADE,
+    facility_name VARCHAR(255) NOT NULL,
+    description TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
--- Events/Satsangs table
-CREATE TABLE events (
+CREATE TABLE IF NOT EXISTS events (
     id SERIAL PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
-    description TEXT,
-    event_type VARCHAR(50) NOT NULL, -- 'Festival', 'Puja', 'Satsang', 'Cultural', 'Educational'
-    temple_id INTEGER REFERENCES temples(id),
-    organizer_devotee_id INTEGER REFERENCES devotees(id),
+    description TEXT NOT NULL,
+    full_description TEXT,
+    event_type VARCHAR(100),
+    temple_id INTEGER REFERENCES temples(id) ON DELETE SET NULL,
+    organizer_devotee_id INTEGER REFERENCES devotees(id) ON DELETE SET NULL,
+    organizer_name VARCHAR(255), -- Store organizer name if not linked to a devotee/temple
+    organizer_email VARCHAR(255),
+    organizer_phone VARCHAR(20),
+    organizer_website VARCHAR(255),
     start_date DATE NOT NULL,
     end_date DATE,
     start_time TIME,
     end_time TIME,
-    location VARCHAR(255),
-    city VARCHAR(100),
+    location TEXT NOT NULL,
+    address TEXT,
+    city VARCHAR(100) NOT NULL,
     max_participants INTEGER,
     current_participants INTEGER DEFAULT 0,
-    registration_fee DECIMAL(10,2) DEFAULT 0.0,
-    image_url VARCHAR(500),
+    registration_fee NUMERIC(10, 2) DEFAULT 0.00,
+    is_free BOOLEAN DEFAULT TRUE,
+    image_url TEXT, -- Main image for the event
+    image_urls JSONB DEFAULT '[]'::jsonb, -- New: For multiple images
+    requirements TEXT,
+    features JSONB DEFAULT '[]'::jsonb,
+    status VARCHAR(50) DEFAULT 'pending' NOT NULL, -- New: 'pending', 'approved', 'rejected'
+    is_featured BOOLEAN DEFAULT FALSE,
     is_active BOOLEAN DEFAULT TRUE,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
--- Event registrations
-CREATE TABLE event_registrations (
+CREATE TABLE IF NOT EXISTS event_registrations (
     id SERIAL PRIMARY KEY,
-    event_id INTEGER REFERENCES events(id) ON DELETE CASCADE,
-    devotee_id INTEGER REFERENCES devotees(id) ON DELETE CASCADE,
-    registration_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    attendance_status VARCHAR(20) DEFAULT 'registered', -- 'registered', 'attended', 'cancelled'
-    payment_status VARCHAR(20) DEFAULT 'pending', -- 'pending', 'paid', 'refunded'
-    UNIQUE(event_id, devotee_id)
+    event_id INTEGER NOT NULL REFERENCES events(id) ON DELETE CASCADE,
+    devotee_id INTEGER NOT NULL REFERENCES devotees(id) ON DELETE CASCADE,
+    registration_date TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    attendance_status VARCHAR(50) DEFAULT 'registered', -- e.g., 'registered', 'attended', 'cancelled'
+    payment_status VARCHAR(50) DEFAULT 'pending', -- e.g., 'pending', 'paid', 'failed', 'refunded'
+    payment_amount NUMERIC(10, 2),
+    transaction_id VARCHAR(255),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
--- Community discussions
-CREATE TABLE discussions (
+CREATE TABLE IF NOT EXISTS discussions (
     id SERIAL PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
     content TEXT NOT NULL,
-    category VARCHAR(100), -- 'General', 'Spiritual', 'Cultural', 'Help', 'Events'
-    author_devotee_id INTEGER REFERENCES devotees(id),
-    is_pinned BOOLEAN DEFAULT FALSE,
-    is_locked BOOLEAN DEFAULT FALSE,
+    category VARCHAR(100),
+    author_devotee_id INTEGER NOT NULL REFERENCES devotees(id) ON DELETE CASCADE,
     views_count INTEGER DEFAULT 0,
     replies_count INTEGER DEFAULT 0,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    is_active BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
--- Discussion replies
-CREATE TABLE discussion_replies (
+CREATE TABLE IF NOT EXISTS discussion_replies (
     id SERIAL PRIMARY KEY,
-    discussion_id INTEGER REFERENCES discussions(id) ON DELETE CASCADE,
-    author_devotee_id INTEGER REFERENCES devotees(id),
+    discussion_id INTEGER NOT NULL REFERENCES discussions(id) ON DELETE CASCADE,
+    author_devotee_id INTEGER NOT NULL REFERENCES devotees(id) ON DELETE CASCADE,
     content TEXT NOT NULL,
-    parent_reply_id INTEGER REFERENCES discussion_replies(id), -- For nested replies
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
--- Donations/Daan
-CREATE TABLE donations (
+CREATE TABLE IF NOT EXISTS donations (
     id SERIAL PRIMARY KEY,
-    devotee_id INTEGER REFERENCES devotees(id),
-    temple_id INTEGER REFERENCES temples(id),
-    event_id INTEGER REFERENCES events(id),
-    amount DECIMAL(10,2) NOT NULL,
-    currency VARCHAR(10) DEFAULT 'NZD',
-    donation_type VARCHAR(50), -- 'General', 'Annadaan', 'Temple Maintenance', 'Festival', 'Charity'
+    devotee_id INTEGER REFERENCES devotees(id) ON DELETE SET NULL,
+    temple_id INTEGER REFERENCES temples(id) ON DELETE SET NULL,
+    event_id INTEGER REFERENCES events(id) ON DELETE SET NULL,
+    amount NUMERIC(10, 2) NOT NULL,
+    donation_type VARCHAR(100), -- e.g., 'Annadaan', 'Temple Maintenance', 'Festival', 'Charity'
     purpose TEXT,
-    payment_method VARCHAR(50), -- 'Credit Card', 'Bank Transfer', 'Cash', 'Online'
+    payment_method VARCHAR(100),
+    payment_status VARCHAR(50) DEFAULT 'pending', -- e.g., 'pending', 'completed', 'failed'
     transaction_id VARCHAR(255),
-    payment_status VARCHAR(20) DEFAULT 'pending', -- 'pending', 'completed', 'failed', 'refunded'
-    is_anonymous BOOLEAN DEFAULT FALSE,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
--- Temple reviews and ratings
-CREATE TABLE temple_reviews (
-    id SERIAL PRIMARY KEY,
-    temple_id INTEGER REFERENCES temples(id) ON DELETE CASCADE,
-    devotee_id INTEGER REFERENCES devotees(id),
-    rating INTEGER CHECK (rating >= 1 AND rating <= 5),
-    review_text TEXT,
-    visit_date DATE,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    UNIQUE(temple_id, devotee_id)
-);
-
--- Devotee activity log
-CREATE TABLE devotee_activities (
-    id SERIAL PRIMARY KEY,
-    devotee_id INTEGER REFERENCES devotees(id) ON DELETE CASCADE,
-    activity_type VARCHAR(50) NOT NULL, -- 'temple_visit', 'event_attendance', 'donation', 'puja_performed', 'discussion_post'
-    activity_description TEXT,
-    related_temple_id INTEGER REFERENCES temples(id),
-    related_event_id INTEGER REFERENCES events(id),
-    related_discussion_id INTEGER REFERENCES discussions(id),
-    metadata JSONB, -- For storing additional activity-specific data
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
--- Spiritual calendar/Panchang data
-CREATE TABLE panchang_data (
+CREATE TABLE IF NOT EXISTS panchang_data (
     id SERIAL PRIMARY KEY,
     date DATE UNIQUE NOT NULL,
     tithi VARCHAR(100),
@@ -199,38 +168,43 @@ CREATE TABLE panchang_data (
     sunset TIME,
     moonrise TIME,
     moonset TIME,
-    special_occasions TEXT[], -- Array of festivals/special days
-    auspicious_times JSONB, -- Store muhurat timings
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    special_occasions TEXT[], -- Array of strings for special occasions
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
--- User sessions for authentication
-CREATE TABLE user_sessions (
+CREATE TABLE IF NOT EXISTS devotee_activities (
     id SERIAL PRIMARY KEY,
-    devotee_id INTEGER REFERENCES devotees(id) ON DELETE CASCADE,
-    session_token VARCHAR(255) UNIQUE NOT NULL,
-    expires_at TIMESTAMP NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    devotee_id INTEGER NOT NULL REFERENCES devotees(id) ON DELETE CASCADE,
+    activity_type VARCHAR(100) NOT NULL, -- e.g., 'login', 'event_registration', 'temple_visit', 'discussion_post', 'donation'
+    activity_description TEXT,
+    related_temple_id INTEGER REFERENCES temples(id) ON DELETE SET NULL,
+    related_event_id INTEGER REFERENCES events(id) ON DELETE SET NULL,
+    amount NUMERIC(10, 2), -- For donations or paid registrations
+    metadata JSONB DEFAULT '{}'::jsonb, -- For additional structured data
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
--- Social login providers
-CREATE TABLE social_logins (
+CREATE TABLE IF NOT EXISTS businesses (
     id SERIAL PRIMARY KEY,
-    devotee_id INTEGER REFERENCES devotees(id) ON DELETE CASCADE,
-    provider VARCHAR(50) NOT NULL, -- 'google', 'facebook', 'github'
-    provider_user_id VARCHAR(255) NOT NULL,
-    provider_email VARCHAR(255),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    UNIQUE(provider, provider_user_id)
+    name VARCHAR(255) NOT NULL,
+    category VARCHAR(100) NOT NULL,
+    description TEXT,
+    address TEXT NOT NULL,
+    city VARCHAR(100) NOT NULL,
+    pincode VARCHAR(20),
+    phone VARCHAR(20),
+    email VARCHAR(255),
+    website VARCHAR(255),
+    image_url TEXT, -- Main image for the business
+    services JSONB DEFAULT '[]'::jsonb, -- Array of services offered
+    operating_hours JSONB DEFAULT '[]'::jsonb, -- e.g., [{"day": "Mon", "open": "09:00", "close": "17:00"}]
+    special_offers TEXT,
+    social_media JSONB DEFAULT '{}'::jsonb, -- e.g., {"facebook": "url", "instagram": "url"}
+    submitted_by_devotee_id INTEGER REFERENCES devotees(id) ON DELETE SET NULL,
+    status VARCHAR(50) DEFAULT 'pending' NOT NULL, -- 'pending', 'approved', 'rejected'
+    is_featured BOOLEAN DEFAULT FALSE,
+    is_active BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
-
--- Create indexes for better performance
-CREATE INDEX idx_devotees_email ON devotees(email);
-CREATE INDEX idx_devotees_city ON devotees(city);
-CREATE INDEX idx_temples_city ON temples(city);
-CREATE INDEX idx_events_date ON events(start_date);
-CREATE INDEX idx_events_temple ON events(temple_id);
-CREATE INDEX idx_discussions_category ON discussions(category);
-CREATE INDEX idx_donations_devotee ON donations(devotee_id);
-CREATE INDEX idx_activities_devotee ON devotee_activities(devotee_id);
-CREATE INDEX idx_panchang_date ON panchang_data(date);

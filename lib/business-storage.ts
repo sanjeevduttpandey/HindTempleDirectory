@@ -216,3 +216,12 @@ export async function getBusinessSubmissionStats(): Promise<{
 
   return { total, pending, approved, rejected }
 }
+
+/**
+ * Very small “upload” helper that just echoes a fake URL.
+ * Connect this to Supabase Storage, Vercel Blob, etc. when ready.
+ */
+export async function uploadImage(_file: File | Blob | ArrayBuffer | Uint8Array, path = "uploads") {
+  // TODO: implement real upload logic.
+  return { url: `/${path}/placeholder.jpg` }
+}

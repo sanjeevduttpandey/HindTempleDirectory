@@ -1,34 +1,30 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { getTodayPanchang, getPanchangByDate } from "@/lib/database"
+import { getPanchangByDate, getTodayPanchang } from "@/lib/database"
+
+export const runtime = "nodejs"
 
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url)
     const date = searchParams.get("date")
 
-    let panchang
+    let panchangData
     if (date) {
-      panchang = await getPanchangByDate(date)
+      panchangData = await getPanchangByDate(date)
     } else {
-      panchang = await getTodayPanchang()
+      panchangData = await getTodayPanchang()
     }
 
-    if (!panchang) {
-      return NextResponse.json(
-        {
-          success: false,
-          message: "Panchang data not available for the requested date",
-        },
-        { status: 404 },
-      )
+    if (!panchangData) {
+      return NextResponse.json({ error: "Panchang data not found for the specified date" }, { status: 404 })
     }
 
     return NextResponse.json({
       success: true,
-      panchang,
+      panchang: panchangData,
     })
   } catch (error: any) {
-    console.error("Error fetching panchang:", error)
+    console.error("Error fetching panchang data:", error)
     return NextResponse.json({ error: "Failed to fetch panchang data" }, { status: 500 })
   }
 }
