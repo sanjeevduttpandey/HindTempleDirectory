@@ -15,21 +15,24 @@ import { EmptyState } from "./empty-state"
 import { Loader2 } from "lucide-react"
 import type { BusinessSubmission } from "@/lib/types" // Assuming you have this type defined
 
-// Load the interactive dashboard on the client only
+// Dynamically import the client component for the interactive dashboard
+// This ensures that client-side hooks and state are only run on the client.
 const BusinessSubmissionsAdminClient = dynamic(() => import("./business-submissions-admin-client"), { ssr: false })
 
 /**
  * Server-side entry for /admin/business-submissions
- * Guards the route and sends unauthenticated users to /admin/login
+ * - Guards the route and sends unauthenticated users to /admin/login
+ * - This component is a Server Component, so it can safely call server-only functions like isAdminAuthenticated().
  */
 export default async function BusinessSubmissionsPage() {
   const authenticated = await isAdminAuthenticated()
 
   if (!authenticated) {
+    // 303 - replace is default for Server Components
     redirect("/admin/login")
   }
 
-  // ✅ Already authenticated → render the interactive dashboard
+  // If authenticated, render the client-side interactive dashboard
   return <BusinessSubmissionsAdminClient />
 }
 
