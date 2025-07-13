@@ -1,10 +1,13 @@
 "use client"
 
+import { useEffect } from "react"
+
+import { useState } from "react"
+
 import { Button } from "@/components/ui/button"
 import { redirect } from "next/navigation"
 import { isAdminAuthenticated } from "@/lib/admin-auth"
-import BusinessSubmissionsAdminClient from "./business-submissions-admin-client"
-import { useState, useEffect } from "react"
+import dynamic from "next/dynamic"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { SubmissionCard } from "./submission-card"
 import { ApprovedCard } from "./approved-card"
@@ -14,15 +17,17 @@ import { EmptyState } from "./empty-state"
 import { Loader2 } from "lucide-react"
 import type { BusinessSubmission } from "@/lib/types" // Assuming you have this type defined
 
+// Load the interactive dashboard on the client only
+const BusinessSubmissionsAdminClient = dynamic(() => import("./business-submissions-admin-client"), { ssr: false })
+
 /**
  * Server-side entry for /admin/business-submissions
- * – Guards the route and sends unauthenticated users to /admin/login
+ * Guards the route and sends unauthenticated users to /admin/login
  */
 export default async function BusinessSubmissionsPage() {
   const authenticated = await isAdminAuthenticated()
 
   if (!authenticated) {
-    // 303 - replace is default for Server Components [^4]
     redirect("/admin/login")
   }
 
