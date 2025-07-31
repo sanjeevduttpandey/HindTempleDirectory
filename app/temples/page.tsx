@@ -246,7 +246,7 @@ const temples = [
   },
   {
     id: 5,
-    name: "ISKCON Wellington",
+    name: "Demo2",
     city: "Wellington",
     address: "90 Daniell Street, Newtown, Wellington 6021",
     phone: "+64 4 389 0644",
