@@ -286,7 +286,7 @@ const templeData = {
     email: "info@svwt.org.nz",
     rating: 4.8,
     reviews: 134,
-    images: ["/images/svt.avif", "/images/svt.avif", "/images/svt.avif"],
+    images: ["/images/svt.avif", "/images/svt2.avif", "/images/svt3.avif"],
     description:
       "International Society for Krishna Consciousness Mandir promoting Krishna consciousness through spiritual practices and community service.",
     timings: "Mon - Fri | 07:00 PM to 08:30 PM And Sat - Sun | 09:30 AM - 11:30 AM & 07:00 PM to 08:30 PM",
