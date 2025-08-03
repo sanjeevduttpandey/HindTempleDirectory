@@ -1,77 +1,103 @@
+"use client"
+
+import { useState } from "react"
 import Link from "next/link"
+import { usePathname } from "next/navigation"
+import { Button } from "@/components/ui/button"
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
+import { Menu, Sun, Moon } from "lucide-react"
+import { useTheme } from "next-themes"
 
-const Navbar = () => {
+const navigation = [
+  { name: "Home", href: "/" },
+  { name: "Temples", href: "/temples" },
+  { name: "Events", href: "/events" },
+  { name: "Community", href: "/community" },
+  { name: "Business", href: "/business/directory" },
+  { name: "About", href: "/about" },
+]
+
+export default function Navbar() {
+  const [isOpen, setIsOpen] = useState(false)
+  const pathname = usePathname()
+  const { theme, setTheme } = useTheme()
+
   return (
-    <nav className="bg-gray-800 p-4">
-      <div className="container mx-auto flex items-center justify-between">
-        <Link href="/" className="text-white text-lg font-bold">
-          My Website
-        </Link>
-
-        <div className="flex items-center space-x-4">
-          <Link href="/about" className="text-gray-300 hover:text-white">
-            About
-          </Link>
-
-          <div className="relative group">
-            <button className="text-gray-300 hover:text-white">Community</button>
-            <div className="absolute hidden group-hover:block bg-gray-700 text-white py-2 rounded shadow-lg mt-2 w-48">
-              <Link href="/community/forums" className="block px-4 py-2 hover:bg-gray-600">
-                Forums
-              </Link>
-              <Link href="/community/events" className="block px-4 py-2 hover:bg-gray-600">
-                Events
-              </Link>
-            </div>
-          </div>
-
-          <div className="relative group">
-            <button className="text-gray-300 hover:text-white">Business</button>
-            <div className="absolute hidden group-hover:block bg-gray-700 text-white py-2 rounded shadow-lg mt-2 w-48">
-              <Link href="/business/directory" className="block px-4 py-2 hover:bg-gray-600">
-                Business Directory
-              </Link>
-              <Link href="/business/register" className="block px-4 py-2 hover:bg-gray-600">
-                Register Business
-              </Link>
-              <Link href="/business/services" className="block px-4 py-2 hover:bg-gray-600">
-                Services
-              </Link>
-              <Link href="/business/marketplace" className="block px-4 py-2 hover:bg-gray-600">
-                Marketplace
-              </Link>
-            </div>
-          </div>
-
-          {/* Changed "Temples" to "Mandirs" */}
-          <div className="relative group">
-            <Link href="/temples" className="text-gray-300 hover:text-white">
-              Mandirs
+    <nav className="bg-white dark:bg-gray-900 shadow-sm border-b">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between h-16">
+          <div className="flex items-center">
+            <Link href="/" className="flex-shrink-0 flex items-center">
+              <span className="text-2xl font-bold text-orange-600">🕉️ Sanatan NZ</span>
             </Link>
           </div>
 
-          <div className="relative group">
-            <button className="text-gray-300 hover:text-white">Spiritual Tools</button>
-            <div className="absolute hidden group-hover:block bg-gray-700 text-white py-2 rounded shadow-lg mt-2 w-48">
-              <Link href="/panchang" className="block px-4 py-2 hover:bg-gray-600">
-                Panchang
+          {/* Desktop Navigation */}
+          <div className="hidden md:flex items-center space-x-8">
+            {navigation.map((item) => (
+              <Link
+                key={item.name}
+                href={item.href}
+                className={`px-3 py-2 text-sm font-medium transition-colors ${
+                  pathname === item.href
+                    ? "text-orange-600 border-b-2 border-orange-600"
+                    : "text-gray-700 dark:text-gray-300 hover:text-orange-600"
+                }`}
+              >
+                {item.name}
               </Link>
-              <Link href="/festivals" className="block px-4 py-2 hover:bg-gray-600">
-                Sanatan Festivals
-              </Link>
-              <Link href="/datetime" className="block px-4 py-2 hover:bg-gray-600">
-                Date &amp; Time
-              </Link>
-            </div>
+            ))}
+
+            {/* Theme Toggle */}
+            <Button variant="ghost" size="sm" onClick={() => setTheme(theme === "dark" ? "light" : "dark")}>
+              <Sun className="h-4 w-4 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+              <Moon className="absolute h-4 w-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+              <span className="sr-only">Toggle theme</span>
+            </Button>
           </div>
 
-          <Link href="/contact" className="text-gray-300 hover:text-white">
-            Contact
-          </Link>
+          {/* Mobile menu button */}
+          <div className="md:hidden flex items-center">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+              className="mr-2"
+            >
+              <Sun className="h-4 w-4 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+              <Moon className="absolute h-4 w-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+              <span className="sr-only">Toggle theme</span>
+            </Button>
+
+            <Sheet open={isOpen} onOpenChange={setIsOpen}>
+              <SheetTrigger asChild>
+                <Button variant="ghost" size="sm">
+                  <Menu className="h-6 w-6" />
+                  <span className="sr-only">Open menu</span>
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="right" className="w-[300px] sm:w-[400px]">
+                <nav className="flex flex-col space-y-4 mt-8">
+                  {navigation.map((item) => (
+                    <Link
+                      key={item.name}
+                      href={item.href}
+                      onClick={() => setIsOpen(false)}
+                      className={`px-3 py-2 text-base font-medium transition-colors ${
+                        pathname === item.href
+                          ? "text-orange-600 bg-orange-50 dark:bg-orange-900/20"
+                          : "text-gray-700 dark:text-gray-300 hover:text-orange-600 hover:bg-gray-50 dark:hover:bg-gray-800"
+                      }`}
+                    >
+                      {item.name}
+                    </Link>
+                  ))}
+                </nav>
+              </SheetContent>
+            </Sheet>
+          </div>
         </div>
       </div>
     </nav>
   )
 }
-
-export default Navbar
