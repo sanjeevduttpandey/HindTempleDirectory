@@ -47,7 +47,7 @@ const CreateDiscussion = () => {
     },
   })
 
-  const { mutate: create, isLoading } = useMutation({
+  const { mutate: create, isPending } = useMutation({
     mutationFn: createDiscussion,
     onSuccess: () => {
       toast({
@@ -136,8 +136,8 @@ const CreateDiscussion = () => {
                 </AlertDialogFooter>
               </AlertDialogContent>
             </AlertDialog>
-            <Button type="submit" disabled={isLoading}>
-              {isLoading ? "Loading" : "Create"}
+            <Button type="submit" disabled={isPending}>
+              {isPending ? "Loading" : "Create"}
             </Button>
           </div>
         </form>
