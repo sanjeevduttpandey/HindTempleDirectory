@@ -1,21 +1,34 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Badge } from "@/components/ui/badge"
-import { Calendar, Search } from "lucide-react"
-import Link from "next/link"
-import Image from "next/image"
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
+import { Calendar, Search, Menu, X } from "lucide-react";
+import Link from "next/link";
+import Image from "next/image";
 
 const festivals = [
   {
     id: 1,
     title: "Diwali",
     date: "2024-11-12",
-    description: "The five-day festival of lights, celebrated by Sanatan, Jains, Sikhs and some Buddhists.",
+    description:
+      "The five-day festival of lights, celebrated by Sanatan, Jains, Sikhs and some Buddhists.",
     image: "/placeholder.svg?height=200&width=400",
     category: "Major Festival",
     significance:
@@ -33,7 +46,8 @@ const festivals = [
     id: 2,
     title: "Holi",
     date: "2025-03-14",
-    description: "The festival of colors, celebrating the arrival of spring and the triumph of good over evil.",
+    description:
+      "The festival of colors, celebrating the arrival of spring and the triumph of good over evil.",
     image: "/placeholder.svg?height=200&width=400",
     category: "Major Festival",
     significance:
@@ -51,7 +65,8 @@ const festivals = [
     id: 3,
     title: "Navratri",
     date: "2024-10-03",
-    description: "A nine-night festival dedicated to the worship of the Goddess Durga.",
+    description:
+      "A nine-night festival dedicated to the worship of the Goddess Durga.",
     image: "/placeholder.svg?height=200&width=400",
     category: "Major Festival",
     significance:
@@ -63,13 +78,18 @@ const festivals = [
       "Decorating homes and Mandir",
       "Feasting on the tenth day (Dussehra)",
     ],
-    associatedDeities: ["Goddess Durga", "Goddess Lakshmi", "Goddess Saraswati"],
+    associatedDeities: [
+      "Goddess Durga",
+      "Goddess Lakshmi",
+      "Goddess Saraswati",
+    ],
   },
   {
     id: 4,
     title: "Maha Shivaratri",
     date: "2025-02-26",
-    description: "The Great Night of Shiva, celebrating the convergence of Shiva and Shakti.",
+    description:
+      "The Great Night of Shiva, celebrating the convergence of Shiva and Shakti.",
     image: "/placeholder.svg?height=200&width=400",
     category: "Religious Observance",
     significance:
@@ -87,7 +107,8 @@ const festivals = [
     id: 5,
     title: "Janmashtami",
     date: "2024-08-26",
-    description: "The birthday of Lord Krishna, celebrated with great devotion and enthusiasm.",
+    description:
+      "The birthday of Lord Krishna, celebrated with great devotion and enthusiasm.",
     image: "/placeholder.svg?height=200&width=400",
     category: "Major Festival",
     significance:
@@ -123,7 +144,8 @@ const festivals = [
     id: 7,
     title: "Rama Navami",
     date: "2025-04-06",
-    description: "The birthday of Lord Rama, celebrated with devotion and spiritual fervor.",
+    description:
+      "The birthday of Lord Rama, celebrated with devotion and spiritual fervor.",
     image: "/placeholder.svg?height=200&width=400",
     category: "Religious Observance",
     significance:
@@ -141,7 +163,8 @@ const festivals = [
     id: 8,
     title: "Raksha Bandhan",
     date: "2024-08-19",
-    description: "A festival celebrating the bond between brothers and sisters.",
+    description:
+      "A festival celebrating the bond between brothers and sisters.",
     image: "/placeholder.svg?height=200&width=400",
     category: "Cultural Festival",
     significance:
@@ -158,7 +181,8 @@ const festivals = [
     id: 9,
     title: "Dussehra (Vijayadashami)",
     date: "2024-10-12",
-    description: "Celebrates the victory of Lord Rama over the demon king Ravana.",
+    description:
+      "Celebrates the victory of Lord Rama over the demon king Ravana.",
     image: "/placeholder.svg?height=200&width=400",
     category: "Major Festival",
     significance:
@@ -176,7 +200,8 @@ const festivals = [
     id: 10,
     title: "Karwa Chauth",
     date: "2024-10-20",
-    description: "A one-day festival observed by Sanatan women for the longevity and safety of their husbands.",
+    description:
+      "A one-day festival observed by Sanatan women for the longevity and safety of their husbands.",
     image: "/placeholder.svg?height=200&width=400",
     category: "Religious Observance",
     significance:
@@ -188,34 +213,61 @@ const festivals = [
       "Sighting the moon and offering prayers",
       "Breaking fast with husband's hand",
     ],
-    associatedDeities: ["Goddess Parvati", "Lord Shiva", "Lord Kartikeya", "Lord Ganesha", "Moon God"],
+    associatedDeities: [
+      "Goddess Parvati",
+      "Lord Shiva",
+      "Lord Kartikeya",
+      "Lord Ganesha",
+      "Moon God",
+    ],
   },
-]
+];
 
 export default function FestivalsPage() {
-  const [searchTerm, setSearchTerm] = useState("")
-  const [selectedCategory, setSelectedCategory] = useState("All Categories")
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("All Categories");
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  const categories = ["All Categories", ...Array.from(new Set(festivals.map((f) => f.category)))]
+  const categories = [
+    "All Categories",
+    ...Array.from(new Set(festivals.map((f) => f.category))),
+  ];
 
   const filteredFestivals = festivals.filter((festival) => {
     const matchesSearch =
       festival.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       festival.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      festival.significance.toLowerCase().includes(searchTerm.toLowerCase())
-    const matchesCategory = selectedCategory === "All Categories" || festival.category === selectedCategory
-    return matchesSearch && matchesCategory
-  })
+      festival.significance.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesCategory =
+      selectedCategory === "All Categories" ||
+      festival.category === selectedCategory;
+    return matchesSearch && matchesCategory;
+  });
 
   // Formats date to New Zealand locale
   const formatDate = (dateString: string) => {
-    const date = new Date(dateString)
+    const date = new Date(dateString);
     return date.toLocaleDateString("en-NZ", {
       year: "numeric",
       month: "long",
       day: "numeric",
-    })
-  }
+    });
+  };
+
+  const toggleMobileMenu = () => {
+    setIsMobileMenuOpen(!isMobileMenuOpen);
+  };
+
+  const closeMobileMenu = () => {
+    setIsMobileMenuOpen(false);
+  };
+
+  const navigationItems = [
+    { href: "/", label: "Home" },
+    { href: "/temples", label: "Mandirs" },
+    { href: "/events", label: "Events" },
+    { href: "/community", label: "Community" },
+  ];
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -228,34 +280,73 @@ export default function FestivalsPage() {
                 <span className="text-white font-bold text-lg">🕉</span>
               </div>
               <div>
-                <h1 className="text-xl font-bold text-gray-900">Sanatan New Zealand</h1>
+                <h1 className="text-xl font-bold text-gray-900">
+                  Sanatan New Zealand
+                </h1>
                 <p className="text-sm text-gray-600">Sanatan Festivals</p>
               </div>
             </Link>
+
+            {/* Desktop Navigation */}
             <nav className="hidden md:flex items-center space-x-6">
-              <Link href="/" className="text-gray-700 hover:text-orange-600 font-medium">
-                Home
-              </Link>
-              <Link href="/temples" className="text-gray-700 hover:text-orange-600 font-medium">
-                Mandirs
-              </Link>
-              <Link href="/events" className="text-gray-700 hover:text-orange-600 font-medium">
-                Events
-              </Link>
-              <Link href="/community" className="text-gray-700 hover:text-orange-600 font-medium">
-                Community
-              </Link>
+              {navigationItems.map((item) => (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className="text-gray-700 hover:text-orange-600 font-medium transition-colors duration-200"
+                >
+                  {item.label}
+                </Link>
+              ))}
             </nav>
+
+            {/* Mobile Menu Button */}
+            <div className="md:hidden">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={toggleMobileMenu}
+                className="p-2"
+                aria-label="Toggle menu"
+              >
+                {isMobileMenuOpen ? (
+                  <X className="h-6 w-6" />
+                ) : (
+                  <Menu className="h-6 w-6" />
+                )}
+              </Button>
+            </div>
           </div>
+
+          {/* Mobile Navigation Menu */}
+          {isMobileMenuOpen && (
+            <div className="md:hidden mt-4 pb-4 border-t pt-4">
+              <nav className="flex flex-col space-y-3">
+                {navigationItems.map((item) => (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className="text-gray-700 hover:text-orange-600 font-medium py-2 px-2 rounded-md hover:bg-orange-50 transition-colors duration-200"
+                    onClick={closeMobileMenu}
+                  >
+                    {item.label}
+                  </Link>
+                ))}
+              </nav>
+            </div>
+          )}
         </div>
       </header>
 
       {/* Hero Section */}
       <section className="py-12 px-4 bg-gradient-to-r from-orange-600 to-red-600 text-white">
         <div className="container mx-auto text-center">
-          <h2 className="text-4xl font-bold mb-4">Sanatan Festivals in New Zealand</h2>
+          <h2 className="text-4xl font-bold mb-4">
+            Sanatan Festivals in New Zealand
+          </h2>
           <p className="text-xl mb-8 opacity-90">
-            Explore the rich calendar of Sanatan festivals celebrated across Aotearoa
+            Explore the rich calendar of Sanatan festivals celebrated across
+            Aotearoa
           </p>
           <div className="max-w-2xl mx-auto">
             <div className="flex flex-col sm:flex-row gap-4">
@@ -268,7 +359,10 @@ export default function FestivalsPage() {
                   className="pl-10 bg-white text-gray-900"
                 />
               </div>
-              <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+              <Select
+                value={selectedCategory}
+                onValueChange={setSelectedCategory}
+              >
                 <SelectTrigger className="w-full sm:w-48 bg-white text-gray-900">
                   <SelectValue placeholder="Category" />
                 </SelectTrigger>
@@ -290,17 +384,23 @@ export default function FestivalsPage() {
         <div className="container mx-auto">
           <div className="mb-6">
             <h3 className="text-2xl font-bold text-gray-900">
-              {filteredFestivals.length} Festival{filteredFestivals.length !== 1 ? "s" : ""} Found
+              {filteredFestivals.length} Festival
+              {filteredFestivals.length !== 1 ? "s" : ""} Found
             </h3>
             <p className="text-gray-600">
-              {selectedCategory !== "All Categories" ? `in ${selectedCategory}` : "across all categories"}
+              {selectedCategory !== "All Categories"
+                ? `in ${selectedCategory}`
+                : "across all categories"}
             </p>
           </div>
 
           {/* Festivals Grid */}
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {filteredFestivals.map((festival) => (
-              <Card key={festival.id} className="overflow-hidden hover:shadow-lg transition-shadow">
+              <Card
+                key={festival.id}
+                className="overflow-hidden hover:shadow-lg transition-shadow"
+              >
                 <div className="relative h-48">
                   <Image
                     src={festival.image || "/placeholder.svg"}
@@ -308,7 +408,9 @@ export default function FestivalsPage() {
                     fill
                     className="object-cover"
                   />
-                  <Badge className="absolute top-4 right-4 bg-white/90 text-gray-900">{festival.category}</Badge>
+                  <Badge className="absolute top-4 right-4 bg-white/90 text-gray-900">
+                    {festival.category}
+                  </Badge>
                 </div>
                 <CardHeader>
                   <CardTitle className="text-lg">{festival.title}</CardTitle>
@@ -318,7 +420,9 @@ export default function FestivalsPage() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <p className="text-sm text-gray-600">{festival.description}</p>
+                  <p className="text-sm text-gray-600">
+                    {festival.description}
+                  </p>
 
                   <div className="space-y-2 text-sm">
                     <h4 className="font-medium text-gray-900">Significance:</h4>
@@ -327,7 +431,9 @@ export default function FestivalsPage() {
 
                   {festival.rituals.length > 0 && (
                     <div className="space-y-2 text-sm">
-                      <h4 className="font-medium text-gray-900">Key Rituals:</h4>
+                      <h4 className="font-medium text-gray-900">
+                        Key Rituals:
+                      </h4>
                       <ul className="list-disc list-inside text-gray-600">
                         {festival.rituals.map((ritual, index) => (
                           <li key={index}>{ritual}</li>
@@ -338,10 +444,16 @@ export default function FestivalsPage() {
 
                   {festival.associatedDeities.length > 0 && (
                     <div className="space-y-2 text-sm">
-                      <h4 className="font-medium text-gray-900">Associated Deities:</h4>
+                      <h4 className="font-medium text-gray-900">
+                        Associated Deities:
+                      </h4>
                       <div className="flex flex-wrap gap-1">
                         {festival.associatedDeities.map((deity, index) => (
-                          <Badge key={index} variant="outline" className="text-xs">
+                          <Badge
+                            key={index}
+                            variant="outline"
+                            className="text-xs"
+                          >
                             {deity}
                           </Badge>
                         ))}
@@ -350,10 +462,19 @@ export default function FestivalsPage() {
                   )}
 
                   <div className="flex gap-2 pt-2">
-                    <Button size="sm" className="flex-1 bg-orange-600 hover:bg-orange-700" asChild>
+                    <Button
+                      size="sm"
+                      className="flex-1 bg-orange-600 hover:bg-orange-700"
+                      asChild
+                    >
                       <Link href={`/festivals/${festival.id}`}>Learn More</Link>
                     </Button>
-                    <Button size="sm" variant="outline" className="flex-1 bg-transparent" asChild>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="flex-1 bg-transparent"
+                      asChild
+                    >
                       <Link href="/events">Find Events</Link>
                     </Button>
                   </div>
@@ -367,12 +488,16 @@ export default function FestivalsPage() {
               <div className="text-gray-400 mb-4">
                 <Calendar className="h-16 w-16 mx-auto" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">No festivals found</h3>
-              <p className="text-gray-600 mb-4">Try adjusting your search criteria or browse all festivals.</p>
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                No festivals found
+              </h3>
+              <p className="text-gray-600 mb-4">
+                Try adjusting your search criteria or browse all festivals.
+              </p>
               <Button
                 onClick={() => {
-                  setSearchTerm("")
-                  setSelectedCategory("All Categories")
+                  setSearchTerm("");
+                  setSelectedCategory("All Categories");
                 }}
                 className="bg-orange-600 hover:bg-orange-700"
               >
@@ -386,9 +511,12 @@ export default function FestivalsPage() {
       {/* Contribute CTA */}
       <section className="py-12 px-4 bg-orange-50">
         <div className="container mx-auto text-center">
-          <h3 className="text-2xl font-bold text-gray-900 mb-4">Know of a festival not listed?</h3>
+          <h3 className="text-2xl font-bold text-gray-900 mb-4">
+            Know of a festival not listed?
+          </h3>
           <p className="text-gray-600 mb-6 max-w-2xl mx-auto">
-            Help us enrich our festival calendar. Share details about Sanatan festivals important to your community.
+            Help us enrich our festival calendar. Share details about Sanatan
+            festivals important to your community.
           </p>
           <Button className="bg-orange-600 hover:bg-orange-700" asChild>
             <Link href="/contact">Contribute Information</Link>
@@ -396,5 +524,5 @@ export default function FestivalsPage() {
         </div>
       </section>
     </div>
-  )
+  );
 }
