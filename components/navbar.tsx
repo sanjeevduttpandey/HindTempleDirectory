@@ -7,14 +7,15 @@ import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { Menu, Sun, Moon } from "lucide-react"
 import { useTheme } from "next-themes"
+import { cn } from "@/lib/utils"
 
 const navigation = [
   { name: "Home", href: "/" },
   { name: "Temples", href: "/temples" },
   { name: "Events", href: "/events" },
   { name: "Community", href: "/community" },
-  { name: "Business", href: "/business/directory" },
-  { name: "About", href: "/about" },
+  { name: "Business Directory", href: "/business/directory" },
+  { name: "Panchang", href: "/panchang" },
 ]
 
 export default function Navbar() {
@@ -23,71 +24,56 @@ export default function Navbar() {
   const { theme, setTheme } = useTheme()
 
   return (
-    <nav className="bg-white dark:bg-gray-900 shadow-sm border-b">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-16">
+    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <div className="container mx-auto px-4">
+        <div className="flex h-16 items-center justify-between">
           <div className="flex items-center">
-            <Link href="/" className="flex-shrink-0 flex items-center">
-              <span className="text-2xl font-bold text-orange-600">🕉️ Sanatan NZ</span>
+            <Link href="/" className="flex items-center space-x-2">
+              <div className="h-8 w-8 rounded-full bg-gradient-to-r from-orange-500 to-red-500" />
+              <span className="font-bold text-xl">Sanatan NZ</span>
             </Link>
           </div>
 
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-8">
+          <nav className="hidden md:flex items-center space-x-6">
             {navigation.map((item) => (
               <Link
                 key={item.name}
                 href={item.href}
-                className={`px-3 py-2 text-sm font-medium transition-colors ${
-                  pathname === item.href
-                    ? "text-orange-600 border-b-2 border-orange-600"
-                    : "text-gray-700 dark:text-gray-300 hover:text-orange-600"
-                }`}
+                className={cn(
+                  "text-sm font-medium transition-colors hover:text-primary",
+                  pathname === item.href ? "text-foreground" : "text-muted-foreground",
+                )}
               >
                 {item.name}
               </Link>
             ))}
+          </nav>
 
-            {/* Theme Toggle */}
-            <Button variant="ghost" size="sm" onClick={() => setTheme(theme === "dark" ? "light" : "dark")}>
-              <Sun className="h-4 w-4 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-              <Moon className="absolute h-4 w-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-              <span className="sr-only">Toggle theme</span>
-            </Button>
-          </div>
-
-          {/* Mobile menu button */}
-          <div className="md:hidden flex items-center">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-              className="mr-2"
-            >
-              <Sun className="h-4 w-4 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-              <Moon className="absolute h-4 w-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+          <div className="flex items-center space-x-4">
+            <Button variant="ghost" size="icon" onClick={() => setTheme(theme === "dark" ? "light" : "dark")}>
+              <Sun className="h-5 w-5 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+              <Moon className="absolute h-5 w-5 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
               <span className="sr-only">Toggle theme</span>
             </Button>
 
             <Sheet open={isOpen} onOpenChange={setIsOpen}>
               <SheetTrigger asChild>
-                <Button variant="ghost" size="sm">
-                  <Menu className="h-6 w-6" />
-                  <span className="sr-only">Open menu</span>
+                <Button variant="ghost" size="icon" className="md:hidden">
+                  <Menu className="h-5 w-5" />
+                  <span className="sr-only">Toggle menu</span>
                 </Button>
               </SheetTrigger>
-              <SheetContent side="right" className="w-[300px] sm:w-[400px]">
-                <nav className="flex flex-col space-y-4 mt-8">
+              <SheetContent side="right">
+                <nav className="flex flex-col space-y-4">
                   {navigation.map((item) => (
                     <Link
                       key={item.name}
                       href={item.href}
+                      className={cn(
+                        "text-sm font-medium transition-colors hover:text-primary",
+                        pathname === item.href ? "text-foreground" : "text-muted-foreground",
+                      )}
                       onClick={() => setIsOpen(false)}
-                      className={`px-3 py-2 text-base font-medium transition-colors ${
-                        pathname === item.href
-                          ? "text-orange-600 bg-orange-50 dark:bg-orange-900/20"
-                          : "text-gray-700 dark:text-gray-300 hover:text-orange-600 hover:bg-gray-50 dark:hover:bg-gray-800"
-                      }`}
                     >
                       {item.name}
                     </Link>
@@ -98,6 +84,6 @@ export default function Navbar() {
           </div>
         </div>
       </div>
-    </nav>
+    </header>
   )
 }

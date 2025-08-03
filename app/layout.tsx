@@ -4,34 +4,14 @@ import { Inter } from "next/font/google"
 import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
 import { QueryProvider } from "@/components/query-provider"
-import { Toaster } from "@/components/ui/toaster"
 import Navbar from "@/components/navbar"
+import { Toaster } from "@/components/ui/sonner"
 
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "Sanatan New Zealand - Hindu Community Platform",
-  description:
-    "Connect with the Hindu community in New Zealand. Find temples, events, businesses, and spiritual resources.",
-  keywords: "Hindu, New Zealand, temples, community, events, spirituality, Sanatan Dharma",
-  authors: [{ name: "Sanatan New Zealand" }],
-  creator: "Sanatan New Zealand",
-  publisher: "Sanatan New Zealand",
-  robots: "index, follow",
-  openGraph: {
-    title: "Sanatan New Zealand - Hindu Community Platform",
-    description:
-      "Connect with the Hindu community in New Zealand. Find temples, events, businesses, and spiritual resources.",
-    type: "website",
-    locale: "en_NZ",
-    siteName: "Sanatan New Zealand",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Sanatan New Zealand - Hindu Community Platform",
-    description:
-      "Connect with the Hindu community in New Zealand. Find temples, events, businesses, and spiritual resources.",
-  },
+  title: "Sanatan New Zealand - Hindu Temple Directory",
+  description: "Discover Hindu temples, events, and community in New Zealand",
     generator: 'v0.dev'
 }
 
@@ -45,12 +25,16 @@ export default function RootLayout({
       <body className={inter.className}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
           <QueryProvider>
-            <div className="min-h-screen flex flex-col">
+            <div className="min-h-screen bg-background">
               <Navbar />
               <main className="flex-1">{children}</main>
-              <footer className="bg-gray-100 dark:bg-gray-800 py-8 mt-auto">
-                <div className="container mx-auto px-4 text-center text-gray-600 dark:text-gray-400">
-                  <p>&copy; 2024 Sanatan New Zealand. All rights reserved.</p>
+              <footer className="border-t py-6 md:py-0">
+                <div className="container mx-auto px-4 flex flex-col items-center justify-between gap-4 md:h-24 md:flex-row">
+                  <div className="flex flex-col items-center gap-4 px-8 md:flex-row md:gap-2 md:px-0">
+                    <p className="text-center text-sm leading-loose text-muted-foreground md:text-left">
+                      Built for the Hindu community in New Zealand. © 2024 Sanatan NZ.
+                    </p>
+                  </div>
                 </div>
               </footer>
             </div>
